@@ -5,6 +5,7 @@ A wrapper for the Trakt.tv REST API
 import requests
 import string
 import json
+from pprint import PrettyPrinter
 
 class BaseAPI(object):
     """
@@ -205,3 +206,37 @@ class TVEpisode(BaseAPI):
 
     def search(self, show, season, episode_num):
         pass
+
+class Movie(BaseAPI):
+    """
+    A Class representing a Movie object
+    """
+    def __init__(self, title, *args, **kwargs):
+        super(Movie, self).__init__(*args, **kwargs)
+        self.title = title
+        self.url_extension = 'search/movies/' + self.key + '?query='
+        self.search(self.title)
+
+    def search(self, title):
+        query = string.replace(title, ' ', '%20')
+        url = self.base_url + self.url_extension + query
+        response = requests.get(url)
+        data = None
+        print url
+        if response.status_code == 200:
+            data = json.loads(response.content)
+        if data != None:
+            data = data[0]
+            self.year = data['year']
+            self.released = data['released']
+            self.url = data['url']
+            self.trailer_url = data['trailer']
+            self.runtime = data['runtime']
+            self.tagline = data['tagline']
+            self.overview = data['overview']
+            self.certification = data['certification']
+            self.imdb_id = data['imdb_id']
+            self.tmdb_id = data['tmdb_id']
+            self.images = data['images']
+            self.genres = data['genres']
+            self.ratings = data['ratings']

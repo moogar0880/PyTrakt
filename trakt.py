@@ -5,7 +5,7 @@ A wrapper for the Trakt.tv REST API
 import requests
 import string
 import json
-from pprint import PrettyPrinter
+from pprint import pprint
 
 class BaseAPI(object):
     """
@@ -23,24 +23,17 @@ class TraktRating(object):
     """
     def __init__(self, rating_data):
         super(TraktRating, self).__init__()
-        self.percentage = rating_data['percentage']
-        self.votes = rating_data['votes']
-        self.loved = rating_data['loved']
-        self.hated = rating_data['hated']
+        for key, val in rating_data.items():
+            setattr(self, key, val)
 
 class TraktStats(object):
     """
+    Trakt Statistics object
     """
     def __init__(self, stats_data):
         super(TraktStats, self).__init__()
-        self.watchers = stats_data['watchers']
-        self.plays = stats_data['plays']
-        self.scrobbles = stats_data['scrobbles']
-        self.scrobbles_unique = stats_data['scrobbles_unique']
-        self.checkins = stats_data['checkins']
-        self.checkins_unique = stats_data['checkins_unique']
-        self.collection = stats_data['collection']
-        self.collection_unique = stats_data['collection_unique']
+        for key, val in stats_data.items():
+            setattr(self, key, val)
 
 class TVShow(BaseAPI):
     """
@@ -56,7 +49,6 @@ class TVShow(BaseAPI):
         self.search(show_title=self.title)
 
     def __fetch_top_watchers(self):
-        # summary.json/888dbf16c37694fd8633f0f7e423dfc5/the-walking-dead
         show_title = self.title
         string.replace(show_title, ' ', '-')
         url = self.url_extension + 'summary.json/' + self.key + '/'
@@ -105,27 +97,13 @@ class TVShow(BaseAPI):
         if response.status_code == 200:
             data = json.loads(response.content)
         if data != None:
-            self.year = data['year']
-            self.url  = data['url']
-            self.first_aired = data['first_aired_iso']
-            self.country = data['country']
-            self.description = data['overview']
-            self.runtime = data['runtime']
-            self.status = data['status']
-            self.network = data['network']
-            self.air_day = data['air_day']
-            self.air_time = data['air_time']
-            self.certification = data['certification']
-            self.imdb_id = data['imdb_id']
-            self.tvdb_id = data['tvdb_id']
-            self.tvrage_id = data['tvrage_id']
-            self.last_updated = data['last_updated']
-            self.poster = data['poster']
-            self.images = data['images']
-            self.genres = data['genres']
-            self.actors = data['people']['actors']
-            self.rating = TraktRating(data['ratings'])
-            self.stats = TraktStats(data['stats'])
+            for key, val in data.items():
+                if key == 'ratings':
+                    setattr(self, 'rating', TraktRating(val))
+                elif key == 'stats':
+                    setattr(self, 'stats', TraktStats(val))
+                else:
+                    setattr(self, key, val)
 
     def search_season(self, season_num=None):
         """
@@ -165,19 +143,22 @@ class TVSeason(BaseAPI):
         """
         Search for a tv season
         """
-        print 'TVSeason search'
         url = self.base_url + self.url_extension + '/'
         # Need to remove spaces from show title
         title = string.replace(show_title, ' ', '-')
         url += title + '/' + str(season_num)
         response = requests.get(url)
         data = None
-        print url
         if response.status_code == 200:
             data = json.loads(response.content)
         if data != None:
             for episode_data in data:
                 self.episodes.append(TVEpisode(self.show, self.season, episode_data=episode_data, key=self.key))
+
+    def __repr__(self):
+        title = [self.show, 'Season', self.season]
+        title = map(str, title)
+        return ' '.join(title)
 
 class TVEpisode(BaseAPI):
     """
@@ -193,19 +174,23 @@ class TVEpisode(BaseAPI):
         elif episode_num != -1 and episode_data == {}:
             self.search(self.show, self.season, self.episode_num)
         else: # episode_data != {}
-            self.episode = episode_data['episode']
-            self.number = episode_data['number']
-            self.tvdb_id = episode_data['tvdb_id']
-            self.title = episode_data['title']
-            self.overview = episode_data['overview']
-            self.first_aired = episode_data['first_aired_iso']
-            self.url = episode_data['url']
-            self.screen = episode_data['screen']
-            self.images = episode_data['images']
-            self.ratings = episode_data['ratings']
+            for key, val in episode_data.items():
+                setattr(self, key, val)
+        # if 'overview' in self.__dict__:
+            # self.overview = string.replace(self.overview, u'\u2013', '-')
+            # self.overview = string.replace(self.overview, u'\u2019', '\'')
+            # self.overview = string.replace(self.overview, u'\u2019', '"')
 
     def search(self, show, season, episode_num):
         pass
+
+    def get_description(self):
+        return str(self.overview)
+
+    def __repr__(self):
+        title = [self.episode, self.title]
+        title = map(str, title)
+        return ' '.join(title)
 
 class Movie(BaseAPI):
     """
@@ -222,21 +207,35 @@ class Movie(BaseAPI):
         url = self.base_url + self.url_extension + query
         response = requests.get(url)
         data = None
-        print url
         if response.status_code == 200:
             data = json.loads(response.content)
         if data != None:
             data = data[0]
-            self.year = data['year']
-            self.released = data['released']
-            self.url = data['url']
-            self.trailer_url = data['trailer']
-            self.runtime = data['runtime']
-            self.tagline = data['tagline']
-            self.overview = data['overview']
-            self.certification = data['certification']
-            self.imdb_id = data['imdb_id']
-            self.tmdb_id = data['tmdb_id']
-            self.images = data['images']
-            self.genres = data['genres']
-            self.ratings = data['ratings']
+            for key, val in data.items():
+                setattr(self, key, val)
+
+class Calendar(BaseAPI):
+    """
+    TraktTV Calendar
+    """
+    def __init__(self):
+        super(Calendar, self).__init__()
+
+class Community(BaseAPI):
+    """
+    TraktTV Community Report
+    """
+    def __init__(self, search_type='all', start=None, end=None, *args, **kwargs):
+        super(Community, self).__init__(*args, **kwargs)
+        self.url_extension = 'community.json/' + self.key + '/' + search_type
+        if start is not None and end is None:
+            self.url_extension += '/' str(start)
+        elif start is None and end is not None:
+            self.url_extension += '/' str(end)
+        else:
+            self.url_extension += '/' str(start) + '/' + str(end)
+        url = self.base_url + self.url_extension
+        response = requests.get(url)
+        data = json.loads(response.content)
+        for key, val in data.items():
+            setattr(self, key, val)

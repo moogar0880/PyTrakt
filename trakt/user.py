@@ -13,7 +13,7 @@ __all__ = ['User', 'UserList']
 class UserList(BaseAPI):
     def __init__(self, user_name, slug='', **kwargs):
         super(UserList, self).__init__()
-        self.user_name = user_name
+        self.username = user_name
         self.slug = slug
         self.items = self.name = self.url = self.description = None
         self.show_numbers = self.allow_shouts = self.privacy = None
@@ -24,7 +24,7 @@ class UserList(BaseAPI):
             self._search()
 
     def _search(self):
-        extension = '/user/lists.json/{}/{}'.format(api_key, self.user_name)
+        extension = '/user/lists.json/{}/{}'.format(api_key, self.username)
         url = self.base_url + extension
         response = requests.get(url)
         data = json.loads(response.content.decode('UTF-8'))
@@ -48,19 +48,22 @@ class UserList(BaseAPI):
 
 
 class User(BaseAPI):
-    def __init__(self, user_name):
+    def __init__(self, username, **kwargs):
         super(User, self).__init__()
-        self.user_name = user_name
+        self.username = username
         self._calendar = self._last_activity = self._watching = None
         self._movies = self._movie_collection = self._movies_watched = None
         self._shows = self._show_collection = self._shows_watched = None
         self._lists = None
+        if len(kwargs) > 0:
+            for key, val in kwargs.items():
+                setattr(self, key, val)
 
     def get_calendar(self, date=None, days=None):
         """Get this :class:`User`'s :class:`UserCalendar` for the specified date
         range.
         """
-        self._calendar = UserCalendar(self.user_name, date=date, days=days)
+        self._calendar = UserCalendar(self.username, date=date, days=days)
         return self._calendar
 
     def get_list(self, title):
@@ -68,7 +71,7 @@ class User(BaseAPI):
         :class:`User`'s won't return any data unless you are friends. To view
         your own private lists, you will need to authenticate as yourself.
         """
-        return UserList(self.user_name, title)
+        return UserList(self.username, title)
 
     @property
     def calendar(self):
@@ -77,7 +80,7 @@ class User(BaseAPI):
         unless you are friends.
         """
         if self._calendar is None:
-            self._calendar = UserCalendar(self.user_name)
+            self._calendar = UserCalendar(self.username)
         return self._calendar
 
     @property
@@ -89,7 +92,7 @@ class User(BaseAPI):
         than what you have cached, sync up the changes for that section."""
         if self._last_activity is None:
             url = '/user/lastactivity.json/{}/{}'.format(api_key,
-                                                         self.user_name)
+                                                         self.username)
             response = requests.get(url)
             data = json.loads(response.content.decode('UTF-8'))
             self._last_activity = data
@@ -102,7 +105,7 @@ class User(BaseAPI):
         will be returned. Protected users won't return any data unless you are
         friends.
         """
-        extension = 'user/watching.json/{}/{}'.format(api_key, self.user_name)
+        extension = 'user/watching.json/{}/{}'.format(api_key, self.username)
         url = self.base_url + extension
         response = requests.get(url)
         data = json.loads(response.content.decode('UTF-8'))
@@ -137,7 +140,7 @@ class User(BaseAPI):
         friends.
         """
         extension = '/user/library/movies/all.json/{}/{}'.format(api_key,
-                                                                 self.user_name)
+                                                                 self.username)
         url = self.base_url + extension
         self._movies = self.__movie_list(url)
         return self._movies
@@ -149,7 +152,7 @@ class User(BaseAPI):
         Protected users won't return any data unless you are friends.
         """
         extension = '/user/library/movies/collection.json/{}/{}'.format(api_key,
-                                                                        self.user_name)
+                                                                        self.username)
         url = self.base_url + extension
         self._movie_collection = self.__movie_list(url)
         return self._movie_collection
@@ -161,7 +164,7 @@ class User(BaseAPI):
         Protected users won't return any data unless you are friends.
         """
         extension = '/user/library/movies/watched.json/{}/{}'.format(api_key,
-                                                                     self.user_name)
+                                                                     self.username)
         url = self.base_url + extension
         self._movies_watched = self.__movie_list(url)
         return self._movies_watched
@@ -174,7 +177,7 @@ class User(BaseAPI):
         friends.
         """
         extension = '/user/library/shows/all.json/{}/{}'.format(api_key,
-                                                                self.user_name)
+                                                                self.username)
         url = self.base_url + extension
         response = requests.get(url)
         data = json.loads(response.content.decode('UTF-8'))
@@ -192,7 +195,7 @@ class User(BaseAPI):
         Protected users won't return any data unless you are friends.
         """
         extension = '/user/library/shows/collection.json/{}/{}'.format(api_key,
-                                                                       self.user_name)
+                                                                       self.username)
         url = self.base_url + extension
         response = requests.get(url)
         data = json.loads(response.content.decode('UTF-8'))
@@ -210,7 +213,7 @@ class User(BaseAPI):
         Protected users won't return any data unless you are friends.
         """
         extension = '/user/library/shows/watched.json/{}/{}'.format(api_key,
-                                                                    self.user_name)
+                                                                    self.username)
         url = self.base_url + extension
         response = requests.get(url)
         data = json.loads(response.content.decode('UTF-8'))
@@ -227,7 +230,7 @@ class User(BaseAPI):
         won't return any data unless you are friends. To view your own private
         lists, you will need to authenticate as yourself.
         """
-        extension = '/user/lists.json/{}/{}'.format(api_key, self.user_name)
+        extension = '/user/lists.json/{}/{}'.format(api_key, self.username)
         url = self.base_url + extension
         response = requests.get(url)
         data = json.loads(response.content.decode('UTF-8'))

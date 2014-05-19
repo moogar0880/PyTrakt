@@ -41,4 +41,4 @@ def test(username, password):
     url = BaseAPI().base_url + '/account/test/{}'.format(api_key)
     response = requests.post(url, data=args)
     resp_data = json.loads(response.content.decode('UTF-8'))
-    return None
+    return resp_data['status'] == 'success'

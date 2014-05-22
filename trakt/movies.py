@@ -3,9 +3,8 @@ import json
 import string
 import requests
 from datetime import datetime, timedelta
-from collections import namedtuple
 
-from . import api_key, BaseAPI, auth_post, __version__
+from . import api_key, BaseAPI, auth_post, Genre, Comment, __version__
 from trakt.user import User
 
 __author__ = 'Jon Nappi'
@@ -54,7 +53,6 @@ def get_recommended_movies(genre=None, start_year=None, end_year=None,
 @property
 def genres():
     """A list of all possible :class:`Movie` Genres"""
-    Genre = namedtuple('Genre', ['name', 'slug'])
     url = BaseAPI().base_url + '/genres/movies.json/{}'.format(api_key)
     response = requests.get(url)
     data = json.loads(response.content.decode('UTF-8'))
@@ -98,7 +96,8 @@ class Movie(BaseAPI):
         self.title = title
         self.year = int(year)
         self.released_iso = self.tmdb_id = self.imdb_id = self.duration = None
-        self.url_extension = 'search/movies/' + api_key + '?query='
+        self.url_extension = 'search/movies/{}?query='.format(api_key)
+        self._checked_in = False
         if len(kwargs) > 0:
             for key, val in kwargs.items():
                 setattr(self, key, val)
@@ -161,6 +160,22 @@ class Movie(BaseAPI):
         real_args = {x: args[x] for x in args if args[x] is not None}
         auth_post(url, real_args)
 
+    def cancel_checkin(self):
+        """Notify trakt that the current user is no longer watching this
+        :class:`Movie`
+        """
+        ext = '/movie/cancelcheckin/{}'.format(api_key)
+        url = self.base_url + ext
+        auth_post(url)
+
+    def cancel_watching(self):
+        """Notify trakt that the current user has stopped watching this
+        :class:`Movie`
+        """
+        ext = '/movie/cancelwatching/{}'.format(api_key)
+        url = self.base_url + ext
+        auth_post(url)
+
     def comment(self, comment, spoiler=False, review=False):
         """Add a comment (shout or review) to this :class:`Move` on trakt."""
         url = self.base_url + '/comment/episode/{}'.format(api_key)
@@ -177,6 +192,24 @@ class Movie(BaseAPI):
         dismiss_recommendation(imdb_id=self.imdb_id, tmdb_id=self.tmdb_id,
                                title=self.title, year=self.year)
 
+    def add_to_library(self):
+        """Add this :class:`Movie` to your library."""
+        ext = '/movie/library/{}'.format(api_key)
+        url = self.base_url + ext
+        args = self._generic_json
+        del args['duration']
+        real_args = {'movies': [args]}
+        auth_post(url, real_args)
+
+    def remove_from_library(self):
+        """Remove this :class:`Movie` from your library."""
+        ext = '/movie/unlibrary/{}'.format(api_key)
+        url = self.base_url + ext
+        args = self._generic_json
+        del args['duration']
+        real_args = {'movies': [args]}
+        auth_post(url, real_args)
+
     def add_to_watchlist(self):
         """Add this :class:`Movie` to your watchlist"""
         ext = '/movie/watchlist/{}'.format(api_key)
@@ -185,20 +218,34 @@ class Movie(BaseAPI):
                             'year': self.year}]}
         auth_post(url, args)
 
-    def start_watching(self):
-        """"""
+    def start_watching(self, progress, media_center_version, media_center_date):
+        """Notify trakt that the current user has started watching this
+        :class:`Movie`.
+
+        :param progress: % progress, integer 0-100. It is recommended to call
+            the watching API every 15 minutes, then call the scrobble API near
+            the end of the movie to lock it in.
+        :param media_center_version: Version number of the media center, be as
+            specific as you can including nightly build number, etc. Used to
+            help debug your plugin.
+        :param media_center_date: Build date of the media center. Used to help
+            debug your plugin.
+        """
         ext = '/movie/watching/{}'.format(api_key)
         url = self.base_url + ext
-        raise NotImplemented
+        args = {'progress': progress, 'media_center_date': media_center_date,
+                'media_center_version': media_center_version,
+                'plugin_version': __version__}
+        for key, val in self._generic_json.items():
+            args[key] = val
+        real_args = {x: args[x] for x in args if args[x] is not None}
+        auth_post(url, real_args)
 
     @property
     def comments(self):
         """All comments (shouts and reviews) for this :class:`Movie`. Most
         recent comments returned first.
         """
-        Comment = namedtuple('Comment', ['id', 'inserted', 'text', 'text_html',
-                                         'spoiler', 'type', 'likes', 'replies',
-                                         'user', 'user_ratings'])
         ext = '/movie/comments.json/{}/{}'.format(api_key, self.title)
         url = self.base_url + ext
         response = requests.get(url)
@@ -222,6 +269,77 @@ class Movie(BaseAPI):
         for movie in data:
             movies.append(Movie(**movie))
         return movies
+
+    def mark_as_seen(self, last_played=None):
+        """Add this :class:`Movie`, watched outside of trakt, to your library."""
+        ext = '/movie/seen/{}'.format(api_key)
+        url = self.base_url + ext
+        args = self._generic_json
+        del args['duration']
+        if last_played is not None:
+            args['last_played'] = last_played
+        real_args = {'movies': [args]}
+        auth_post(url, real_args)
+
+    def mark_as_unseen(self):
+        """Remove this :class:`Movie`, watched outside of trakt, from your
+        library.
+        """
+        ext = '/movie/unseen/{}'.format(api_key)
+        url = self.base_url + ext
+        args = self._generic_json
+        del args['duration']
+        real_args = {'movies': [args]}
+        auth_post(url, real_args)
+
+    def scrobble(self, progress, media_center_version, media_center_date):
+        """Notify trakt that the current user has finished watching a movie.
+        This commits this :class:`Movie` to the current users profile. You
+        should use movie/watching prior to calling this method.
+
+        :param progress: % progress, integer 0-100. It is recommended to call
+            the watching API every 15 minutes, then call the scrobble API near
+            the end of the movie to lock it in.
+        :param media_center_version: Version number of the media center, be as
+            specific as you can including nightly build number, etc. Used to
+            help debug your plugin.
+        :param media_center_date: Build date of the media center. Used to help
+            debug your plugin.
+        """
+        ext = '/movie/scrobble/{}'.format(api_key)
+        url = self.base_url + ext
+        args = {'progress': progress, 'media_center_date': media_center_date,
+                'media_center_version': media_center_version,
+                'plugin_version': __version__}
+        for key, val in self._generic_json.items():
+            args[key] = val
+        real_args = {x: args[x] for x in args if args[x] is not None}
+        auth_post(url, real_args)
+
+    def watching(self, progress, media_center_version, media_center_date):
+        """Check into this :class:`Movie` on Trakt.tv. Think of this method as
+        in between a seen and a scrobble. After checking in, Trakt will
+        automatically display it as watching then switch over to watched status
+        once the duration has elapsed.
+
+        :param progress: % progress, integer 0-100. It is recommended to call
+            the watching API every 15 minutes, then call the scrobble API near
+            the end of the movie to lock it in.
+        :param media_center_version: Version number of the media center, be as
+            specific as you can including nightly build number, etc. Used to
+            help debug your plugin.
+        :param media_center_date: Build date of the media center. Used to help
+            debug your plugin.
+        """
+        ext = '/movie/checkin/{}'.format(api_key)
+        url = self.base_url + ext
+        args = {'progress': progress, 'media_center_date': media_center_date,
+                'media_center_version': media_center_version,
+                'plugin_version': __version__}
+        for key, val in self._generic_json.items():
+            args[key] = val
+        real_args = {x: args[x] for x in args if args[x] is not None}
+        auth_post(url, real_args)
 
     @property
     def watching_now(self):

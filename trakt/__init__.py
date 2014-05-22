@@ -1,7 +1,10 @@
 """A wrapper for the Trakt.tv REST API"""
 import requests
 from hashlib import sha1
+from collections import namedtuple
+
 from .account import test
+
 __author__ = 'Jon Nappi'
 __all__ = ['api_key', 'BaseAPI', 'server_time', 'authenticate', 'auth_post']
 __version__ = '0.1'
@@ -49,6 +52,12 @@ def auth_post(url, kwargs=None):
     kwargs['password'] = password
     response = requests.post(url, kwargs)
     return response
+
+
+Genre = namedtuple('Genre', ['name', 'slug'])
+Comment = namedtuple('Comment', ['id', 'inserted', 'text', 'text_html',
+                                 'spoiler', 'type', 'likes', 'replies', 'user',
+                                 'user_ratings'])
 
 
 class BaseAPI(object):

@@ -5,7 +5,7 @@ import requests
 from datetime import datetime, timedelta
 
 from . import api_key, BaseAPI, auth_post, Genre, Comment, __version__
-from trakt.user import User
+from trakt.users import User
 
 __author__ = 'Jon Nappi'
 __all__ = ['Movie', 'trending_movies', 'updated_movies']
@@ -49,6 +49,25 @@ def get_recommended_movies(genre=None, start_year=None, end_year=None,
     for movie in response:
         movies.append(Movie(**movie))
     return movies
+
+
+def rate_movies(movies, rating):
+    """Apply *rating* to all :class:`Movie`'s in *movies*
+
+    :param movies: A `list` of :class:`Movie` objects to rate
+    :param rating: The rating to apply to *movies*
+    """
+    valid_ratings = ['love', 'hate', 'unrate'] + list(range(11))
+    if rating in valid_ratings:
+        ext = '/rate/movies/{}'.format(api_key)
+        url = BaseAPI().base_url + ext
+        movie_list = []
+        for movie in movies:
+            d = {'imdb_id': movie.imdb_id, 'title': movie.title,
+                 'year': movie.year, 'rating': rating}
+            movie_list.append(d)
+        args = {'movies': movie_list}
+        auth_post(url, args)
 
 @property
 def genres():
@@ -291,6 +310,21 @@ class Movie(BaseAPI):
         del args['duration']
         real_args = {'movies': [args]}
         auth_post(url, real_args)
+
+    def rate(self, rating):
+        """Rate this :class:`Movie` on trakt. Depending on the current users
+        settings, this may also send out social updates to facebook, twitter,
+        tumblr, and path.
+        """
+        valid_ratings = ['love', 'hate', 'unrate'] + list(range(11))
+        if rating in valid_ratings:
+            ext = '/rate/movie/{}'.format(api_key)
+            url = self.base_url + ext
+            args = {'rating': rating}
+            for key, val in self._generic_json.items():
+                if key != 'duration':
+                    args[key] = val
+            auth_post(url, args)
 
     def scrobble(self, progress, media_center_version, media_center_date):
         """Notify trakt that the current user has finished watching a movie.

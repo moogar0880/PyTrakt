@@ -8,7 +8,7 @@ from .account import test
 __author__ = 'Jon Nappi'
 __all__ = ['api_key', 'BaseAPI', 'server_time', 'authenticate', 'auth_post']
 __version__ = '0.1'
-# TODO: movie, network, rate, show, user
+# TODO: show, user
 
 
 @property

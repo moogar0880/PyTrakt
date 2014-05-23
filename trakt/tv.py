@@ -3,9 +3,9 @@ import json
 import string
 import requests
 from datetime import datetime, timedelta
-from collections import namedtuple
 
-from . import api_key, BaseAPI, auth_post
+from . import api_key, BaseAPI, auth_post, Genre, Comment
+from .users import User
 from .community import TraktRating, TraktStats
 __author__ = 'Jon Nappi'
 __all__ = ['trending_shows', 'TVShow', 'TVEpisode', 'TVSeason']
@@ -50,10 +50,40 @@ def get_recommended_movies(genre=None, start_year=None, end_year=None,
     return shows
 
 
+def rate_shows(shows, rating):
+    """Apply *rating* to all :class:`TVShow`'s in *shows*"""
+    valid_ratings = ['love', 'hate', 'unrate'] + list(range(11))
+    if rating in valid_ratings:
+        ext = '/rate/shows/{}'.format(api_key)
+        url = BaseAPI().base_url + ext
+        show_list = []
+        for show in shows:
+            d = {'tvdb_id': show.tvdb_id, 'title': show.title,
+                 'year': show.year, 'rating': rating}
+            show_list.append(d)
+        args = {'shows': show_list}
+        auth_post(url, args)
+
+
+def rate_episodes(episodes, rating):
+    """Apply *rating* to all :class:`TVEpisode`'s in *episodes*"""
+    valid_ratings = ['love', 'hate', 'unrate'] + list(range(11))
+    if rating in valid_ratings:
+        ext = '/rate/episodes/{}'.format(api_key)
+        url = BaseAPI().base_url + ext
+        episode_list = []
+        for episode in episodes:
+            d = {'tvdb_id': episode.tvdb_id, 'title': episode.title,
+                 'year': episode.year, 'season': episode.season,
+                 'episode': episode.episode, 'rating': rating}
+            episode_list.append(d)
+        args = {'episodes': episode_list}
+        auth_post(url, args)
+
+
 @property
 def genres():
     """A list of all possible :class:`Movie` Genres"""
-    Genre = namedtuple('Genre', ['name', 'slug'])
     url = BaseAPI().base_url + '/genres/shows.json/{}'.format(api_key)
     response = requests.get(url)
     data = json.loads(response.content.decode('UTF-8'))
@@ -87,11 +117,11 @@ def updated_shows(timestamp=None):
     url = BaseAPI().base_url + '/shows/updated.json/{}/{}'.format(api_key, ts)
     response = requests.get(url)
     data = json.loads(response.content.decode('UTF-8'))
-    # to_ret = []
-    # for show in data['shows']:
-    #     title = show.get('title')
-    #     to_ret.append(TVShow(title, **show))
-    return data['shows']
+    to_ret = []
+    for show in data['shows']:
+        title = show.get('title')
+        to_ret.append(TVShow(title, **show))
+    return to_ret
 
 
 class TVShow(BaseAPI):
@@ -119,33 +149,42 @@ class TVShow(BaseAPI):
 
     def cancel_watching(self):
         """Cancel watching the current show"""
-        url = self.url + 'cancelwatching/' + api_key
+        url = self.url + 'cancelwatching/{}'.format(api_key)
         response = requests.get(url)
         if response.status_code == 200:
             pass
 
     def scrobble(self):
         """Scrobble the current show"""
-        url = self.url + 'scrobble/' + api_key
+        url = self.url + 'scrobble/{}'.format(api_key)
         response = requests.get(url)
         if response.status_code == 200:
             pass
 
     def watching_now(self):
         """Returns a list of users currently watching this show"""
-        url = self.url + 'watchingnow.json/' + api_key + '/' + self.title
+        url = self.url + 'watchingnow.json/{}/{}'.format(api_key, self.title)
         response = requests.get(url)
         if response.status_code == 200:
             pass
 
-    def add_to_library(self):
-        """Add this show to your library"""
-        pass
+    def rate(self, rating):
+        """Rate this :class:`TVShow` on trakt. Depending on the current users
+        settings, this may also send out social updates to facebook, twitter,
+        tumblr, and path.
+        """
+        valid_ratings = ['love', 'hate', 'unrate'] + list(range(11))
+        if rating in valid_ratings:
+            ext = '/rate/show/{}'.format(api_key)
+            url = self.base_url + ext
+            args = {'rating': rating, 'tvdb_id': self.tvdb_id,
+                    'title': self.title, 'year': self.year}
+            auth_post(url, args)
 
     def __fetch_top_watchers(self):
         show_title = self.title
         show_title = string.replace(show_title, ' ', '-')
-        url = self.url + 'summary.json/' + api_key + '/' + show_title
+        url = self.url + 'summary.json/{}/{}'.format(api_key, show_title)
         response = requests.get(url)
         if response.status_code == 200:
             data = json.loads(response.content)
@@ -161,7 +200,7 @@ class TVShow(BaseAPI):
     def __fetch_top_episodes(self):
         show_title = self.title
         show_title = string.replace(show_title, ' ', '-').lower()
-        url = self.url + 'summary.json/' + api_key + '/' + show_title
+        url = self.url + 'summary.json/{}/{}'.format(api_key, show_title)
         response = requests.get(url)
         if response.status_code == 200:
             data = json.loads(response.content)
@@ -177,7 +216,7 @@ class TVShow(BaseAPI):
     def search(self, show_title=None):
         """Search for general information on a show"""
         show_title = string.replace(show_title, ' ', '-').lower()
-        url = self.url + 'summary.json/' + api_key + '/' + show_title
+        url = self.url + 'summary.json/{}/{}'.format(api_key, show_title)
         response = requests.get(url)
         data = None
         if response.status_code == 200:
@@ -209,6 +248,22 @@ class TVShow(BaseAPI):
             raise Exception
         return self.seasons[season_num-1]
 
+    def seen(self):
+        """Mark this :class:`TVShow` as seen"""
+        ext = '/show/seen/{}'.format(api_key)
+        url = self.base_url + ext
+        args = {'imdb_id': self.imdb_id, 'tvdb_id': self.tvdb_id,
+                'title': self.title, 'year': self.year}
+        auth_post(url, args)
+
+    def add_to_library(self):
+        """Add this :class:`TVShow` to the current :class:`User`'s library"""
+        ext = '/show/library/{}'.format(api_key)
+        url = self.base_url + ext
+        args = {'imdb_id': self.imdb_id, 'tvdb_id': self.tvdb_id,
+                'title': self.title, 'year': self.year}
+        auth_post(url, args)
+
     def comment(self, comment, spoiler=False, review=False):
         """Add a comment (shout or review) to this :class:`Move` on trakt."""
         url = self.base_url + '/comment/episode/{}'.format(api_key)
@@ -219,6 +274,22 @@ class TVShow(BaseAPI):
         else:
             args['tvdb_id'] = self.tvdb_id
         auth_post(url, kwargs=args)
+
+    @property
+    def comments(self):
+        """All comments (shouts and reviews) for this :class:`Movie`. Most
+        recent comments returned first.
+        """
+        ext = '/show/comments.json/{}/{}/{}'.format(api_key, self.title, 'all')
+        url = self.base_url + ext
+        response = requests.get(url)
+        data = json.loads(response.content.decode('UTF-8'))
+        comments = []
+        for comment in data:
+            user = User(**comment.get('user'))
+            ratings = comment.get('user_ratings')
+            comments.append(Comment(user=user, user_ratings=ratings, **comment))
+        return comments
 
     def dismiss(self):
         """Dismiss this movie from showing up in Movie Recommendations"""
@@ -237,9 +308,9 @@ class TVSeason(BaseAPI):
         super(TVSeason, self).__init__()
         self.show = show
         self.season = season
-        self.url_extension = 'show/season.json/' + api_key
+        self.url_extension = 'show/season.json/{}'.format(api_key)
         self.episodes = []
-        self.tvdb_id = None
+        self.tvdb_id = self.imdb_id = None
         self.search(self.show, self.season)
 
     def search(self, show_title, season_num):
@@ -258,6 +329,24 @@ class TVSeason(BaseAPI):
             for episode_data in data:
                 self.episodes.append(TVEpisode(self.show, self.season,
                                                episode_data=episode_data))
+
+    def seen(self):
+        """Mark this :class:`TVSeason` as seen"""
+        ext = '/show/season/seen/{}'.format(api_key)
+        url = self.base_url + ext
+        args = {'imdb_id': self.imdb_id, 'tvdb_id': self.tvdb_id,
+                'title': self.show, 'year': self.show.year,
+                'season': self.season}
+        auth_post(url, args)
+
+    def add_to_library(self):
+        """Add this :class:`TVSeason` to the current :class:`User`'s library"""
+        ext = '/show/season/library/{}'.format(api_key)
+        url = self.base_url + ext
+        args = {'imdb_id': self.imdb_id, 'tvdb_id': self.tvdb_id,
+                'title': self.show, 'year': self.show.year,
+                'season': self.season}
+        auth_post(url, args)
 
     def __repr__(self):
         title = [self.show, 'Season', self.season]
@@ -300,6 +389,20 @@ class TVEpisode(BaseAPI):
     def get_description(self):
         return str(self.overview)
 
+    def rate(self, rating):
+        """Rate this :class:`TVEpisode` on trakt. Depending on the current users
+        settings, this may also send out social updates to facebook, twitter,
+        tumblr, and path.
+        """
+        valid_ratings = ['love', 'hate', 'unrate'] + list(range(11))
+        if rating in valid_ratings:
+            ext = '/rate/episode/{}'.format(api_key)
+            url = self.base_url + ext
+            args = {'rating': rating, 'tvdb_id': self.tvdb_id,
+                    'title': self.title, 'year': self.year,
+                    'season': self.season, 'episode': self.episode}
+            auth_post(url, args)
+
     def comment(self, comment, spoiler=False, review=False):
         """Add a comment (shout or review) to this :class:`TVEpisode` on trakt.
         """
@@ -312,6 +415,26 @@ class TVEpisode(BaseAPI):
         else:
             args['tvdb_id'] = self.tvdb_id
         auth_post(url, kwargs=args)
+
+    @property
+    def comments(self):
+        """All comments (shouts and reviews) for this :class:`Movie`. Most
+        recent comments returned first.
+        """
+        ext = '/show/episode/comments.json/{}/{}/{}/{}/{}'.format(api_key,
+                                                                  self.title,
+                                                                  self.season,
+                                                                  self.episode,
+                                                                  'all')
+        url = self.base_url + ext
+        response = requests.get(url)
+        data = json.loads(response.content.decode('UTF-8'))
+        comments = []
+        for comment in data:
+            user = User(**comment.get('user'))
+            ratings = comment.get('user_ratings')
+            comments.append(Comment(user=user, user_ratings=ratings, **comment))
+        return comments
 
     def __repr__(self):
         title = map(str, [self.episode, self.title])

@@ -37,7 +37,7 @@ class UserList(BaseAPI):
             for key, val in kwargs:
                 setattr(self, key, val)
         else:
-            ext = '/lists/add/{}'.format(api_key)
+            ext = 'lists/add/{}'.format(api_key)
             url = self.base_url + ext
             args = {'name': self._name, 'description': self._description,
                     'privacy': self._privacy, 'show_numbers': self._show_numbers,
@@ -57,7 +57,7 @@ class UserList(BaseAPI):
             elif isinstance(item, trakt_types):
                 self.items.append(item)
                 items_list.append(item._list_json)
-        ext = '/lists/items/add/{}'.format(api_key)
+        ext = 'lists/items/add/{}'.format(api_key)
         url = self.base_url + ext
         args = {'slug': self.slug, 'items': items_list}
         auth_post(url, args)
@@ -73,14 +73,14 @@ class UserList(BaseAPI):
             elif isinstance(item, trakt_types):
                 self.items.append(item)
                 items_list.append(item._list_json)
-        ext = '/lists/items/delete/{}'.format(api_key)
+        ext = 'lists/items/delete/{}'.format(api_key)
         url = self.base_url + ext
         args = {'slug': self.slug, 'items': items_list}
         auth_post(url, args)
 
     def __property_update(self, key, val):
         """Update an attribute of this :class:`UserList`"""
-        ext = '/lists/update/{}'.format(api_key)
+        ext = 'lists/update/{}'.format(api_key)
         url = self.base_url + ext
         args = {'slug': self.slug, key: val}
         auth_post(url, args)
@@ -139,7 +139,7 @@ class UserList(BaseAPI):
 
     def delete(self):
         """Delete this :class:`UserList`"""
-        ext = '/lists/delete/{}'.format(api_key)
+        ext = 'lists/delete/{}'.format(api_key)
         url = self.base_url + ext
         args = {'slug': self.slug}
         auth_post(url, args)

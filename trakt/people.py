@@ -25,7 +25,7 @@ class Person(BaseAPI):
         """Search for this :class:`Person` via the Trakt.tv API"""
         def formatted(name):
             return name.replace(' ', '+').lower()
-        ext = '/search/people.json/{}?query={}'.format(api_key,
+        ext = 'search/people.json/{}?query={}'.format(api_key,
                                                        formatted(self.name))
         url = self.base_url + ext
         response = requests.get(url)

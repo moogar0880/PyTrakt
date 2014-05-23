@@ -18,7 +18,7 @@ Request = namedtuple('Request', ['username', 'protected', 'full_name',
 
 def approve_request(user_name, follow_back=False):
     """Approve a follower request from *user_name* if one exists"""
-    ext = '/network/approve/{}'.format(api_key)
+    ext = 'network/approve/{}'.format(api_key)
     url = BaseAPI().base_url + ext
     args = {'user': user_name, 'follow_back': follow_back}
     auth_post(url, args)
@@ -26,7 +26,7 @@ def approve_request(user_name, follow_back=False):
 
 def deny_request(user_name):
     """Deny a follower request from *user_name* if one exists"""
-    ext = '/network/deny/{}'.format(api_key)
+    ext = 'network/deny/{}'.format(api_key)
     url = BaseAPI().base_url + ext
     args = {'user': user_name}
     auth_post(url, args)
@@ -37,7 +37,7 @@ def follow(user_name):
     follow request will be in a pending state. If they have a public profile,
     they will be followed immediately.
     """
-    ext = '/network/follow/{}'.format(api_key)
+    ext = 'network/follow/{}'.format(api_key)
     url = BaseAPI().base_url + ext
     args = {'user': user_name}
     auth_post(url, args)
@@ -46,7 +46,7 @@ def follow(user_name):
 def unfollow(user_name):
     """Unfollow a user you're currently following with a username of *user_name*
     """
-    ext = '/network/unfollow/{}'.format(api_key)
+    ext = 'network/unfollow/{}'.format(api_key)
     url = BaseAPI().base_url + ext
     args = {'user': user_name}
     auth_post(url, args)
@@ -56,7 +56,7 @@ def get_all_requests():
     """Get a list of all follower requests including the timestamp when the
     request was made. Use the approve and deny methods to manage each request.
     """
-    ext = '/network/requests/{}'.format(api_key)
+    ext = 'network/requests/{}'.format(api_key)
     url = BaseAPI().base_url + ext
     response = auth_post(url)
     data = json.loads(response.content.decode('UTF-8'))
@@ -119,7 +119,7 @@ class User(BaseAPI):
             for key, val in kwargs.items():
                 setattr(self, key, val)
         else:
-            ext = '/user/profile.format/{}/{}'.format(api_key, self.username)
+            ext = 'user/profile.json/{}/{}'.format(api_key, self.username)
             url = self.base_url + ext
             response = requests.get(url)
             data = json.loads(response.content.decode('UTF-8'))
@@ -323,7 +323,7 @@ class User(BaseAPI):
         display data either.
         """
         if self._followers is None:
-            ext = '/user/network/followers.json/{}/{}'.format(api_key,
+            ext = 'user/network/followers.json/{}/{}'.format(api_key,
                                                               self.username)
             url = self.base_url + ext
             response = requests.get(url)
@@ -341,7 +341,7 @@ class User(BaseAPI):
         that are protected won't display data either.
         """
         if self._following is None:
-            ext = '/user/network/following.json/{}/{}'.format(api_key,
+            ext = 'user/network/following.json/{}/{}'.format(api_key,
                                                               self.username)
             url = self.base_url + ext
             response = requests.get(url)
@@ -360,7 +360,7 @@ class User(BaseAPI):
         display data either.
         """
         if self._friends is None:
-            ext = '/user/network/frields.json/{}/{}'.format(api_key,
+            ext = 'user/network/frields.json/{}/{}'.format(api_key,
                                                             self.username)
             url = self.base_url + ext
             response = requests.get(url)
@@ -376,7 +376,7 @@ class User(BaseAPI):
         :class:`User`'s collection.
         """
         if self._collected is None:
-            ext = '/user/progress/collected.json/{}/{}/'.format(api_key,
+            ext = 'user/progress/collected.json/{}/{}/'.format(api_key,
                                                                 self.username)
             url = self.base_url + ext
             response = requests.get(url)
@@ -392,7 +392,7 @@ class User(BaseAPI):
         collection.
         """
         if self._watched is None:
-            ext = '/user/progress/watched.json/{}/{}/'.format(api_key,
+            ext = 'user/progress/watched.json/{}/{}/'.format(api_key,
                                                               self.username)
             url = self.base_url + ext
             response = requests.get(url)
@@ -406,7 +406,7 @@ class User(BaseAPI):
     def episode_ratings(self):
         """All :class:`TVEpisodes` this :class:`User` has rated"""
         if self._episode_ratings is None:
-            ext = '/user/ratings/episodes.json/{}/{}/'.format(api_key,
+            ext = 'user/ratings/episodes.json/{}/{}/'.format(api_key,
                                                               self.username)
             url = self.base_url + ext
             response = requests.get(url)
@@ -420,7 +420,7 @@ class User(BaseAPI):
     def show_ratings(self):
         """All :class:`TVShow`'s this :class:`User` has rated"""
         if self._show_ratings is None:
-            ext = '/user/ratings/shows.json/{}/{}/'.format(api_key,
+            ext = 'user/ratings/shows.json/{}/{}/'.format(api_key,
                                                            self.username)
             url = self.base_url + ext
             response = requests.get(url)
@@ -434,7 +434,7 @@ class User(BaseAPI):
     def movie_ratings(self):
         """All :class:`Movie`'s this :class:`User` has rated"""
         if self._movie_ratings is None:
-            ext = '/user/ratings/movies.json/{}/{}/'.format(api_key,
+            ext = 'user/ratings/movies.json/{}/{}/'.format(api_key,
                                                             self.username)
             url = self.base_url + ext
             response = requests.get(url)
@@ -448,7 +448,7 @@ class User(BaseAPI):
     def episode_watchlist(self):
         """All :class:`TVEpisodes` this :class:`User`s watchlist"""
         if self._episode_watchlist is None:
-            ext = '/user/ratings/episodes.json/{}/{}/'.format(api_key,
+            ext = 'user/ratings/episodes.json/{}/{}/'.format(api_key,
                                                               self.username)
             url = self.base_url + ext
             response = requests.get(url)
@@ -462,7 +462,7 @@ class User(BaseAPI):
     def show_watchlist(self):
         """All :class:`TVShow`'s this :class:`User`s watchlist"""
         if self._show_watchlist is None:
-            ext = '/user/ratings/shows.json/{}/{}/'.format(api_key,
+            ext = 'user/ratings/shows.json/{}/{}/'.format(api_key,
                                                            self.username)
             url = self.base_url + ext
             response = requests.get(url)
@@ -476,7 +476,7 @@ class User(BaseAPI):
     def movie_watchlist(self):
         """All :class:`Movie`'s this :class:`User`'s watchlist"""
         if self._movie_watchlist is None:
-            ext = '/user/ratings/movies.json/{}/{}/'.format(api_key,
+            ext = 'user/ratings/movies.json/{}/{}/'.format(api_key,
                                                             self.username)
             url = self.base_url + ext
             response = requests.get(url)

@@ -3,12 +3,10 @@ import requests
 from hashlib import sha1
 from collections import namedtuple
 
-from .account import test
-
 __author__ = 'Jon Nappi'
 __all__ = ['api_key', 'BaseAPI', 'server_time', 'authenticate', 'auth_post']
 __version__ = '0.1'
-# TODO: show, user
+# TODO: show
 
 
 @property
@@ -35,6 +33,7 @@ def server_time():
 
 def authenticate(username, password):
     """Provide authentication for a Trakt.tv account"""
+    from .account import test
     if not test(username, password):
         raise
     globals()['_TRAKT_US_NAME_'] = username

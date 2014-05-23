@@ -5,7 +5,6 @@ import requests
 from datetime import datetime, timedelta
 
 from . import api_key, BaseAPI, auth_post, Genre, Comment, __version__
-from trakt.users import User
 
 __author__ = 'Jon Nappi'
 __all__ = ['Movie', 'trending_movies', 'updated_movies']
@@ -15,7 +14,7 @@ def dismiss_recommendation(imdb_id=None, tmdb_id=None, title=None, year=None):
     """Dismiss the movie matching the specified criteria from showing up in
     recommendations.
     """
-    ext = '/recommendations/movies/dismiss/{}'.format(api_key)
+    ext = 'recommendations/movies/dismiss/{}'.format(api_key)
     url = BaseAPI().base_url + ext
     args = {'imdb_id': imdb_id, 'tmdb_id': tmdb_id, 'title': title,
             'year': year}
@@ -38,7 +37,7 @@ def get_recommended_movies(genre=None, start_year=None, end_year=None,
     :param hide_collected: Set to False to show movies the user has collected.
     :param hide_watchlisted: Set to False to show movies on the user's watchlist
     """
-    ext = '/recommendations/movies/{}'.format(api_key)
+    ext = 'recommendations/movies/{}'.format(api_key)
     url = BaseAPI().base_url + ext
     args = {'genre': genre, 'start_year': start_year, 'end_year': end_year,
             'hide_collected': hide_collected,
@@ -59,7 +58,7 @@ def rate_movies(movies, rating):
     """
     valid_ratings = ['love', 'hate', 'unrate'] + list(range(11))
     if rating in valid_ratings:
-        ext = '/rate/movies/{}'.format(api_key)
+        ext = 'rate/movies/{}'.format(api_key)
         url = BaseAPI().base_url + ext
         movie_list = []
         for movie in movies:
@@ -168,7 +167,7 @@ class Movie(BaseAPI):
         :param tumblr: Flag to share on tumblr
         :param path: Flag to share on path?
         """
-        ext = '/movie/checkin/{}'.format(api_key)
+        ext = 'movie/checkin/{}'.format(api_key)
         url = self.base_url + ext
         share = {'facebook': facebook, 'twitter': twitter, 'tumblr': tumblr,
                  'path': path}
@@ -183,7 +182,7 @@ class Movie(BaseAPI):
         """Notify trakt that the current user is no longer watching this
         :class:`Movie`
         """
-        ext = '/movie/cancelcheckin/{}'.format(api_key)
+        ext = 'movie/cancelcheckin/{}'.format(api_key)
         url = self.base_url + ext
         auth_post(url)
 
@@ -191,7 +190,7 @@ class Movie(BaseAPI):
         """Notify trakt that the current user has stopped watching this
         :class:`Movie`
         """
-        ext = '/movie/cancelwatching/{}'.format(api_key)
+        ext = 'movie/cancelwatching/{}'.format(api_key)
         url = self.base_url + ext
         auth_post(url)
 
@@ -213,7 +212,7 @@ class Movie(BaseAPI):
 
     def add_to_library(self):
         """Add this :class:`Movie` to your library."""
-        ext = '/movie/library/{}'.format(api_key)
+        ext = 'movie/library/{}'.format(api_key)
         url = self.base_url + ext
         args = self._generic_json
         del args['duration']
@@ -222,7 +221,7 @@ class Movie(BaseAPI):
 
     def remove_from_library(self):
         """Remove this :class:`Movie` from your library."""
-        ext = '/movie/unlibrary/{}'.format(api_key)
+        ext = 'movie/unlibrary/{}'.format(api_key)
         url = self.base_url + ext
         args = self._generic_json
         del args['duration']
@@ -231,7 +230,7 @@ class Movie(BaseAPI):
 
     def add_to_watchlist(self):
         """Add this :class:`Movie` to your watchlist"""
-        ext = '/movie/watchlist/{}'.format(api_key)
+        ext = 'movie/watchlist/{}'.format(api_key)
         url = self.base_url + ext
         args = {'movies': [{'imdb_id': self.imdb_id, 'title': self.title,
                             'year': self.year}]}
@@ -250,7 +249,7 @@ class Movie(BaseAPI):
         :param media_center_date: Build date of the media center. Used to help
             debug your plugin.
         """
-        ext = '/movie/watching/{}'.format(api_key)
+        ext = 'movie/watching/{}'.format(api_key)
         url = self.base_url + ext
         args = {'progress': progress, 'media_center_date': media_center_date,
                 'media_center_version': media_center_version,
@@ -265,7 +264,8 @@ class Movie(BaseAPI):
         """All comments (shouts and reviews) for this :class:`Movie`. Most
         recent comments returned first.
         """
-        ext = '/movie/comments.json/{}/{}'.format(api_key, self.title)
+        from .users import User
+        ext = 'movie/comments.json/{}/{}'.format(api_key, self.title)
         url = self.base_url + ext
         response = requests.get(url)
         data = json.loads(response.content.decode('UTF-8'))
@@ -279,7 +279,7 @@ class Movie(BaseAPI):
     @property
     def related(self):
         """The top 10 :class:`Movie`'s related to this :class:`Movie`"""
-        ext = '/movie/related.format/{}/{}/hidewatched'.format(api_key,
+        ext = 'movie/related.format/{}/{}/hidewatched'.format(api_key,
                                                                self.title)
         url = self.base_url + ext
         response = auth_post(url)
@@ -291,7 +291,7 @@ class Movie(BaseAPI):
 
     def mark_as_seen(self, last_played=None):
         """Add this :class:`Movie`, watched outside of trakt, to your library."""
-        ext = '/movie/seen/{}'.format(api_key)
+        ext = 'movie/seen/{}'.format(api_key)
         url = self.base_url + ext
         args = self._generic_json
         del args['duration']
@@ -304,7 +304,7 @@ class Movie(BaseAPI):
         """Remove this :class:`Movie`, watched outside of trakt, from your
         library.
         """
-        ext = '/movie/unseen/{}'.format(api_key)
+        ext = 'movie/unseen/{}'.format(api_key)
         url = self.base_url + ext
         args = self._generic_json
         del args['duration']
@@ -318,7 +318,7 @@ class Movie(BaseAPI):
         """
         valid_ratings = ['love', 'hate', 'unrate'] + list(range(11))
         if rating in valid_ratings:
-            ext = '/rate/movie/{}'.format(api_key)
+            ext = 'rate/movie/{}'.format(api_key)
             url = self.base_url + ext
             args = {'rating': rating}
             for key, val in self._generic_json.items():
@@ -340,7 +340,7 @@ class Movie(BaseAPI):
         :param media_center_date: Build date of the media center. Used to help
             debug your plugin.
         """
-        ext = '/movie/scrobble/{}'.format(api_key)
+        ext = 'movie/scrobble/{}'.format(api_key)
         url = self.base_url + ext
         args = {'progress': progress, 'media_center_date': media_center_date,
                 'media_center_version': media_center_version,
@@ -365,7 +365,7 @@ class Movie(BaseAPI):
         :param media_center_date: Build date of the media center. Used to help
             debug your plugin.
         """
-        ext = '/movie/checkin/{}'.format(api_key)
+        ext = 'movie/checkin/{}'.format(api_key)
         url = self.base_url + ext
         args = {'progress': progress, 'media_center_date': media_center_date,
                 'media_center_version': media_center_version,
@@ -378,7 +378,8 @@ class Movie(BaseAPI):
     @property
     def watching_now(self):
         """A list of all :class:`User`'s watching a movie."""
-        ext = '/movie/watchingnow.json/{}/{}'.format(api_key, self.imdb_id)
+        from .users import User
+        ext = 'movie/watchingnow.json/{}/{}'.format(api_key, self.imdb_id)
         url = self.base_url + ext
         response = auth_post(url)
         data = json.loads(response.content.decode('UTF-8'))

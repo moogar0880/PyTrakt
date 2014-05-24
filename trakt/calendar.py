@@ -7,8 +7,9 @@ if int(sys.version[0]) == 2:
 elif int(sys.version[0]) == 3:
     from urllib.parse import urlencode
 
-from . import BaseAPI, api_key
+from . import BaseAPI
 from .tv import TVEpisode
+import trakt
 __author__ = 'Jon Nappi'
 __all__ = ['Calendar', 'PremiereCalendar', 'ShowCalendar', 'UserCalendar']
 
@@ -28,12 +29,13 @@ class Calendar(BaseAPI):
                                         url_args[x] is not None})
         if formatted_url_args != {}:
             url = '/'.join([url, '?', formatted_url_args])
-        return url
+        return self.base_url + url
 
     def _build(self):
         """Build the calendar"""
         if self.url is not None:
             url = self._build_url()
+            print url
             response = requests.get(url)
             data_list = json.loads(response.content.decode('UTF-8'))
             self.episodes = []
@@ -50,7 +52,7 @@ class PremiereCalendar(Calendar):
     """All shows premiering during the time period specified."""
     def __init__(self, *args, **kwargs):
         super(PremiereCalendar, self).__init__(*args, **kwargs)
-        self.url = self.base_url + '/calendar/premieres.json/' + api_key
+        self.url = self.base_url + '/calendar/premieres.json/{}'.format(trakt.api_key)
         self._build()
 
 
@@ -58,7 +60,7 @@ class ShowCalendar(Calendar):
     """TraktTV ShowCalendar"""
     def __init__(self, *args, **kwargs):
         super(ShowCalendar, self).__init__(*args, **kwargs)
-        self.url = self.base_url + '/calendar/shows.json/' + api_key
+        self.url = self.base_url + '/calendar/shows.json/{}'.format(trakt.api_key)
         self._build()
 
 
@@ -66,6 +68,6 @@ class UserCalendar(Calendar):
     def __init__(self, user_name, *args, **kwargs):
         super(UserCalendar, self).__init__(*args, **kwargs)
         self.user_name = user_name
-        self.url = '/user/calendar/shows.json/{}/{}'.format(api_key,
+        self.url = '/user/calendar/shows.json/{}/{}'.format(trakt.api_key,
                                                             self.user_name)
         self._build()

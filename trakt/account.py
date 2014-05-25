@@ -3,7 +3,8 @@ import json
 import requests
 from hashlib import sha1
 
-from . import api_key, BaseAPI
+from . import BaseAPI
+import trakt
 __author__ = 'Jon Nappi'
 __all__ = ['create_account', 'settings', 'test']
 
@@ -12,11 +13,12 @@ def create_account(username, password, email):
     """Create a new trakt account. Username and e-mail must be unique and not
     already exist in trakt.
     """
-    args = {'username': username, 'password': sha1(password), 'email': email}
-    url = BaseAPI().base_url + '/account/create/{}'.format(api_key)
+    args = {'username': username, 'password': sha1(password).hexdigest(),
+            'email': email}
+    url = BaseAPI().base_url + 'account/create/{}'.format(trakt.api_key)
     response = requests.post(url, data=args)
     resp_data = json.loads(response.content.decode('UTF-8'))
-    return None
+    return resp_data
 
 
 def settings(username, password):
@@ -26,19 +28,19 @@ def settings(username, password):
     the binary scale. The social connections are also useful to customize the
     checkin prompt.
     """
-    args = {'username': username, 'password': sha1(password)}
-    url = BaseAPI().base_url + '/account/settings/{}'.format(api_key)
+    args = {'username': username, 'password': sha1(password).hexdigest()}
+    url = BaseAPI().base_url + 'account/settings/{}'.format(trakt.api_key)
     response = requests.post(url, data=args)
     resp_data = json.loads(response.content.decode('UTF-8'))
-    return None
+    return resp_data
 
 
 def test(username, password):
     """Test trakt credentials. This is useful for your configuration screen and
     is a simple way to test someone's trakt account.
     """
-    args = {'username': username, 'password': sha1(password)}
-    url = BaseAPI().base_url + '/account/test/{}'.format(api_key)
+    args = {'username': username, 'password': sha1(password).hexdigest()}
+    url = BaseAPI().base_url + 'account/test/{}'.format(trakt.api_key)
     response = requests.post(url, data=args)
     resp_data = json.loads(response.content.decode('UTF-8'))
     return resp_data['status'] == 'success'

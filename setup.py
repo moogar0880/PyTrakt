@@ -16,7 +16,7 @@ setup(
     long_description=readme,
     author='Jonathan Nappi',
     author_email='moogar0880@gmail.com',
-    url='http://python-requests.org',
+    url='https://github.com/moogar0880/PyTrakt',
     install_requires=requires,
     license='Apache 2.0',
     zip_safe=False,

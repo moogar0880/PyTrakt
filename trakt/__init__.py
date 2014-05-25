@@ -25,13 +25,13 @@ def api_key():
     globals()['_TRAKT_APIKEY_'] = None
 
 
-@property
 def server_time():
-    """The current timestamp (PST) from the trakt server."""
+    """Get the current timestamp (PST) from the trakt server."""
     import requests
     url = BaseAPI().base_url + '/server/time.json/{}'.format(api_key)
     response = requests.get(url)
-    return response['timestamp']
+    data = json.loads(response.content.decode('UTF-8'))
+    return data['timestamp']
 
 
 def authenticate(username, password):

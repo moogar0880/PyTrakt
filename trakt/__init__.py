@@ -6,9 +6,10 @@ from hashlib import sha1
 from collections import namedtuple
 from .errors import *
 
+version_info = (0, 1, 1)
 __author__ = 'Jon Nappi'
 __all__ = ['api_key', 'BaseAPI', 'server_time', 'authenticate', 'auth_post']
-__version__ = '0.1'
+__version__ = '.'.join([str(i) for i in version_info])
 
 
 @property

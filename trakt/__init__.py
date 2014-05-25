@@ -1,7 +1,6 @@
 """A wrapper for the Trakt.tv REST API"""
 import json
 import logging
-import requests
 from hashlib import sha1
 from collections import namedtuple
 from .errors import *
@@ -29,6 +28,7 @@ def api_key():
 @property
 def server_time():
     """The current timestamp (PST) from the trakt server."""
+    import requests
     url = BaseAPI().base_url + '/server/time.json/{}'.format(api_key)
     response = requests.get(url)
     return response['timestamp']
@@ -45,6 +45,7 @@ def authenticate(username, password):
 
 def auth_post(url, kwargs=None):
     """Create a post with provided authentication"""
+    import requests
     if '_TRAKT_US_NAME_' not in globals() or '_TRAKT_PASS_WD_' not in globals():
         raise InvalidCredentials
     user = globals()['_TRAKT_US_NAME_']
@@ -52,7 +53,6 @@ def auth_post(url, kwargs=None):
     kwargs = kwargs or {}
     kwargs['username'] = user
     kwargs['password'] = password
-    print url
     response = requests.post(url, kwargs)
     return response
 
@@ -75,6 +75,7 @@ class BaseAPI(object):
 
         :param uri: The uri extension to GET from
         """
+        import requests
         url = self.base_url + uri
         self.logger.debug('GET: {}'.format(url))
         response = requests.get(url)

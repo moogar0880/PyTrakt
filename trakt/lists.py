@@ -38,12 +38,11 @@ class UserList(BaseAPI):
                 setattr(self, key, val)
         else:
             ext = 'lists/add/{}'.format(api_key)
-            url = self.base_url + ext
             args = {'name': self._name, 'description': self._description,
                     'privacy': self._privacy, 'show_numbers': self._show_numbers,
                     'allow_shouts': self._allow_shouts}
             real_args = {x: args[x] for x in args if args[x] is not None}
-            response = auth_post(url, real_args)
+            response = self._post_(ext, real_args)
             for key, val in response.items():
                 setattr(self, key, val)
 
@@ -58,9 +57,8 @@ class UserList(BaseAPI):
                 self.items.append(item)
                 items_list.append(item._list_json)
         ext = 'lists/items/add/{}'.format(api_key)
-        url = self.base_url + ext
         args = {'slug': self.slug, 'items': items_list}
-        auth_post(url, args)
+        self._post_(ext, args)
 
     def remove_items(self, items):
         """Remove *items* to this :class:`UserList`, where items is an iterable
@@ -74,17 +72,19 @@ class UserList(BaseAPI):
                 self.items.append(item)
                 items_list.append(item._list_json)
         ext = 'lists/items/delete/{}'.format(api_key)
-        url = self.base_url + ext
         args = {'slug': self.slug, 'items': items_list}
-        auth_post(url, args)
+        self._post_(ext, args)
 
     def __property_update(self, key, val):
         """Update an attribute of this :class:`UserList`"""
         ext = 'lists/update/{}'.format(api_key)
-        url = self.base_url + ext
         args = {'slug': self.slug, key: val}
-        auth_post(url, args)
+        self._post_(ext, args)
         setattr(self, key, val)
+
+    def __len__(self):
+        """Return the length of this :class:`UserList`"""
+        return len(self.items)
 
     @property
     def name(self):

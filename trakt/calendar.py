@@ -2,6 +2,7 @@
 import sys
 import json
 import requests
+from datetime import datetime
 if int(sys.version[0]) == 2:
     from urllib import urlencode
 elif int(sys.version[0]) == 3:
@@ -14,14 +15,35 @@ __author__ = 'Jon Nappi'
 __all__ = ['Calendar', 'PremiereCalendar', 'ShowCalendar', 'UserCalendar']
 
 
-class Calendar(BaseAPI):
-    def __init__(self, date=None, days=None):
-        super(Calendar, self).__init__()
-        self.date = date
-        self.days = days
-        self.url = self.episodes = None
+def _now_date_format():
+    """Get the current day in the format expected by each :class:`Calendar`"""
+    now = datetime.now()
+    year = now.year
+    month = now.month if now.month > 10 else '0{}'.format(now.month)
+    day = now.day if now.day > 10 else '0{}'.format(now.day)
+    date = int('{}{}{}'.format(year, month, day))
+    return date
 
-    def _build_url(self):
+
+class Calendar(BaseAPI):
+    """Base :class:`Calendar` type serves as a foundation for other Calendar
+    types
+    """
+    def __init__(self, date=None, days=None):
+        """Create a new :class:`Calendar` object
+
+        :param date: Start date of this :class:`Calendar` in the format Ymd
+            (i.e. 20110421). Defaults to today
+        :param days: Number of days for this :class:`Calendar`. Defaults to 7
+            days
+        """
+        super(Calendar, self).__init__()
+        self.date = date or _now_date_format()
+        self.days = days or 7
+        self.url = None
+        self.episodes = []
+
+    def _build_uri(self):
         """construct the fully formatted url for this Calendar"""
         url = self.url
         url_args = {'date': self.date, 'days': self.days}
@@ -29,15 +51,13 @@ class Calendar(BaseAPI):
                                         url_args[x] is not None})
         if formatted_url_args != {}:
             url = '/'.join([url, '?', formatted_url_args])
-        return self.base_url + url
+        return url
 
     def _build(self):
         """Build the calendar"""
         if self.url is not None:
-            url = self._build_url()
-            print url
-            response = requests.get(url)
-            data_list = json.loads(response.content.decode('UTF-8'))
+            ext = self._build_uri()
+            data_list = self._get_(ext)
             self.episodes = []
             for data in data_list:
                 for episode in data['episodes']:
@@ -47,12 +67,17 @@ class Calendar(BaseAPI):
                     self.episodes.append(TVEpisode(show, ep, season,
                                                    episode_data=episode['episode']))
 
+    def __len__(self):
+        """Returns the length of the episodes list in this calendar"""
+        return len(self.episodes)
+
 
 class PremiereCalendar(Calendar):
     """All shows premiering during the time period specified."""
     def __init__(self, *args, **kwargs):
         super(PremiereCalendar, self).__init__(*args, **kwargs)
-        self.url = self.base_url + '/calendar/premieres.json/{}'.format(trakt.api_key)
+        self.url = '{}/calendar/premieres.json/{}'.format(self.base_url,
+                                                          trakt.api_key)
         self._build()
 
 
@@ -60,7 +85,8 @@ class ShowCalendar(Calendar):
     """TraktTV ShowCalendar"""
     def __init__(self, *args, **kwargs):
         super(ShowCalendar, self).__init__(*args, **kwargs)
-        self.url = self.base_url + '/calendar/shows.json/{}'.format(trakt.api_key)
+        self.url = '{}/calendar/shows.json/{}'.format(self.base_url,
+                                                      trakt.api_key)
         self._build()
 
 

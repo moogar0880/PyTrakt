@@ -70,7 +70,7 @@ def rate_movies(movies, rating):
         args = {'movies': movie_list}
         auth_post(url, args)
 
-@property
+
 def genres():
     """A list of all possible :class:`Movie` Genres"""
     url = BaseAPI().base_url + '/genres/movies.json/{}'.format(trakt.api_key)
@@ -82,7 +82,6 @@ def genres():
     return genre_list
 
 
-@property
 def trending_movies():
     """All :class:`Movie`'s being watched right now"""
     url = BaseAPI().base_url + '/movies/trending.json/{}'.format(trakt.api_key)
@@ -390,5 +389,5 @@ class Movie(BaseAPI):
 
     def __str__(self):
         """String representation of a :class:`Movie`"""
-        return '<Movie>: {}'.format(self.title)
+        return '<Movie>: {}'.format(self.title.encode('ascii', 'ignore'))
     __repr__ = __str__

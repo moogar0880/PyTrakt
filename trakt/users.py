@@ -1,9 +1,7 @@
 """Interfaces to all of the User objects offered by the Trakt.tv API"""
-import json
-import requests
 from collections import namedtuple
 
-from . import BaseAPI, auth_post
+from . import BaseAPI
 from .tv import TVShow, TVEpisode
 from .movies import Movie
 from .calendar import UserCalendar
@@ -20,17 +18,15 @@ Request = namedtuple('Request', ['username', 'protected', 'full_name',
 def approve_request(user_name, follow_back=False):
     """Approve a follower request from *user_name* if one exists"""
     ext = 'network/approve/{}'.format(trakt.api_key)
-    url = BaseAPI().base_url + ext
     args = {'user': user_name, 'follow_back': follow_back}
-    auth_post(url, args)
+    BaseAPI()._post_(ext, args)
 
 
 def deny_request(user_name):
     """Deny a follower request from *user_name* if one exists"""
     ext = 'network/deny/{}'.format(trakt.api_key)
-    url = BaseAPI().base_url + ext
     args = {'user': user_name}
-    auth_post(url, args)
+    BaseAPI()._post_(ext, args)
 
 
 def follow(user_name):
@@ -39,18 +35,16 @@ def follow(user_name):
     they will be followed immediately.
     """
     ext = 'network/follow/{}'.format(trakt.api_key)
-    url = BaseAPI().base_url + ext
     args = {'user': user_name}
-    auth_post(url, args)
+    BaseAPI()._post_(ext, args)
 
 
 def unfollow(user_name):
     """Unfollow a user you're currently following with a username of *user_name*
     """
     ext = 'network/unfollow/{}'.format(trakt.api_key)
-    url = BaseAPI().base_url + ext
     args = {'user': user_name}
-    auth_post(url, args)
+    BaseAPI()._post_(ext, args)
 
 
 def get_all_requests():
@@ -58,9 +52,7 @@ def get_all_requests():
     request was made. Use the approve and deny methods to manage each request.
     """
     ext = 'network/requests/{}'.format(trakt.api_key)
-    url = BaseAPI().base_url + ext
-    response = auth_post(url)
-    data = json.loads(response.content.decode('UTF-8'))
+    data = BaseAPI()._post_(ext)
     request_list = []
     for request in data:
         request_list.append(Request(**request))
@@ -68,6 +60,7 @@ def get_all_requests():
 
 
 class UserList(BaseAPI):
+    """A list created by a Trakt.tv :class:`User`"""
     def __init__(self, user_name, slug='', **kwargs):
         super(UserList, self).__init__()
         self.username = user_name
@@ -82,9 +75,7 @@ class UserList(BaseAPI):
 
     def _search(self):
         ext = '/user/lists.json/{}/{}'.format(trakt.api_key, self.username)
-        url = self.base_url + ext
-        response = requests.get(url)
-        data = json.loads(response.content.decode('UTF-8'))
+        data = self._get_(ext)
         if len(data) > 0:
             for key, val in data.items():
                 if key != 'items':
@@ -105,6 +96,7 @@ class UserList(BaseAPI):
 
 
 class User(BaseAPI):
+    """A Trakt.tv User"""
     def __init__(self, username, **kwargs):
         super(User, self).__init__()
         self.username = username
@@ -121,10 +113,7 @@ class User(BaseAPI):
                 setattr(self, key, val)
         else:
             ext = 'user/profile.json/{}/{}'.format(trakt.api_key, self.username)
-            url = self.base_url + ext
-            print url
-            response = requests.get(url)
-            data = json.loads(response.content.decode('UTF-8'))
+            data = self._get_(ext)
             for key, val in data.items():
                 if key == 'watched':
                     pass
@@ -173,9 +162,7 @@ class User(BaseAPI):
         if self._last_activity is None:
             ext = 'user/lastactivity.json/{}/{}'.format(trakt.api_key,
                                                         self.username)
-            url = self.base_url + ext
-            response = requests.get(url)
-            data = json.loads(response.content.decode('UTF-8'))
+            data = self._get_(ext)
             self._last_activity = data
         return self._last_activity
 
@@ -186,11 +173,8 @@ class User(BaseAPI):
         will be returned. Protected users won't return any data unless you are
         friends.
         """
-        extension = 'user/watching.json/{}/{}'.format(trakt.api_key,
-                                                      self.username)
-        url = self.base_url + extension
-        response = requests.get(url)
-        data = json.loads(response.content.decode('UTF-8'))
+        ext = 'user/watching.json/{}/{}'.format(trakt.api_key, self.username)
+        data = self._get_(ext)
         if len(data) > 0:
             media_type = data.get('type')
             if media_type == 'movie':
@@ -202,17 +186,19 @@ class User(BaseAPI):
 
     def __movie_list(self, url):
         """Return a list of :class:`Movie` objects returned from the provided
-        url
+        url extension
         """
-        response = requests.get(url)
-        data = json.loads(response.content.decode('UTF-8'))
-        to_ret = None
+        data = self._get_(url)
+        to_ret = []
         if len(data) > 0:
-            to_ret = []
             for movie_data in data:
-                # title = movie_data.get('title', None)
                 to_ret.append(Movie(**movie_data))
         return to_ret
+
+    def __str__(self):
+        """String representation of a :class:`User`"""
+        return '<User>: {}'.format(self.username.encode('ascii', 'ignore'))
+    __repr__ = __str__
 
     @property
     def movies(self):
@@ -221,10 +207,9 @@ class User(BaseAPI):
         it has. Protected :class:`User`'s won't return any data unless you are
         friends.
         """
-        extension = '/user/library/movies/all.json/{}/{}'.format(trakt.api_key,
-                                                                 self.username)
-        url = self.base_url + extension
-        self._movies = self.__movie_list(url)
+        ext = 'user/library/movies/all.json/{}/{}'.format(trakt.api_key,
+                                                          self.username)
+        self._movies = self.__movie_list(ext)
         return self._movies
 
     @property
@@ -233,10 +218,9 @@ class User(BaseAPI):
         Collection items might include blu-rays, dvds, and digital downloads.
         Protected users won't return any data unless you are friends.
         """
-        ext = '/user/library/movies/collection.json/{}/{}'.format(trakt.api_key,
-                                                                  self.username)
-        url = self.base_url + ext
-        self._movie_collection = self.__movie_list(url)
+        ext = 'user/library/movies/collection.json/{}/{}'.format(trakt.api_key,
+                                                                 self.username)
+        self._movie_collection = self.__movie_list(ext)
         return self._movie_collection
 
     @property
@@ -258,11 +242,9 @@ class User(BaseAPI):
         it has. Protected :class:`User`'s won't return any data unless you are
         friends.
         """
-        ext = '/user/library/shows/all.json/{}/{}'.format(trakt.api_key,
-                                                          self.username)
-        url = self.base_url + ext
-        response = requests.get(url)
-        data = json.loads(response.content.decode('UTF-8'))
+        ext = 'user/library/shows/all.json/{}/{}'.format(trakt.api_key,
+                                                         self.username)
+        data = self._get_(ext)
         if len(data) > 0:
             self._shows = []
             for show_data in data:
@@ -275,11 +257,9 @@ class User(BaseAPI):
         Collection items might include blu-rays, dvds, and digital downloads.
         Protected users won't return any data unless you are friends.
         """
-        ext = '/user/library/shows/collection.json/{}/{}'.format(trakt.api_key,
-                                                                 self.username)
-        url = self.base_url + ext
-        response = requests.get(url)
-        data = json.loads(response.content.decode('UTF-8'))
+        ext = 'user/library/shows/collection.json/{}/{}'.format(trakt.api_key,
+                                                                self.username)
+        data = self._get_(ext)
         if len(data) > 0:
             self._show_collection = []
             for show_data in data:
@@ -292,11 +272,9 @@ class User(BaseAPI):
         Collection items might include blu-rays, dvds, and digital downloads.
         Protected users won't return any data unless you are friends.
         """
-        ext = '/user/library/shows/watched.json/{}/{}'.format(trakt.api_key,
-                                                              self.username)
-        url = self.base_url + ext
-        response = requests.get(url)
-        data = json.loads(response.content.decode('UTF-8'))
+        ext = 'user/library/shows/watched.json/{}/{}'.format(trakt.api_key,
+                                                             self.username)
+        data = self._get_(ext)
         if len(data) > 0:
             self._shows_watched = []
             for show_data in data:
@@ -309,11 +287,8 @@ class User(BaseAPI):
         won't return any data unless you are friends. To view your own private
         lists, you will need to authenticate as yourself.
         """
-        extension = '/user/lists.json/{}/{}'.format(trakt.api_key,
-                                                    self.username)
-        url = self.base_url + extension
-        response = requests.get(url)
-        data = json.loads(response.content.decode('UTF-8'))
+        ext = 'user/lists.json/{}/{}'.format(trakt.api_key, self.username)
+        data = self._get_(ext)
         if len(data) > 0:
             self._lists = []
             for list_data in data:
@@ -330,9 +305,7 @@ class User(BaseAPI):
         if self._followers is None:
             ext = 'user/network/followers.json/{}/{}'.format(trakt.api_key,
                                                              self.username)
-            url = self.base_url + ext
-            response = requests.get(url)
-            data = json.loads(response.content.decode('UTF-8'))
+            data = self._get_(ext)
             self._followers = []
             for user in data:
                 self._followers.append(User(**user))
@@ -348,9 +321,7 @@ class User(BaseAPI):
         if self._following is None:
             ext = 'user/network/following.json/{}/{}'.format(trakt.api_key,
                                                              self.username)
-            url = self.base_url + ext
-            response = requests.get(url)
-            data = json.loads(response.content.decode('UTF-8'))
+            data = self._get_(ext)
             self._following = []
             for user in data:
                 self._following.append(User(**user))
@@ -367,9 +338,7 @@ class User(BaseAPI):
         if self._friends is None:
             ext = 'user/network/friends.json/{}/{}'.format(trakt.api_key,
                                                            self.username)
-            url = self.base_url + ext
-            response = requests.get(url)
-            data = json.loads(response.content.decode('UTF-8'))
+            data = self._get_(ext)
             self._friends = []
             for user in data:
                 self._friends.append(User(**user))
@@ -383,9 +352,7 @@ class User(BaseAPI):
         if self._collected is None:
             ext = 'user/progress/collected.json/{}/{}/'.format(trakt.api_key,
                                                                self.username)
-            url = self.base_url + ext
-            response = requests.get(url)
-            data = json.loads(response.content.decode('UTF-8'))
+            data = self._get_(ext)
             self._collected = []
             for show in data:
                 self._collected.append(TVShow(**show))
@@ -399,9 +366,7 @@ class User(BaseAPI):
         if self._watched is None:
             ext = 'user/progress/watched.json/{}/{}/'.format(trakt.api_key,
                                                              self.username)
-            url = self.base_url + ext
-            response = requests.get(url)
-            data = json.loads(response.content.decode('UTF-8'))
+            data = self._get_(ext)
             self._watched = []
             for show in data:
                 self._watched.append(TVShow(**show))
@@ -413,9 +378,7 @@ class User(BaseAPI):
         if self._episode_ratings is None:
             ext = 'user/ratings/episodes.json/{}/{}/'.format(trakt.api_key,
                                                              self.username)
-            url = self.base_url + ext
-            response = requests.get(url)
-            data = json.loads(response.content.decode('UTF-8'))
+            data = self._get_(ext)
             self._episode_ratings = []
             for episode in data:
                 show = episode['show']['title']
@@ -439,9 +402,7 @@ class User(BaseAPI):
         if self._show_ratings is None:
             ext = 'user/ratings/shows.json/{}/{}/'.format(trakt.api_key,
                                                           self.username)
-            url = self.base_url + ext
-            response = requests.get(url)
-            data = json.loads(response.content.decode('UTF-8'))
+            data = self._get_(ext)
             self._show_ratings = []
             for show in data:
                 self._show_ratings.append(TVShow(**show))
@@ -453,9 +414,7 @@ class User(BaseAPI):
         if self._movie_ratings is None:
             ext = 'user/ratings/movies.json/{}/{}/'.format(trakt.api_key,
                                                            self.username)
-            url = self.base_url + ext
-            response = requests.get(url)
-            data = json.loads(response.content.decode('UTF-8'))
+            data = self._get_(ext)
             self._movie_ratings = []
             for movie in data:
                 self._movie_ratings.append(Movie(**movie))
@@ -467,9 +426,7 @@ class User(BaseAPI):
         if self._episode_watchlist is None:
             ext = 'user/ratings/episodes.json/{}/{}/'.format(trakt.api_key,
                                                              self.username)
-            url = self.base_url + ext
-            response = requests.get(url)
-            data = json.loads(response.content.decode('UTF-8'))
+            data = self._get_(ext)
             self._episode_watchlist = []
             for episode in data:
                 show = episode['show']['title']
@@ -493,9 +450,7 @@ class User(BaseAPI):
         if self._show_watchlist is None:
             ext = 'user/ratings/shows.json/{}/{}/'.format(trakt.api_key,
                                                           self.username)
-            url = self.base_url + ext
-            response = requests.get(url)
-            data = json.loads(response.content.decode('UTF-8'))
+            data = self._get_(ext)
             self._show_watchlist = []
             for show in data:
                 self._show_watchlist.append(TVShow(**show))
@@ -507,9 +462,7 @@ class User(BaseAPI):
         if self._movie_watchlist is None:
             ext = 'user/ratings/movies.json/{}/{}/'.format(trakt.api_key,
                                                            self.username)
-            url = self.base_url + ext
-            response = requests.get(url)
-            data = json.loads(response.content.decode('UTF-8'))
+            data = self._get_(ext)
             self._movie_watchlist = []
             for movie in data:
                 self._movie_watchlist.append(Movie(**movie))

@@ -1,7 +1,4 @@
 """Interfaces to all of the TV objects offered by the Trakt.tv API"""
-import json
-import string
-import requests
 from datetime import datetime, timedelta
 
 from . import BaseAPI, auth_post, Genre, Comment
@@ -55,14 +52,13 @@ def rate_shows(shows, rating):
     valid_ratings = ['love', 'hate', 'unrate'] + list(range(11))
     if rating in valid_ratings:
         ext = 'rate/shows/{}'.format(trakt.api_key)
-        url = BaseAPI().base_url + ext
         show_list = []
         for show in shows:
             d = {'tvdb_id': show.tvdb_id, 'title': show.title,
                  'year': show.year, 'rating': rating}
             show_list.append(d)
         args = {'shows': show_list}
-        auth_post(url, args)
+        BaseAPI()._post_(ext, args)
 
 
 def rate_episodes(episodes, rating):
@@ -70,7 +66,6 @@ def rate_episodes(episodes, rating):
     valid_ratings = ['love', 'hate', 'unrate'] + list(range(11))
     if rating in valid_ratings:
         ext = 'rate/episodes/{}'.format(trakt.api_key)
-        url = BaseAPI().base_url + ext
         episode_list = []
         for episode in episodes:
             d = {'tvdb_id': episode.tvdb_id, 'title': episode.title,
@@ -78,15 +73,14 @@ def rate_episodes(episodes, rating):
                  'episode': episode.episode, 'rating': rating}
             episode_list.append(d)
         args = {'episodes': episode_list}
-        auth_post(url, args)
+        BaseAPI()._post_(ext, args)
 
 
 @property
 def genres():
     """A list of all possible :class:`Movie` Genres"""
-    url = BaseAPI().base_url + '/genres/shows.json/{}'.format(trakt.api_key)
-    response = requests.get(url)
-    data = json.loads(response.content.decode('UTF-8'))
+    ext = 'genres/shows.json/{}'.format(trakt.api_key)
+    data = BaseAPI()._get_(ext)
     genres = []
     for genre in data:
         genres.append(Genre(genre['name'], genre['slug']))
@@ -96,9 +90,8 @@ def genres():
 @property
 def trending_shows():
     """All :class:`TVShow`'s being watched right now"""
-    url = BaseAPI().base_url + '/shows/trending.json/{}'.format(trakt.api_key)
-    response = requests.get(url)
-    data = json.loads(response.content.decode('UTF-8'))
+    ext = 'shows/trending.json/{}'.format(trakt.api_key)
+    data = BaseAPI()._get_(ext)
     to_ret = []
     for show in data:
         title = show.get('title')
@@ -114,9 +107,8 @@ def updated_shows(timestamp=None):
     """
     y_day = datetime.now() - timedelta(1)
     ts = timestamp or int(y_day.strftime('%s')) * 1000
-    url = BaseAPI().base_url + '/shows/updated.json/{}/{}'.format(trakt.api_key, ts)
-    response = requests.get(url)
-    data = json.loads(response.content.decode('UTF-8'))
+    ext = 'shows/updated.json/{}/{}'.format(trakt.api_key, ts)
+    data = BaseAPI()._get_(ext)
     to_ret = []
     for show in data['shows']:
         title = show.get('title')
@@ -167,8 +159,7 @@ class TVShow(BaseAPI):
             self._post_(ext, args)
 
     def __fetch_top_watchers(self):
-        show_title = self.title
-        show_title = string.replace(show_title, ' ', '-')
+        show_title = self.title.replace(' ', '-')
         ext = 'summary.json/{}/{}'.format(trakt.api_key, show_title)
         data = self._get_(ext)
         self.top_watchers = data['top_watchers']
@@ -180,8 +171,7 @@ class TVShow(BaseAPI):
         return self.__fetch_top_watchers()
 
     def __fetch_top_episodes(self):
-        show_title = self.title
-        show_title = string.replace(show_title, ' ', '-').lower()
+        show_title = self.title.replace(' ', '-').lower()
         ext = 'summary.json/{}/{}'.format(trakt.api_key, show_title)
         data = self._get_(ext)
         self.top_episodes = data['top_episodes']
@@ -195,7 +185,7 @@ class TVShow(BaseAPI):
     @property
     def _search_title(self):
         """The title of this :class:`TVShow` formatted in a searchable way"""
-        return string.replace(self.title, ' ', '-').lower()
+        return self.title.replace(' ', '-').lower()
 
     def search(self):
         """Search for general information on a show"""
@@ -294,7 +284,7 @@ class TVShow(BaseAPI):
 
     def __str__(self):
         """Return a string representation of a :class:`TVShow`"""
-        return '<TVShow> {}'.format(self.title)
+        return '<TVShow> {}'.format(self.title.encode('ascii', 'ignore'))
     __repr__ = __str__
 
     @property
@@ -317,9 +307,8 @@ class TVSeason(BaseAPI):
         """Search for a tv season"""
         ext = 'show/season.json/{}/'.format(trakt.api_key)
         # Need to remove spaces and parentheses from show title
-        title = string.replace(show_title, ' ', '-').lower()
-        title = string.replace(title, '(', '')
-        title = string.replace(title, ')', '')
+        title = show_title.replace(' ', '-').replace('(', '').replace(')', '')
+        title = title.lower()
         ext += title + '/' + str(season_num)
         data = self._get_(ext)
         for episode_data in data:
@@ -345,7 +334,7 @@ class TVSeason(BaseAPI):
     def __str__(self):
         title = [self.show, 'Season', self.season]
         title = map(str, title)
-        return ' '.join(title)
+        return ' '.join(title.encode('ascii', 'ignore'))
     __repr__ = __str__
 
     @property
@@ -373,10 +362,6 @@ class TVEpisode(BaseAPI):
             for key, val in episode_data.items():
                 if key != 'episode':
                     setattr(self, key, val)
-        # if 'overview' in self.__dict__:
-            # self.overview = string.replace(self.overview, u'\u2013', '-')
-            # self.overview = string.replace(self.overview, u'\u2019', '\'')
-            # self.overview = string.replace(self.overview, u'\u2019', '"')
 
     def search(self, show, season, episode_num):
         pass
@@ -453,7 +438,7 @@ class TVEpisode(BaseAPI):
     def comment(self, comment, spoiler=False, review=False):
         """Add a comment (shout or review) to this :class:`TVEpisode` on trakt.
         """
-        url = self.base_url + '/comment/episode/{}'.format(trakt.api_key)
+        ext = 'comment/episode/{}'.format(trakt.api_key)
         args = {'title': self.show, 'year': self.year, 'season': self.season,
                 'episode': self.title, 'comment': comment, 'spoiler': spoiler,
                 'review': review}
@@ -461,7 +446,7 @@ class TVEpisode(BaseAPI):
             args['imdb_id'] = self.imdb_id
         else:
             args['tvdb_id'] = self.tvdb_id
-        auth_post(url, kwargs=args)
+        self._post_(ext, args)
 
     @property
     def comments(self):
@@ -500,7 +485,7 @@ class TVEpisode(BaseAPI):
 
     def __repr__(self):
         title = map(str, [self.episode, self.title])
-        return ' '.join(title)
+        return ' '.join(title.encode('ascii', 'ignore'))
     __str__ = __repr__
 
     @property

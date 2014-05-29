@@ -26,18 +26,16 @@ class TraktStats(object):
 
 
 class Community(BaseAPI):
-    """TraktTV Community Report"""
+    """Trakt.tv Community Report"""
     def __init__(self, search_type='all', start=None, end=None):
         super(Community, self).__init__()
-        self.url_extension = 'community.json/' + api_key + '/' + search_type
+        ext = 'community.json/{}/{}'.format(api_key, search_type)
         if start is not None and end is None:
-            self.url_extension += '/' + str(start)
+            ext += '/' + str(start)
         elif start is None and end is not None:
-            self.url_extension += '/' + str(end)
+            ext += '/' + str(end)
         else:
-            self.url_extension += '/' + str(start) + '/' + str(end)
-        url = self.base_url + self.url_extension
-        response = requests.get(url)
-        data = json.loads(response.content)
+            ext += '/' + str(start) + '/' + str(end)
+        data = self._get_(ext)
         for key, val in data.items():
             setattr(self, key, val)

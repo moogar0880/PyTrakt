@@ -1,6 +1,8 @@
 """Interfaces to all of the TV objects offered by the Trakt.tv API"""
 from datetime import datetime, timedelta
 
+from proxy_tools import module_property
+
 from . import BaseAPI, auth_post, Genre, Comment
 from .community import TraktRating, TraktStats
 import trakt
@@ -76,7 +78,7 @@ def rate_episodes(episodes, rating):
         BaseAPI()._post_(ext, args)
 
 
-@property
+@module_property
 def genres():
     """A list of all possible :class:`Movie` Genres"""
     ext = 'genres/shows.json/{}'.format(trakt.api_key)
@@ -87,7 +89,7 @@ def genres():
     return genres
 
 
-@property
+@module_property
 def trending_shows():
     """All :class:`TVShow`'s being watched right now"""
     ext = 'shows/trending.json/{}'.format(trakt.api_key)
@@ -99,7 +101,7 @@ def trending_shows():
     return to_ret
 
 
-@property
+@module_property
 def updated_shows(timestamp=None):
     """All :class:`TVShow`'s updated since *timestamp* (PST). To establish a
     baseline timestamp, you can use the server/time method. It's recommended to
@@ -484,8 +486,8 @@ class TVEpisode(BaseAPI):
         return users
 
     def __repr__(self):
-        title = map(str, [self.episode, self.title])
-        return ' '.join(title.encode('ascii', 'ignore'))
+        title = '{} {}'.format(self.episode, self.title)
+        return title.encode('ascii', 'ignore')
     __str__ = __repr__
 
     @property

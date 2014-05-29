@@ -39,7 +39,7 @@ def test(username, password):
     """Test trakt credentials. This is useful for your configuration screen and
     is a simple way to test someone's trakt account.
     """
-    args = {'username': username, 'password': sha1(password).hexdigest()}
+    args = {'username': username, 'password': sha1(password.encode('UTF-8')).hexdigest()}
     url = BaseAPI().base_url + 'account/test/{}'.format(trakt.api_key)
     response = requests.post(url, data=args)
     resp_data = json.loads(response.content.decode('UTF-8'))

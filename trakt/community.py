@@ -1,7 +1,4 @@
 """Interfaces to all of the TV objects offered by the Trakt.tv API"""
-import json
-import requests
-
 from . import api_key, BaseAPI
 __author__ = 'Jon Nappi'
 __all__ = ['Community', 'TraktRating', 'TraktStats']

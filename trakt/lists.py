@@ -1,7 +1,9 @@
 """A single Interface to the Lists methods offered by the Trakt.tv API"""
-from . import api_key, BaseAPI, auth_post
+from . import BaseAPI, auth_post
 from .tv import TVShow, TVSeason, TVEpisode
 from .movies import Movie
+
+import trakt
 __author__ = 'Jon Nappi'
 __all__ = ['UserList']
 
@@ -37,7 +39,7 @@ class UserList(BaseAPI):
             for key, val in kwargs:
                 setattr(self, key, val)
         else:
-            ext = 'lists/add/{}'.format(api_key)
+            ext = 'lists/add/{}'.format(trakt.api_key)
             args = {'name': self._name, 'description': self._description,
                     'privacy': self._privacy, 'show_numbers': self._show_numbers,
                     'allow_shouts': self._allow_shouts}
@@ -56,7 +58,7 @@ class UserList(BaseAPI):
             elif isinstance(item, trakt_types):
                 self.items.append(item)
                 items_list.append(item._list_json)
-        ext = 'lists/items/add/{}'.format(api_key)
+        ext = 'lists/items/add/{}'.format(trakt.api_key)
         args = {'slug': self.slug, 'items': items_list}
         self._post_(ext, args)
 
@@ -71,13 +73,13 @@ class UserList(BaseAPI):
             elif isinstance(item, trakt_types):
                 self.items.append(item)
                 items_list.append(item._list_json)
-        ext = 'lists/items/delete/{}'.format(api_key)
+        ext = 'lists/items/delete/{}'.format(trakt.api_key)
         args = {'slug': self.slug, 'items': items_list}
         self._post_(ext, args)
 
     def __property_update(self, key, val):
         """Update an attribute of this :class:`UserList`"""
-        ext = 'lists/update/{}'.format(api_key)
+        ext = 'lists/update/{}'.format(trakt.api_key)
         args = {'slug': self.slug, key: val}
         self._post_(ext, args)
         setattr(self, key, val)
@@ -139,7 +141,7 @@ class UserList(BaseAPI):
 
     def delete(self):
         """Delete this :class:`UserList`"""
-        ext = 'lists/delete/{}'.format(api_key)
+        ext = 'lists/delete/{}'.format(trakt.api_key)
         url = self.base_url + ext
         args = {'slug': self.slug}
         auth_post(url, args)

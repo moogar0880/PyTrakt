@@ -3,13 +3,16 @@ trakt package
 """
 import json
 import logging
+import requests
 from hashlib import sha1
 from collections import namedtuple
 
 from proxy_tools import module_property
 
-import trakt
+from . import account
 from .errors import *
+
+import trakt
 __author__ = 'Jon Nappi'
 __all__ = ['BaseAPI', 'server_time', 'authenticate', 'auth_post', 'Genre',
            'Comment']
@@ -18,20 +21,16 @@ __all__ = ['BaseAPI', 'server_time', 'authenticate', 'auth_post', 'Genre',
 @module_property
 def server_time():
     """Get the current timestamp (PST) from the trakt server."""
-    import requests
     url = BaseAPI().base_url + 'server/time.json/{}'.format(trakt.api_key)
     print(url)
     response = requests.get(url)
     data = json.loads(response.content.decode('UTF-8'))
-    from pprint import pprint
-    pprint(data)
     return data['timestamp']
 
 
 def authenticate(username, password):
     """Provide authentication for a Trakt.tv account"""
-    from .account import test
-    if not test(username, password):
+    if not account.test(username, password):
         raise InvalidCredentials
     globals()['_TRAKT_US_NAME_'] = username
     globals()['_TRAKT_PASS_WD_'] = sha1(password.encode('UTF-8')).hexdigest()
@@ -39,7 +38,6 @@ def authenticate(username, password):
 
 def auth_post(url, kwargs=None):
     """Create a post with provided authentication"""
-    import requests
     if '_TRAKT_US_NAME_' not in globals() or '_TRAKT_PASS_WD_' not in globals():
         raise InvalidCredentials
     user = globals()['_TRAKT_US_NAME_']
@@ -69,7 +67,6 @@ class BaseAPI(object):
 
         :param uri: The uri extension to GET from
         """
-        import requests
         url = self.base_url + uri
         self.logger.debug('GET: {}'.format(url))
         response = requests.get(url)

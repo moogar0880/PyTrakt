@@ -1,7 +1,5 @@
 """Interfaces to all of the Calendar objects offered by the Trakt.tv API"""
 import sys
-import json
-import requests
 from datetime import datetime
 if int(sys.version[0]) == 2:
     from urllib import urlencode

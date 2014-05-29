@@ -4,6 +4,8 @@ import string
 import requests
 from datetime import datetime, timedelta
 
+from proxy_tools import module_property
+
 from . import BaseAPI, auth_post, Genre, Comment, __version__
 import trakt
 
@@ -71,6 +73,7 @@ def rate_movies(movies, rating):
         auth_post(url, args)
 
 
+@module_property
 def genres():
     """A list of all possible :class:`Movie` Genres"""
     url = BaseAPI().base_url + '/genres/movies.json/{}'.format(trakt.api_key)
@@ -82,6 +85,7 @@ def genres():
     return genre_list
 
 
+@module_property
 def trending_movies():
     """All :class:`Movie`'s being watched right now"""
     url = BaseAPI().base_url + '/movies/trending.json/{}'.format(trakt.api_key)

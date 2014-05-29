@@ -8,7 +8,7 @@ with open('README.rst') as f:
     readme = f.read()
 
 packages = ['trakt']
-requires = ['requests']
+requires = ['requests', 'proxy_tools']
 
 setup(
     name='trakt',

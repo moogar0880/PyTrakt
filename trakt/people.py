@@ -6,7 +6,7 @@ __all__ = ['Person']
 
 
 class Person(BaseAPI):
-    """A Class representing a Movie object"""
+    """A Class representing a trakt.tv Person such as an Actor or Director"""
     def __init__(self, name, **kwargs):
         super(Person, self).__init__()
         self.name = name
@@ -17,9 +17,9 @@ class Person(BaseAPI):
             for key, val in kwargs.items():
                 setattr(self, key, val)
         else:
-            self.search()
+            self._search()
 
-    def search(self):
+    def _search(self):
         """Search for this :class:`Person` via the Trakt.tv API"""
         def formatted(name):
             return name.replace(' ', '+').lower()

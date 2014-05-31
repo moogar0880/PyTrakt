@@ -122,9 +122,8 @@ class TVShow(BaseAPI):
     """A Class representing a TV Show object"""
     def __init__(self, title='', **kwargs):
         super(TVShow, self).__init__()
-        self.url = self.base_url + 'show/'
         self.top_watchers = self.top_episodes = self.year = self.tvdb_id = None
-        self.imdb_id = self.people = None
+        self.imdb_id = self.people = self.genres = None
         self.seasons = []
         self.title = title
         if len(kwargs) > 0:
@@ -217,6 +216,11 @@ class TVShow(BaseAPI):
                 self.people = []
                 for person in val['actors']:
                     self.people.append(Person(**person))
+            elif key == 'genres':
+                self.genres = []
+                for genre in val:
+                    slug = genre.lower().replace(' ', '-')
+                    self.genres.append(Genre(genre, slug))
             else:
                 setattr(self, key, val)
 
@@ -334,9 +338,9 @@ class TVSeason(BaseAPI):
         self._post_(ext, args)
 
     def __str__(self):
-        title = [self.show, 'Season', self.season]
+        title = ['<TVSeason>:', self.show, 'Season', self.season]
         title = map(str, title)
-        return ' '.join(title.encode('ascii', 'ignore'))
+        return ' '.join(title)
     __repr__ = __str__
 
     @property
@@ -486,8 +490,8 @@ class TVEpisode(BaseAPI):
         return users
 
     def __repr__(self):
-        title = '{} {}'.format(self.episode, self.title)
-        return title.encode('ascii', 'ignore')
+        return '<TVEpisode>: {} S{}E{} {}'.format(self.show, self.season,
+                                                  self.episode, self.title)
     __str__ = __repr__
 
     @property

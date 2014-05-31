@@ -21,7 +21,6 @@ __all__ = ['BaseAPI', 'server_time', 'authenticate', 'auth_post', 'Genre',
 def server_time():
     """Get the current timestamp (PST) from the trakt server."""
     url = BaseAPI().base_url + 'server/time.json/{}'.format(trakt.api_key)
-    print(url)
     response = requests.get(url)
     data = json.loads(response.content.decode('UTF-8'))
     return data['timestamp']

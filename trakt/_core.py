@@ -9,7 +9,6 @@ from collections import namedtuple
 
 from proxy_tools import module_property
 
-from . import account
 from .errors import *
 
 import trakt
@@ -30,6 +29,7 @@ def server_time():
 
 def authenticate(username, password):
     """Provide authentication for a Trakt.tv account"""
+    from . import account
     if not account.test(username, password):
         raise InvalidCredentials
     globals()['_TRAKT_US_NAME_'] = username
@@ -70,7 +70,7 @@ class BaseAPI(object):
         url = self.base_url + uri
         self.logger.debug('GET: {}'.format(url))
         response = requests.get(url)
-        data = json.loads(response.content.decode('UTF-8'))
+        data = json.loads(response.content.decode('UTF-8', 'ignore'))
         return data
 
     def _post_(self, uri, args=None):
@@ -83,5 +83,5 @@ class BaseAPI(object):
         url = self.base_url + uri
         self.logger.debug('POST: {}: <{}>'.format(url, args))
         response = auth_post(url, args)
-        data = json.loads(response.content.decode('UTF-8'))
+        data = json.loads(response.content.decode('UTF-8', 'ignore'))
         return data

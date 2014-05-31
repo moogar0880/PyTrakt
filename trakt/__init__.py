@@ -1,5 +1,8 @@
 """A wrapper for the Trakt.tv REST API"""
-from ._core import *
+try:
+    from ._core import *
+except ImportError:
+    pass
 
 version_info = (0, 2, 0)
 __author__ = 'Jon Nappi'

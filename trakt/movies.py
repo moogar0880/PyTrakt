@@ -43,13 +43,18 @@ def get_recommended_movies(genre=None, start_year=None, end_year=None,
     """
     ext = 'recommendations/movies/{}'.format(trakt.api_key)
     url = BaseAPI().base_url + ext
-    args = {'genre': genre, 'start_year': start_year, 'end_year': end_year,
+    if isinstance(genre, Genre):
+        slug = genre.slug
+    else:
+        slug = genre
+    args = {'genre': slug, 'start_year': start_year, 'end_year': end_year,
             'hide_collected': hide_collected,
             'hide_watchlisted': hide_watchlisted}
     real_args = {x: args[x] for x in args if args[x] is not None}
     response = auth_post(url, real_args)
+    data = json.loads(response.content.decode('UTF-8', 'ignore'))
     movies = []
-    for movie in response:
+    for movie in data:
         movies.append(Movie(**movie))
     return movies
 
@@ -90,11 +95,10 @@ def trending_movies():
     """All :class:`Movie`'s being watched right now"""
     url = BaseAPI().base_url + '/movies/trending.json/{}'.format(trakt.api_key)
     response = requests.get(url)
-    data = json.loads(response.content.decode('UTF-8'))
+    data = json.loads(response.content.decode('UTF-8', 'ignore'))
     to_ret = []
     for movie in data:
-        title = movie.get('title')
-        to_ret.append(Movie(title, **movie))
+        to_ret.append(Movie(**movie))
     return to_ret
 
 
@@ -104,12 +108,15 @@ def updated_movies(timestamp=None):
     recommended to store the timestamp so you can be efficient in using this
     method.
     """
-    y_day = datetime.now() - timedelta(1)
-    ts = timestamp or int(y_day.strftime('%s')) * 1000
-    url = BaseAPI().base_url + '/movies/updated.json/{}/{}'.format(trakt.api_key, ts)
+    ts = timestamp or trakt.server_time
+    url = BaseAPI().base_url + '/movies/updated.json/{}/{}'
+    url = url.format(trakt.api_key, ts)
     response = requests.get(url)
-    data = json.loads(response.content.decode('UTF-8'))
-    return data['movies']
+    data = json.loads(response.content.decode('UTF-8', 'ignore'))
+    to_ret = []
+    for movie in data['movies']:
+        to_ret.append(Movie(**movie))
+    return to_ret
 
 
 class Movie(BaseAPI):
@@ -119,45 +126,52 @@ class Movie(BaseAPI):
         self.title = title
         self.year = int(year) if year is not None else year
         self.released_iso = self.tmdb_id = self.imdb_id = self.duration = None
-        self.url = self._comments = None
+        self.url = self._comments = self.genres = None
         self.url_extension = 'search/movies/{}?query='.format(trakt.api_key)
         self._checked_in = False
         if len(kwargs) > 0:
-            for key, val in kwargs.items():
-                setattr(self, key, val)
+            self._build(kwargs)
         else:
-            self.search(self.title)
+            self._search(self.title)
 
-    def search(self, title):
-        query = string.replace(title, ' ', '%20')
-        url = self.base_url + self.url_extension + query
-        response = requests.get(url)
-        data = None
-        if response.status_code == 200:
-            data = json.loads(response.content)
-            if data is not None and self.year is not None:
-                for movie in data:
-                    title = movie['title'].lower()
-                    # print title, self.title.lower()
-                    # print movie['year'], self.year, movie['year'] == self.year
-                    if movie['year'] == self.year and title == self.title.lower():
-                        data = movie
-                        break
-                if isinstance(data, list):
-                    data = data[0]
-            elif data is not None and self.year is None:
+    def _search(self, title):
+        """Perform a search for the specified *title*
+
+        :param title: The title to search for
+        """
+        query = title.replace(' ', '%20')
+        ext = self.url_extension + query
+        data = self._get_(ext)
+        if data is not None and self.year is not None:
+            for movie in data:
+                title = movie['title'].lower()
+                if movie['year'] == self.year and title == self.title.lower():
+                    data = movie
+                    break
+            if isinstance(data, list):
                 data = data[0]
-            # print data
-            if data is not None and data != []:
-                for key, val in data.items():
-                    setattr(self, key, val)
-            try:
-                release = getattr(self, 'released')
-                release = float(release)
-                utc = datetime.utcfromtimestamp(release)
-                self.released_iso = str(utc).replace(' ', 'T')
-            except AttributeError:
-                pass
+        elif data is not None and self.year is None:
+            data = data[0]
+        if data is not None and data != []:
+            self._build(data)
+        try:
+            release = getattr(self, 'released')
+            release = float(release)
+            utc = datetime.utcfromtimestamp(release)
+            self.released_iso = str(utc).replace(' ', 'T')
+        except AttributeError:
+            pass
+
+    def _build(self, data):
+        """Build this :class:`Movie` object with the data in *data*"""
+        for key, val in data.items():
+            if key == 'genres':
+                self.genres = []
+                for genre in val:
+                    slug = genre.lower().replace(' ', '-')
+                    self.genres.append(Genre(genre, slug))
+            else:
+                setattr(self, key, val)
 
     def checkin(self, venue_id=None, venue_name=None, facebook=False,
                 twitter=False, tumblr=False, path=False):

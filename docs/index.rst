@@ -3,14 +3,71 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to trakt's documentation!
-=================================
+trakt: Python interface to Trakt.tv
+===================================
+Release v\ |version|.
 
-Contents:
+This module is designed to be a Pythonic interface to the `Trakt.tv <http://trakt.tv>`_.
+REST API. The official documentation for which can be found `here <http://trakt.tv/api-docs/>`_.
+trakt contains interfaces to all of the Trakt.tv functionality in an, ideally, easily
+scriptable fashion.
+
+More information about getting started and accessing the information you thirst for
+can be found throughout the documentation below.
+
+
+Installation
+------------
+There are two ways through which you can install trakt
+
+Install Via Pip
+^^^^^^^^^^^^^^^
+To install with `pip <http://www.pip-installer.org/>`_, just run this in your terminal::
+
+    $ pip install trakt
+
+Get the code
+^^^^^^^^^^^^
+trakt is available on `GitHub <https://github.com/kennethreitz/requests>`_.
+
+You can either clone the public repository::
+
+    $ git clone git://github.com/moogar0880/PyTrakt.git
+
+Download the `tarball <https://github.com/moogar0880/PyTrakt/tarball/master>`_::
+
+    $ curl -OL https://github.com/moogar0880/PyTrakt/tarball/master
+
+Or, download the `zipball <https://github.com/moogar0880/PyTrakt/zipball/master>`_::
+
+    $ curl -OL https://github.com/moogar0880/PyTrakt/zipball/master
+
+
+Once you have a copy of the source, you can embed it in your Python package,
+or install it into your site-packages easily::
+
+    $ python setup.py install
+
+
+
+User Guide
+----------
+Below you will find links to the generated documentation of the trakt module,
+including example usages.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
+   getstarted.rst
+   errors.rst
+   account.rst
+   calendar.rst
+   community.rst
+   lists.rst
+   movies.rst
+   people.rst
+   tv.rst
+   users.rst
 
 
 Indices and tables

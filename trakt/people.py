@@ -35,5 +35,5 @@ class Person(BaseAPI):
 
     def __str__(self):
         """String representation of a :class:`Person`"""
-        return '<Person>: {}'.format(self.name.encode('ascii', 'ignore'))
+        return '<Person>: {}'.format(self.name)
     __repr__ = __str__

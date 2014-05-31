@@ -7,7 +7,7 @@ trakt.account
 
 
 Example Usage
--------------
+^^^^^^^^^^^^^
 This module is pretty lightweight and only contains the three basic functions
 described above. You can create a new account
 ::

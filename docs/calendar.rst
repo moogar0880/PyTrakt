@@ -7,7 +7,7 @@ trakt.calendar
 
 
 Example Usage
--------------
+^^^^^^^^^^^^^
 All three Calendar types :class:`PremiereCalendar`, :class:`ShowCalendar`, and
 :class:`UserCalendar` behave similarly, the only fundamental difference is in
 the data they represent. They all accept optional date and days parameters which

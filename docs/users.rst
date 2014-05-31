@@ -10,7 +10,7 @@ trakt.users
     :undoc-members:
 
 Examples
---------
+^^^^^^^^
 To access a :class:`User` all you need do is pass the :class:`User`'s username
 to the :class:`User`'s __init__ method
 ::

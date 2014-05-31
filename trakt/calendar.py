@@ -39,7 +39,21 @@ class Calendar(BaseAPI):
         self.date = date or _now_date_format()
         self.days = days or 7
         self.url = None
-        self.episodes = []
+        self._episodes = []
+
+    def __iter__(self):
+        """Custom iterator for iterating over the episodes in this Calendar"""
+        return iter(self._episodes)
+
+    def __len__(self):
+        """Returns the length of the episodes list in this calendar"""
+        return len(self._episodes)
+
+    def __str__(self):
+        """str representation of this Calendar"""
+        from pprint import pformat
+        return pformat(self._episodes)
+    __repr__ = __str__
 
     def _build_uri(self):
         """construct the fully formatted url for this Calendar"""
@@ -56,26 +70,22 @@ class Calendar(BaseAPI):
         if self.url is not None:
             ext = self._build_uri()
             data_list = self._get_(ext)
-            self.episodes = []
+            self._episodes = []
             for data in data_list:
                 for episode in data['episodes']:
                     show = episode['show']['title']
                     season = episode['episode']['season']
                     ep = episode['episode']['number']
-                    self.episodes.append(TVEpisode(show, ep, season,
-                                                   episode_data=episode['episode']))
-
-    def __len__(self):
-        """Returns the length of the episodes list in this calendar"""
-        return len(self.episodes)
+                    ep_data = episode['episode']
+                    self._episodes.append(TVEpisode(show, ep, season,
+                                                    episode_data=ep_data))
 
 
 class PremiereCalendar(Calendar):
     """All shows premiering during the time period specified."""
     def __init__(self, *args, **kwargs):
         super(PremiereCalendar, self).__init__(*args, **kwargs)
-        self.url = '{}/calendar/premieres.json/{}'.format(self.base_url,
-                                                          trakt.api_key)
+        self.url = 'calendar/premieres.json/{}'.format(trakt.api_key)
         self._build()
 
 
@@ -83,8 +93,7 @@ class ShowCalendar(Calendar):
     """TraktTV ShowCalendar"""
     def __init__(self, *args, **kwargs):
         super(ShowCalendar, self).__init__(*args, **kwargs)
-        self.url = '{}/calendar/shows.json/{}'.format(self.base_url,
-                                                      trakt.api_key)
+        self.url = 'calendar/shows.json/{}'.format(trakt.api_key)
         self._build()
 
 
@@ -92,6 +101,6 @@ class UserCalendar(Calendar):
     def __init__(self, user_name, *args, **kwargs):
         super(UserCalendar, self).__init__(*args, **kwargs)
         self.user_name = user_name
-        self.url = '/user/calendar/shows.json/{}/{}'.format(trakt.api_key,
-                                                            self.user_name)
+        self.url = 'user/calendar/shows.json/{}/{}'.format(trakt.api_key,
+                                                           self.user_name)
         self._build()

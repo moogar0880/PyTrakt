@@ -2,7 +2,7 @@
 from collections import namedtuple
 
 from . import BaseAPI
-from .tv import TVShow, TVEpisode
+from .tv import TVShow, TVSeason, TVEpisode
 from .movies import Movie
 from .calendar import UserCalendar
 import trakt
@@ -61,38 +61,163 @@ def get_all_requests():
 
 class UserList(BaseAPI):
     """A list created by a Trakt.tv :class:`User`"""
-    def __init__(self, user_name, slug='', **kwargs):
+    def __init__(self, user_name, name=None, slug=None, description=None,
+                 privacy='private', show_numbers=True, allow_shouts=True,
+                 **kwargs):
         super(UserList, self).__init__()
         self.username = user_name
+        self._name = name
+        self._description = description
+        self._privacy = privacy
+        self._show_numbers = show_numbers
+        self._allow_shouts = allow_shouts
         self.slug = slug
-        self.items = self.name = self.url = self.description = None
-        self.show_numbers = self.allow_shouts = self.privacy = None
-        if len(kwargs) > 0:
-            for key, val in kwargs.items():
-                setattr(self, key, val)
+        self.url = None
+        self.items = []
+        # If there was no slug passed in but there was a name, we know we're
+        # creating a new UserList
+        if slug is None and name is not None:
+            ext = 'lists/add/{}'.format(trakt.api_key)
+            args = {'name': self._name, 'description': self._description,
+                    'privacy': self._privacy, 'show_numbers': self._show_numbers,
+                    'allow_shouts': self._allow_shouts}
+            real_args = {x: args[x] for x in args if args[x] is not None}
+            response = self._post_(ext, real_args)
+            self._build(response)
+        elif len(kwargs) > 0:
+            self._build(kwargs)
         else:
-            self._search()
+            self._search(self.slug or self._name.lower().replace(' ', '-'))
 
-    def _search(self):
-        ext = '/user/lists.json/{}/{}'.format(trakt.api_key, self.username)
+    def _build(self, data):
+        """Build this object from the fields in *data*"""
+        private = ('name', 'description', 'privacy', 'show_numbers',
+                   'allow_shouts')
+        for key, val in data.items():
+            if key in private:
+                setattr(self, '_' + key, val)
+            else:
+                setattr(self, key, val)
+
+    def _search(self, slug):
+        """Search for an existing UserList"""
+        ext = '/user/list.json/{}/{}/{}'.format(trakt.api_key, self.username,
+                                                slug)
         data = self._get_(ext)
-        if len(data) > 0:
-            for key, val in data.items():
-                if key != 'items':
-                    setattr(self, key, val)
-                else:
-                    self.items = []
-                    for item in val:
-                        item_type = item.get('type')
-                        for item_key, item_val in item.items():
-                            if item_type == 'movie':
-                                movie_data = item_val['movie']
-                                title = movie_data.get('title', None)
-                                self.items.append(Movie(title, **movie_data))
-                            elif item_type == 'show':
-                                show_data = item_val['show']
-                                title = show_data.get('title', None)
-                                self.items.append(TVShow(title, **show_data))
+        for key, val in data.items():
+            if key != 'items':
+                setattr(self, key, val)
+            else:
+                self.items = []
+                for item in val:
+                    item_type = item.get('type')
+                    for item_key, item_val in item.items():
+                        if item_type == 'movie':
+                            movie_data = item_val['movie']
+                            title = movie_data.get('title', None)
+                            self.items.append(Movie(title, **movie_data))
+                        elif item_type == 'show':
+                            show_data = item_val['show']
+                            title = show_data.get('title', None)
+                            self.items.append(TVShow(title, **show_data))
+
+    def add_items(self, items):
+        """Add *items* to this :class:`UserList`, where items is an iterable"""
+        items_list = []
+        trakt_types = (TVShow, TVSeason, TVEpisode, Movie)
+        for item in items:
+            if isinstance(item, dict):
+                items_list.append(item)
+            elif isinstance(item, trakt_types):
+                self.items.append(item)
+                items_list.append(item._list_json)
+        ext = 'lists/items/add/{}'.format(trakt.api_key)
+        args = {'slug': self.slug, 'items': items_list}
+        self._post_(ext, args)
+
+    def remove_items(self, items):
+        """Remove *items* to this :class:`UserList`, where items is an iterable
+        """
+        items_list = []
+        trakt_types = (TVShow, TVSeason, TVEpisode, Movie)
+        for item in items:
+            if isinstance(item, dict):
+                items_list.append(item)
+            elif isinstance(item, trakt_types):
+                self.items.append(item)
+                items_list.append(item._list_json)
+        ext = 'lists/items/delete/{}'.format(trakt.api_key)
+        args = {'slug': self.slug, 'items': items_list}
+        self._post_(ext, args)
+
+    def __property_update(self, key, val):
+        """Update an attribute of this :class:`UserList`"""
+        ext = 'lists/update/{}'.format(trakt.api_key)
+        args = {'slug': self.slug, key: val}
+        self._post_(ext, args)
+        setattr(self, key, val)
+
+    def __len__(self):
+        """Return the length of this :class:`UserList`"""
+        return len(self.items)
+
+    @property
+    def name(self):
+        """The list name. This must be unique across the Trakt.tv system."""
+        return self._name
+    @name.setter
+    def name(self, value):
+        self.__property_update('name', value)
+
+    @property
+    def description(self):
+        """Optional but recommended description of what the list contains."""
+        return self._description
+    @description.setter
+    def description(self, value):
+        self.__property_update('description', value)
+
+    @property
+    def privacy(self):
+        """Privacy level of this :class:`UserList` must be one of private,
+        friends, or public.
+        """
+        return self._privacy
+    @privacy.setter
+    def privacy(self, value):
+        valid = ('private', 'friends', 'public')
+        if value in valid:
+            self.__property_update('privacy', value)
+
+    @property
+    def show_numbers(self):
+        """A boolean flag to determine if this  :class:`UserList` should show
+        numbers for each item. This is useful for ranked lists. Must be True or
+        False
+        """
+        return self._show_numbers
+    @show_numbers.setter
+    def show_numbers(self, value):
+        if isinstance(value, bool):
+            self.__property_update('show_numbers', value)
+
+    @property
+    def allow_shouts(self):
+        """A boolean flag to determine if this :class:`UserList` allows
+        discussion by users who have access. Must be True or False
+        """
+        return self._allow_shouts
+    @allow_shouts.setter
+    def allow_shouts(self, value):
+        if isinstance(value, bool):
+            self.__property_update('allow_shouts', value)
+
+    def delete(self):
+        """Delete this :class:`UserList`"""
+        ext = 'lists/delete/{}'.format(trakt.api_key)
+        url = self.base_url + ext
+        args = {'slug': self.slug}
+        self._post_(url, args)
 
 
 class User(BaseAPI):
@@ -422,7 +547,7 @@ class User(BaseAPI):
 
     @property
     def episode_watchlist(self):
-        """All :class:`TVEpisodes` this :class:`User`s watchlist"""
+        """All :class:`TVEpisode`'s this :class:`User`'s watchlist"""
         if self._episode_watchlist is None:
             ext = 'user/ratings/episodes.json/{}/{}/'.format(trakt.api_key,
                                                              self.username)
@@ -446,7 +571,7 @@ class User(BaseAPI):
 
     @property
     def show_watchlist(self):
-        """All :class:`TVShow`'s this :class:`User`s watchlist"""
+        """All :class:`TVShow`'s this :class:`User`'s watchlist"""
         if self._show_watchlist is None:
             ext = 'user/ratings/shows.json/{}/{}/'.format(trakt.api_key,
                                                           self.username)

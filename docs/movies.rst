@@ -1,5 +1,5 @@
-trakt.movies
-------------
+Movies
+------
 
 .. automodule:: trakt.movies
     :members:

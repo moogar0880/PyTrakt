@@ -1,5 +1,5 @@
-trakt.calendar
---------------
+Calendars
+---------
 
 .. automodule:: trakt.calendar
     :members:

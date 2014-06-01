@@ -1,5 +1,5 @@
-trakt.users
------------
+Users
+-----
 
 .. autoclass:: trakt.users.User(username)
     :members:

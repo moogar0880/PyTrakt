@@ -1,5 +1,5 @@
-trakt.tv
---------
+Television
+----------
 
 .. automodule:: trakt.tv
     :members:

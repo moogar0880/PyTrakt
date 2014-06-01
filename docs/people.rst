@@ -1,5 +1,5 @@
-trakt.people
-------------
+People
+------
 
 .. automodule:: trakt.people
     :members:

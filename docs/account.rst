@@ -1,5 +1,5 @@
-trakt.account
--------------
+Accounts
+--------
 
 .. automodule:: trakt.account
     :members:

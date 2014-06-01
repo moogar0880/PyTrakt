@@ -1,4 +1,4 @@
-trakt.errors
+Trakt Errors
 ------------
 
 .. automodule:: trakt.errors

@@ -42,13 +42,10 @@ Or, download the `zipball <https://github.com/moogar0880/PyTrakt/zipball/master>
 
     $ curl -OL https://github.com/moogar0880/PyTrakt/zipball/master
 
-
 Once you have a copy of the source, you can embed it in your Python package,
 or install it into your site-packages easily::
 
     $ python setup.py install
-
-
 
 User Guide
 ----------
@@ -62,8 +59,6 @@ including example usages.
    errors.rst
    account.rst
    calendar.rst
-   community.rst
-   lists.rst
    movies.rst
    people.rst
    tv.rst

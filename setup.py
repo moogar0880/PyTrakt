@@ -9,11 +9,13 @@ with open('README.rst') as f:
 
 packages = ['trakt']
 requires = ['requests', 'proxy_tools']
+description = 'Pythonic abstraction layer for easier scripting of the ' \
+              'Trakt.tv REST API.'
 
 setup(
     name='trakt',
     version=trakt.__version__,
-    description='Python interface to the Trakt.tv API.',
+    description=description,
     long_description=readme,
     author='Jonathan Nappi',
     author_email='moogar0880@gmail.com',
@@ -30,5 +32,5 @@ setup(
         'Programming Language :: Python',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.3')
+        'Programming Language :: Python :: 3.4')
 )

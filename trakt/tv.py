@@ -1,9 +1,10 @@
 """Interfaces to all of the TV objects offered by the Trakt.tv API"""
 from datetime import datetime, timedelta
+from operator import itemgetter
 
 from proxy_tools import module_property
 
-from . import BaseAPI, auth_post, Genre, Comment
+from ._core import BaseAPI, auth_post, Genre, Comment
 from .community import TraktRating, TraktStats
 import trakt
 __author__ = 'Jon Nappi'
@@ -123,8 +124,10 @@ class TVShow(BaseAPI):
     def __init__(self, title='', **kwargs):
         super(TVShow, self).__init__()
         self.top_watchers = self.top_episodes = self.year = self.tvdb_id = None
-        self.imdb_id = self.people = self.genres = None
+        self.imdb_id = self.genres = self.certification = None
+        self.network = None
         self.seasons = []
+        self.people = []
         self.title = title
         if len(kwargs) > 0:
             for key, val in kwargs.items():
@@ -160,6 +163,7 @@ class TVShow(BaseAPI):
             self._post_(ext, args)
 
     def __fetch_top_watchers(self):
+        """Handle fetching the top watchers of this show"""
         show_title = self.title.replace(' ', '-')
         ext = 'summary.json/{}/{}'.format(trakt.api_key, show_title)
         data = self._get_(ext)
@@ -167,11 +171,13 @@ class TVShow(BaseAPI):
         return self.top_watchers or None
 
     def get_top_watchers(self):
+        """Return the list of most active watchers of this :class:`TVShow`"""
         if self.top_watchers is not None:
             return self.top_watchers
         return self.__fetch_top_watchers()
 
     def __fetch_top_episodes(self):
+        """Handle fetching top episodes list"""
         show_title = self.title.replace(' ', '-').lower()
         ext = 'summary.json/{}/{}'.format(trakt.api_key, show_title)
         data = self._get_(ext)
@@ -179,6 +185,7 @@ class TVShow(BaseAPI):
         return self.top_episodes
 
     def get_top_episodes(self):
+        """Return the list of top rated episodes for this :class:`TVShow`"""
         if self.top_episodes is not None:
             return self.top_episodes
         return self.__fetch_top_episodes()
@@ -192,9 +199,14 @@ class TVShow(BaseAPI):
         """Search for general information on a show"""
         from .users import User
         from .people import Person
-        ext = 'show/summary.json/{}/{}'.format(trakt.api_key,
+        ext = 'search/shows.json/{}/{}'.format(trakt.api_key,
                                                self._search_title)
-        data = self._get_(ext)
+        args = {'query': self._search_title, 'seasons': True}
+        data = self._get_(ext, args)
+        for response in data:
+            if response['title'] == self.title:
+                data = response
+                break
         for key, val in data.items():
             if key == 'ratings':
                 setattr(self, 'rating', TraktRating(val))
@@ -221,26 +233,28 @@ class TVShow(BaseAPI):
                 for genre in val:
                     slug = genre.lower().replace(' ', '-')
                     self.genres.append(Genre(genre, slug))
+            elif key == 'seasons':
+                self.seasons = []
+                sorted_val = sorted(val, key=itemgetter('season'))
+                results = [s['season'] for s in sorted_val]
+                # Special check for shows with no "Specials" season
+                if 0 not in results:
+                    self.seasons.append(TVSeason(self.title, season=0))
+                for season in sorted_val:
+                    season_num = season.get('season', 0)
+                    self.seasons.append(TVSeason(self.title, season=season_num))
             else:
                 setattr(self, key, val)
-
-    def search_season(self, season_num=None):
-        """Search for a show in the Trakt.tv API and store all seasons for this
-        show
-        """
-        try:
-            self.seasons[season_num] = TVSeason(self.title, season_num)
-        except IndexError:
-            while len(self.seasons) < season_num + 1:
-                self.seasons.append(None)
-            self.seasons[season_num] = TVSeason(self.title, season_num)
-        return self.seasons[season_num] or None
-
-    def get_season(self, season_num):
-        """Get the requested season"""
-        if season_num < 0 or season_num >= len(self.seasons):
-            raise Exception
-        return self.seasons[season_num-1]
+        # For now it looks like the API doesn't return all the data we need on
+        # search, so we'll need to do an explicit search for missing data
+        if len(self.people) == 0:
+            ext = 'show/summary.json/{}/{}'.format(trakt.api_key,
+                                                   self._search_title)
+            data = self._get_(ext)
+            people = data['people'].pop('actors', [])
+            self.people = []
+            for person in people:
+                self.people.append(Person(**person))
 
     def seen(self):
         """Mark this :class:`TVShow` as seen"""
@@ -508,3 +522,9 @@ class TVEpisode(BaseAPI):
         return {'imdb_id': self.imdb_id, 'tvdb_id': self.tvdb_id,
                 'title': self.title, 'year': self.year,
                 'episodes': [{'season': self.season, 'episode': self.episode}]}
+
+if __name__ == '__main__':
+    trakt.api_key = '888dbf16c37694fd8633f0f7e423dfc5'
+    archer = TVShow('Archer')
+    from pprint import pprint
+    pprint(dir(archer))

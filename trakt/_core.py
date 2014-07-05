@@ -61,14 +61,17 @@ class BaseAPI(object):
         self.base_url = 'http://api.trakt.tv/'
         self.logger = logging.getLogger('Trakt.API')
 
-    def _get_(self, uri):
+    def _get_(self, uri, args=None):
         """Perform a GET API call against the Trakt.tv API against *uri*
 
         :param uri: The uri extension to GET from
         """
         url = self.base_url + uri
         self.logger.debug('GET: {}'.format(url))
-        response = requests.get(url)
+        if args is None:
+            response = requests.get(url)
+        else:
+            response = requests.get(url, params=args)
         data = json.loads(response.content.decode('UTF-8', 'ignore'))
         return data
 

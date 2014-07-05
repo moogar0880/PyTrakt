@@ -1,8 +1,7 @@
 """Interfaces to all of the Movie objects offered by the Trakt.tv API"""
 import json
-import string
 import requests
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from proxy_tools import module_property
 

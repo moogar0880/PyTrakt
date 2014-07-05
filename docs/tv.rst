@@ -14,10 +14,17 @@ dismiss shows from recommendations, getting recommendations, rating a list of sh
 rating a list of episodes, getting a list of valid show genres, a list of trending
 shows, and getting a list of recently updated shows and dealing with specific
 shows, seasons, and episodes.
+
+For our first example let's start by grabbing a specific show
 ::
 
     >>> from trakt.tv import TVShow
     >>> it_crowd = TVShow('The IT Crowd')
+
+Well that was pretty painless. Ok, now let's pull some data out of our ``it_crowd``
+object
+::
+
     >>> it_crowd.people
     [<Person>: Chris O'Dowd, <Person>: Katherine Parkinson, <Person>: None,
     <Person>: Richard Ayoade, <Person>: Chris Morris, <Person>: Matt Berry, <Person>: Noel Fielding]
@@ -29,7 +36,21 @@ shows, seasons, and episodes.
     <User>: b'pavvoc', <User>: b'heartbraden', <User>: b'tressal', <User>: b'hherrera',...
     >>> it_crowd.genres
     [Genre(name='Comedy', slug='comedy')]
-    >>> s1 = it.search_season(1)
+
+Now that we've gotten some information on the show, let's start doing something
+interesting and interacting with the API via the :class:`TVShow`'s methods
+::
+
+    >>> it_crowd.add_to_library()
+    >>> it_crowd.comment('Wow, I REALLY love this show')
+    >>> it_crowd.comment('They should never have given Jen the internet.',
+                         spoiler=True, review=True)
+
+Now that we've gotten some information on the show, let's dive down and get some
+information on the show's seasons and episodes
+::
+
+    >>> s1 = it_crowd.seasons[1]
     >>> s1.episodes
     [<TVEpisode>: The IT Crowd S1E-1 Yesterday's Jam, <TVEpisode>: The IT Crowd S1E-1 Calamity Jen,
     <TVEpisode>: The IT Crowd S1E-1 Fifty-Fifty, <TVEpisode>: The IT Crowd S1E-1 The Red Door,
@@ -39,5 +60,4 @@ shows, seasons, and episodes.
     'Yesterday's Jam'
     >>> pilot.overview
     'Jen is hired as the manager Reynholm Industries although she doesn't know the first thing about computers.'
-
 

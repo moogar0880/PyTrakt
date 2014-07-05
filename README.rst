@@ -3,7 +3,8 @@ PyTrakt
 This module is designed to be a Pythonic interface to the `Trakt.tv <http://trakt.tv>`_.
 REST API. The official documentation for which can be found `here <http://trakt.tv/api-docs/>`_.
 trakt contains interfaces to all of the Trakt.tv functionality in an, ideally, easily
-scriptable fashion.
+scriptable fashion. For more information on this module's contents and example usages
+please see the `PyTrakt docs <http://pytrakt.readthedocs.org/en/latest/>`_.
 
 More information about getting started and accessing the information you thirst for
 can be found throughout the documentation below.
@@ -21,7 +22,7 @@ To install with `pip <http://www.pip-installer.org/>`_, just run this in your te
 
 Get the code
 ^^^^^^^^^^^^
-trakt is available on `GitHub <https://github.com/kennethreitz/requests>`_.
+trakt is available on `GitHub <https://github.com/moogar0880/PyTrakt>`_.
 
 You can either clone the public repository::
 
@@ -39,5 +40,4 @@ Once you have a copy of the source, you can embed it in your Python package,
 or install it into your site-packages easily::
 
     $ python setup.py install
-
 

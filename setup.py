@@ -18,7 +18,7 @@ setup(
     name='trakt',
     version=trakt.__version__,
     description=description,
-    long_description='\n\n'.join([readme, history]),
+    long_description='\n'.join([readme, history]),
     author='Jonathan Nappi',
     author_email='moogar0880@gmail.com',
     url='https://github.com/moogar0880/PyTrakt',

@@ -126,9 +126,11 @@ class Movie(BaseAPI):
         self.title = title
         self.year = int(year) if year is not None else year
         self.released_iso = self.tmdb_id = self.imdb_id = self.duration = None
-        self.url = self._comments = self.genres = None
+        self.url = self._comments = self.genres = self.certification = None
+        self.overview = None
         self.url_extension = 'search/movies/{}?query='.format(trakt.api_key)
         self._checked_in = False
+        self.images = {}
         if len(kwargs) > 0:
             self._build(kwargs)
         else:

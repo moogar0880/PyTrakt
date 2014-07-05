@@ -6,6 +6,8 @@ __author__ = 'Jon Nappi'
 
 with open('README.rst') as f:
     readme = f.read()
+with open('HISTORY.rst') as f:
+    history = f.read()
 
 packages = ['trakt']
 requires = ['requests', 'proxy_tools']
@@ -16,7 +18,7 @@ setup(
     name='trakt',
     version=trakt.__version__,
     description=description,
-    long_description=readme,
+    long_description='\n\n'.join([readme, history]),
     author='Jonathan Nappi',
     author_email='moogar0880@gmail.com',
     url='https://github.com/moogar0880/PyTrakt',

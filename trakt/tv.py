@@ -522,9 +522,3 @@ class TVEpisode(BaseAPI):
         return {'imdb_id': self.imdb_id, 'tvdb_id': self.tvdb_id,
                 'title': self.title, 'year': self.year,
                 'episodes': [{'season': self.season, 'episode': self.episode}]}
-
-if __name__ == '__main__':
-    trakt.api_key = '888dbf16c37694fd8633f0f7e423dfc5'
-    archer = TVShow('Archer')
-    from pprint import pprint
-    pprint(dir(archer))

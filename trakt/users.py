@@ -549,7 +549,7 @@ class User(BaseAPI):
     def episode_watchlist(self):
         """All :class:`TVEpisode`'s this :class:`User`'s watchlist"""
         if self._episode_watchlist is None:
-            ext = 'user/ratings/episodes.json/{}/{}/'.format(trakt.api_key,
+            ext = 'user/watchlist/episodes.json/{}/{}/'.format(trakt.api_key,
                                                              self.username)
             data = self._get_(ext)
             self._episode_watchlist = []
@@ -573,7 +573,7 @@ class User(BaseAPI):
     def show_watchlist(self):
         """All :class:`TVShow`'s this :class:`User`'s watchlist"""
         if self._show_watchlist is None:
-            ext = 'user/ratings/shows.json/{}/{}/'.format(trakt.api_key,
+            ext = 'user/watchlist/shows.json/{}/{}/'.format(trakt.api_key,
                                                           self.username)
             data = self._get_(ext)
             self._show_watchlist = []
@@ -585,7 +585,7 @@ class User(BaseAPI):
     def movie_watchlist(self):
         """All :class:`Movie`'s this :class:`User`'s watchlist"""
         if self._movie_watchlist is None:
-            ext = 'user/ratings/movies.json/{}/{}/'.format(trakt.api_key,
+            ext = 'user/watchlist/movies.json/{}/{}/'.format(trakt.api_key,
                                                            self.username)
             data = self._get_(ext)
             self._movie_watchlist = []

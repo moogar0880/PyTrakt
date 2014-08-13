@@ -1,5 +1,11 @@
 Release History
 ^^^^^^^^^^^^^^^
+0.3.4 (2014-08-12)
+++++++++++++++++++
+
+* Merged @stampedeboss changes from PR #1
+* Some small stylistic changes for consistency
+
 0.3.3 (2014-07-04)
 ++++++++++++++++++
 

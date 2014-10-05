@@ -4,7 +4,7 @@ from operator import itemgetter
 
 from proxy_tools import module_property
 
-from ._core import BaseAPI, auth_post, Genre, Comment
+from ._core import BaseAPI, auth_post, Genre, Comment, slugify
 from .community import TraktRating, TraktStats
 import trakt
 __author__ = 'Jon Nappi'
@@ -124,7 +124,7 @@ class TVShow(BaseAPI):
     def __init__(self, title='', **kwargs):
         super(TVShow, self).__init__()
         self.top_watchers = self.top_episodes = self.year = self.tvdb_id = None
-        self.imdb_id = self.genres = self.certification = None
+        self.imdb_id = self.genres = self.certification = self.slug = None
         self.network = None
         self.seasons = []
         self.people = []
@@ -190,23 +190,28 @@ class TVShow(BaseAPI):
             return self.top_episodes
         return self.__fetch_top_episodes()
 
-    @property
-    def _search_title(self):
-        """The title of this :class:`TVShow` formatted in a searchable way"""
-        return self.title.replace(' ', '-').lower()
-
     def search(self):
         """Search for general information on a show"""
         from .users import User
         from .people import Person
         ext = 'search/shows.json/{}/{}'.format(trakt.api_key,
-                                               self._search_title)
-        args = {'query': self._search_title, 'seasons': True}
-        data = self._get_(ext, args)
+                                               slugify(self.title))
+        args = {'query': slugify(self.title), 'seasons': True}
+        raw_data = data = self._get_(ext, args)
         for response in data:
+            # Should this be slugify(response['title']) == slugify(self.title)?
             if response['title'] == self.title:
                 data = response
                 break
+        if raw_data == data:
+            # If our title didn't match the search result title exactly, trust
+            # that trakt knew what we meant, and go with the first result
+            data = raw_data[0]
+
+        # Because trakt's show slugs are fairly inconsistent, this is the only
+        # truly accurate way to make sure we're using the *exactly* correct slug
+        self.slug = data['url'].split('/')[-1]
+
         for key, val in data.items():
             if key == 'ratings':
                 setattr(self, 'rating', TraktRating(val))
@@ -239,17 +244,19 @@ class TVShow(BaseAPI):
                 results = [s['season'] for s in sorted_val]
                 # Special check for shows with no "Specials" season
                 if 0 not in results:
-                    self.seasons.append(TVSeason(self.title, season=0))
+                    self.seasons.append(TVSeason(data['title'], season=0,
+                                                 slug=self.slug))
                 for season in sorted_val:
                     season_num = season.get('season', 0)
-                    self.seasons.append(TVSeason(self.title, season=season_num))
+                    self.seasons.append(TVSeason(data['title'],
+                                                 season=season_num,
+                                                 slug=self.slug))
             else:
                 setattr(self, key, val)
         # For now it looks like the API doesn't return all the data we need on
         # search, so we'll need to do an explicit search for missing data
         if len(self.people) == 0:
-            ext = 'show/summary.json/{}/{}'.format(trakt.api_key,
-                                                   self._search_title)
+            ext = 'show/summary.json/{}/{}'.format(trakt.api_key, self.slug)
             data = self._get_(ext)
             people = data['people'].pop('actors', [])
             self.people = []
@@ -287,8 +294,8 @@ class TVShow(BaseAPI):
         recent comments returned first.
         """
         from .users import User
-        ext = 'show/comments.json/{}/{}/{}'.format(trakt.api_key,
-                                                   self._search_title, 'all')
+        ext = 'show/comments.json/{}/{}/{}'.format(trakt.api_key, self.slug,
+                                                   'all')
         data = self._get_(ext)
         comments = []
         for comment in data:
@@ -298,8 +305,8 @@ class TVShow(BaseAPI):
         return comments
 
     def dismiss(self):
-        """Dismiss this movie from showing up in Movie Recommendations"""
-        dismiss_recommendation(tvdb_id=self.tvdb_id, title=self.title,
+        """Dismiss this movie from showing up in TVShow Recommendations"""
+        dismiss_recommendation(tvdb_id=self.tvdb_id, title=self.slug,
                                year=self.year)
 
     def __str__(self):
@@ -315,21 +322,23 @@ class TVShow(BaseAPI):
 
 class TVSeason(BaseAPI):
     """Container for TV Seasons"""
-    def __init__(self, show, season=1):
+    def __init__(self, show, season=1, slug=None):
         super(TVSeason, self).__init__()
         self.show = show
         self.season = season
+        self.slug = slug
         self.episodes = []
         self.tvdb_id = self.imdb_id = None
-        self.search(self.show, self.season)
+        try:
+            self.search(self.show, self.season)
+        except (ValueError, AttributeError):
+            pass
 
     def search(self, show_title, season_num):
         """Search for a tv season"""
-        ext = 'show/season.json/{}/'.format(trakt.api_key)
-        # Need to remove spaces and parentheses from show title
-        title = show_title.replace(' ', '-').replace('(', '').replace(')', '')
-        title = title.lower()
-        ext += title + '/' + str(season_num)
+        query = self.slug or slugify(show_title)
+        ext = 'show/season.json/{}/{}/{}'.format(trakt.api_key, query,
+                                                 season_num)
         data = self._get_(ext)
         for episode_data in data:
             self.episodes.append(TVEpisode(self.show, self.season,
@@ -371,7 +380,7 @@ class TVEpisode(BaseAPI):
         self.show = show
         self.season = season
         self.episode = episode_num
-        self.overview = self.title = self.year = self.tvdb_id =  None
+        self.overview = self.title = self.year = self.tvdb_id = None
         self._stats = self.imdb_id = None
         if episode_data is None and episode_num == -1:
             # Do nothing, not enough info given
@@ -380,8 +389,7 @@ class TVEpisode(BaseAPI):
             self.search(self.show, self.season, self.episode)
         else:  # episode_data != None
             for key, val in episode_data.items():
-                if key != 'episode':
-                    setattr(self, key, val)
+                setattr(self, key, val)
 
     def search(self, show, season, episode_num):
         pass

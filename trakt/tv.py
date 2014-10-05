@@ -16,8 +16,8 @@ def dismiss_recommendation(tvdb_id=None, title=None, year=None):
     """Dismiss the show matching the specified criteria from showing up in
     recommendations.
     """
-    ext = 'recommendations/shows/dismiss/{}'.format(trakt.api_key)
-    url = BaseAPI().base_url + ext
+    url = '{}recommendations/shows/dismiss/{}'.format(BaseAPI.base_url,
+                                                      trakt.api_key)
     args = {'tvdb_id': tvdb_id, 'title': title, 'year': year}
     real_args = {x: args[x] for x in args if args[x] is not None}
     auth_post(url, real_args)
@@ -43,7 +43,7 @@ def get_recommended_shows(genre=None, start_year=None, end_year=None,
             'hide_collected': hide_collected,
             'hide_watchlisted': hide_watchlisted}
     real_args = {x: args[x] for x in args if args[x] is not None}
-    response = BaseAPI()._post_(ext, real_args)
+    response = BaseAPI._post_(ext, real_args)
     shows = []
     for show in response:
         shows.append(TVShow(**show))
@@ -61,7 +61,7 @@ def rate_shows(shows, rating):
                  'year': show.year, 'rating': rating}
             show_list.append(d)
         args = {'shows': show_list}
-        BaseAPI()._post_(ext, args)
+        BaseAPI._post_(ext, args)
 
 
 def rate_episodes(episodes, rating):
@@ -76,14 +76,14 @@ def rate_episodes(episodes, rating):
                  'episode': episode.episode, 'rating': rating}
             episode_list.append(d)
         args = {'episodes': episode_list}
-        BaseAPI()._post_(ext, args)
+        BaseAPI._post_(ext, args)
 
 
 @module_property
 def genres():
     """A list of all possible :class:`Movie` Genres"""
     ext = 'genres/shows.json/{}'.format(trakt.api_key)
-    data = BaseAPI()._get_(ext)
+    data = BaseAPI._get_(ext)
     genres = []
     for genre in data:
         genres.append(Genre(genre['name'], genre['slug']))
@@ -94,7 +94,7 @@ def genres():
 def trending_shows():
     """All :class:`TVShow`'s being watched right now"""
     ext = 'shows/trending.json/{}'.format(trakt.api_key)
-    data = BaseAPI()._get_(ext)
+    data = BaseAPI._get_(ext)
     to_ret = []
     for show in data:
         title = show.get('title')
@@ -111,7 +111,7 @@ def updated_shows(timestamp=None):
     y_day = datetime.now() - timedelta(1)
     ts = timestamp or int(y_day.strftime('%s')) * 1000
     ext = 'shows/updated.json/{}/{}'.format(trakt.api_key, ts)
-    data = BaseAPI()._get_(ext)
+    data = BaseAPI._get_(ext)
     to_ret = []
     for show in data['shows']:
         title = show.get('title')

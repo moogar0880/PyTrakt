@@ -19,14 +19,14 @@ def approve_request(user_name, follow_back=False):
     """Approve a follower request from *user_name* if one exists"""
     ext = 'network/approve/{}'.format(trakt.api_key)
     args = {'user': user_name, 'follow_back': follow_back}
-    BaseAPI()._post_(ext, args)
+    BaseAPI._post_(ext, args)
 
 
 def deny_request(user_name):
     """Deny a follower request from *user_name* if one exists"""
     ext = 'network/deny/{}'.format(trakt.api_key)
     args = {'user': user_name}
-    BaseAPI()._post_(ext, args)
+    BaseAPI._post_(ext, args)
 
 
 def follow(user_name):
@@ -36,7 +36,7 @@ def follow(user_name):
     """
     ext = 'network/follow/{}'.format(trakt.api_key)
     args = {'user': user_name}
-    BaseAPI()._post_(ext, args)
+    BaseAPI._post_(ext, args)
 
 
 def unfollow(user_name):
@@ -44,7 +44,7 @@ def unfollow(user_name):
     """
     ext = 'network/unfollow/{}'.format(trakt.api_key)
     args = {'user': user_name}
-    BaseAPI()._post_(ext, args)
+    BaseAPI._post_(ext, args)
 
 
 def get_all_requests():
@@ -52,7 +52,7 @@ def get_all_requests():
     request was made. Use the approve and deny methods to manage each request.
     """
     ext = 'network/requests/{}'.format(trakt.api_key)
-    data = BaseAPI()._post_(ext)
+    data = BaseAPI._post_(ext)
     request_list = []
     for request in data:
         request_list.append(Request(**request))

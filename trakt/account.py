@@ -15,7 +15,7 @@ def create_account(username, password, email):
     """
     hex_pass = sha1(password.encode('UTF-8')).hexdigest()
     args = {'username': username, 'password': hex_pass, 'email': email}
-    url = BaseAPI().base_url + 'account/create/{}'.format(trakt.api_key)
+    url = BaseAPI.base_url + 'account/create/{}'.format(trakt.api_key)
     response = requests.post(url, data=args)
     resp_data = json.loads(response.content.decode('UTF-8'))
     return resp_data
@@ -30,7 +30,7 @@ def settings(username, password):
     """
     hex_pass = sha1(password.encode('UTF-8')).hexdigest()
     args = {'username': username, 'password': hex_pass}
-    url = BaseAPI().base_url + 'account/settings/{}'.format(trakt.api_key)
+    url = BaseAPI.base_url + 'account/settings/{}'.format(trakt.api_key)
     response = requests.post(url, data=args)
     resp_data = json.loads(response.content.decode('UTF-8'))
     return resp_data
@@ -42,7 +42,7 @@ def test(username, password):
     """
     hex_pass = sha1(password.encode('UTF-8')).hexdigest()
     args = {'username': username, 'password': hex_pass}
-    url = BaseAPI().base_url + 'account/test/{}'.format(trakt.api_key)
+    url = BaseAPI.base_url + 'account/test/{}'.format(trakt.api_key)
     response = requests.post(url, data=args)
     resp_data = json.loads(response.content.decode('UTF-8'))
     return resp_data['status'] == 'success'

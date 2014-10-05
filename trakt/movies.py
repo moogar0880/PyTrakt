@@ -17,8 +17,8 @@ def dismiss_recommendation(imdb_id=None, tmdb_id=None, title=None, year=None):
     """Dismiss the movie matching the specified criteria from showing up in
     recommendations.
     """
-    ext = 'recommendations/movies/dismiss/{}'.format(trakt.api_key)
-    url = BaseAPI().base_url + ext
+    url = '{}recommendations/movies/dismiss/{}'.format(BaseAPI.base_url,
+                                                       trakt.api_key)
     args = {'imdb_id': imdb_id, 'tmdb_id': tmdb_id, 'title': title,
             'year': year}
     real_args = {x: args[x] for x in args if args[x] is not None}
@@ -40,8 +40,7 @@ def get_recommended_movies(genre=None, start_year=None, end_year=None,
     :param hide_collected: Set to False to show movies the user has collected.
     :param hide_watchlisted: Set to False to show movies on the user's watchlist
     """
-    ext = 'recommendations/movies/{}'.format(trakt.api_key)
-    url = BaseAPI().base_url + ext
+    url = '{}recommendations/movies/{}'.format(BaseAPI.base_url, trakt.api_key)
     if isinstance(genre, Genre):
         slug = genre.slug
     else:
@@ -66,8 +65,7 @@ def rate_movies(movies, rating):
     """
     valid_ratings = ['love', 'hate', 'unrate'] + list(range(11))
     if rating in valid_ratings:
-        ext = 'rate/movies/{}'.format(trakt.api_key)
-        url = BaseAPI().base_url + ext
+        url = '{}rate/movies/{}'.format(BaseAPI.base_url, trakt.api_key)
         movie_list = []
         for movie in movies:
             d = {'imdb_id': movie.imdb_id, 'title': movie.title,
@@ -80,7 +78,7 @@ def rate_movies(movies, rating):
 @module_property
 def genres():
     """A list of all possible :class:`Movie` Genres"""
-    url = BaseAPI().base_url + '/genres/movies.json/{}'.format(trakt.api_key)
+    url = BaseAPI.base_url + '/genres/movies.json/{}'.format(trakt.api_key)
     response = requests.get(url)
     data = json.loads(response.content.decode('UTF-8'))
     genre_list = []
@@ -92,7 +90,7 @@ def genres():
 @module_property
 def trending_movies():
     """All :class:`Movie`'s being watched right now"""
-    url = BaseAPI().base_url + '/movies/trending.json/{}'.format(trakt.api_key)
+    url = BaseAPI.base_url + '/movies/trending.json/{}'.format(trakt.api_key)
     response = requests.get(url)
     data = json.loads(response.content.decode('UTF-8', 'ignore'))
     to_ret = []
@@ -108,7 +106,7 @@ def updated_movies(timestamp=None):
     method.
     """
     ts = timestamp or trakt.server_time
-    url = BaseAPI().base_url + '/movies/updated.json/{}/{}'
+    url = BaseAPI.base_url + '/movies/updated.json/{}/{}'
     url = url.format(trakt.api_key, ts)
     response = requests.get(url)
     data = json.loads(response.content.decode('UTF-8', 'ignore'))

@@ -5,7 +5,7 @@ from datetime import datetime
 
 from proxy_tools import module_property
 
-from . import BaseAPI, auth_post, Genre, Comment, __version__
+from . import BaseAPI, auth_post, Genre, Comment, __version__, slugify
 import trakt
 
 __author__ = 'Jon Nappi'
@@ -167,7 +167,7 @@ class Movie(BaseAPI):
             if key == 'genres':
                 self.genres = []
                 for genre in val:
-                    slug = genre.lower().replace(' ', '-')
+                    slug = slugify(genre)
                     self.genres.append(Genre(genre, slug))
             else:
                 setattr(self, key, val)

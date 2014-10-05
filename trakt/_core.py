@@ -20,7 +20,7 @@ __all__ = ['BaseAPI', 'server_time', 'authenticate', 'auth_post', 'Genre',
 @module_property
 def server_time():
     """Get the current timestamp (PST) from the trakt server."""
-    url = BaseAPI().base_url + 'server/time.json/{}'.format(trakt.api_key)
+    url = BaseAPI.base_url + 'server/time.json/{}'.format(trakt.api_key)
     response = requests.get(url)
     data = json.loads(response.content.decode('UTF-8'))
     return data['timestamp']
@@ -56,18 +56,17 @@ Comment = namedtuple('Comment', ['id', 'inserted', 'text', 'text_html',
 
 class BaseAPI(object):
     """Base class containing all basic functionality of a Trakt.tv API call"""
-    def __init__(self):
-        super(BaseAPI, self).__init__()
-        self.base_url = 'http://api.trakt.tv/'
-        self.logger = logging.getLogger('Trakt.API')
+    base_url = 'http://api.trakt.tv/'
+    _logger = logging.getLogger('Trakt.API')
 
-    def _get_(self, uri, args=None):
+    @classmethod
+    def _get_(cls, uri, args=None):
         """Perform a GET API call against the Trakt.tv API against *uri*
 
         :param uri: The uri extension to GET from
         """
-        url = self.base_url + uri
-        self.logger.debug('GET: {}'.format(url))
+        url = cls.base_url + uri
+        cls._logger.debug('GET: {}'.format(url))
         if args is None:
             response = requests.get(url)
         else:
@@ -75,15 +74,16 @@ class BaseAPI(object):
         data = json.loads(response.content.decode('UTF-8', 'ignore'))
         return data
 
-    def _post_(self, uri, args=None):
+    @classmethod
+    def _post_(cls, uri, args=None):
         """Perform a POST API call against the Trakt.tv API against *uri*,
         passing args
 
         :param uri: The uri extension to POST to
         :param args: The args to pass to Trakt.tv
         """
-        url = self.base_url + uri
-        self.logger.debug('POST: {}: <{}>'.format(url, args))
+        url = cls.base_url + uri
+        cls._logger.debug('POST: {}: <{}>'.format(url, args))
         response = auth_post(url, args)
         data = json.loads(response.content.decode('UTF-8', 'ignore'))
         return data

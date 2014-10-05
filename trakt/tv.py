@@ -199,8 +199,10 @@ class TVShow(BaseAPI):
         args = {'query': slugify(self.title), 'seasons': True}
         raw_data = data = self._get_(ext, args)
         for response in data:
-            # Should this be slugify(response['title']) == slugify(self.title)?
-            if response['title'] == self.title:
+            # I FEEL like this is probably a better way of validating the search
+            # results...but I can't actually tell if that's accurate or not. For
+            # now I'll leave it, but may need to change it later
+            if slugify(response['title']) == slugify(self.title):
                 data = response
                 break
         if raw_data == data:

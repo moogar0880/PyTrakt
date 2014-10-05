@@ -1,7 +1,7 @@
 """Interfaces to all of the User objects offered by the Trakt.tv API"""
 from collections import namedtuple
 
-from . import BaseAPI
+from . import BaseAPI, slugify
 from .tv import TVShow, TVSeason, TVEpisode
 from .movies import Movie
 from .calendar import UserCalendar
@@ -87,7 +87,7 @@ class UserList(BaseAPI):
         elif len(kwargs) > 0:
             self._build(kwargs)
         else:
-            self._search(self.slug or self._name.lower().replace(' ', '-'))
+            self._search(self.slug or slugify(self._name))
 
     def _build(self, data):
         """Build this object from the fields in *data*"""

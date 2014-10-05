@@ -3,18 +3,20 @@ trakt package
 """
 import json
 import logging
+import re
 import requests
 from hashlib import sha1
 from collections import namedtuple
 
 from proxy_tools import module_property
+import unicodedata
 
 from .errors import *
 
 import trakt
 __author__ = 'Jon Nappi'
 __all__ = ['BaseAPI', 'server_time', 'authenticate', 'auth_post', 'Genre',
-           'Comment']
+           'Comment', 'slugify']
 
 
 @module_property
@@ -52,6 +54,20 @@ Genre = namedtuple('Genre', ['name', 'slug'])
 Comment = namedtuple('Comment', ['id', 'inserted', 'text', 'text_html',
                                  'spoiler', 'type', 'likes', 'replies', 'user',
                                  'user_ratings'])
+
+
+def slugify(value):
+    """Converts to lowercase, removes non-word characters (alphanumerics and
+    underscores) and converts spaces to hyphens. Also strips leading and
+    trailing whitespace.
+
+    Borrowed from django.utils.text.slugify with some slight modifications
+    """
+    value = unicodedata.normalize('NFKD',
+                                  value).encode('ascii',
+                                                'ignore').decode('ascii')
+    value = re.sub('[^\w\s-]', '', value).strip().lower()
+    return re.sub('[-\s]+', '-', value)
 
 
 class BaseAPI(object):

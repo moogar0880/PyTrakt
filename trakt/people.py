@@ -22,6 +22,10 @@ class Person(BaseAPI):
     def _search(self):
         """Search for this :class:`Person` via the Trakt.tv API"""
         def formatted(name):
+            """Because actors aren't likely to have special characters in their
+            name (although they're probably more likely to than anyone else), we
+            don't need to slugify their names, just replace spaces and lower()
+            """
             return name.replace(' ', '+').lower()
 
         ext = 'search/people.json/{}?query={}'.format(trakt.api_key,

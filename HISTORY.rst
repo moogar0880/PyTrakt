@@ -1,5 +1,10 @@
 Release History
 ^^^^^^^^^^^^^^^
+0.3.6 (2015-01-15)
+++++++++++++++++++
+
+* Bug fix for the failure to process JSON API responses
+
 0.3.4 (2014-08-12)
 ++++++++++++++++++
 

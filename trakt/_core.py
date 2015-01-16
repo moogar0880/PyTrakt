@@ -1,19 +1,19 @@
 """Objects, properties, and methods to be shared across other modules in the
 trakt package
 """
+import re
 import json
 import logging
-import re
 import requests
+import unicodedata
 from hashlib import sha1
 from collections import namedtuple
 
 from proxy_tools import module_property
-import unicodedata
-
-from .errors import *
 
 import trakt
+from .errors import *
+
 __author__ = 'Jon Nappi'
 __all__ = ['BaseAPI', 'server_time', 'authenticate', 'auth_post', 'Genre',
            'Comment', 'slugify']
@@ -25,7 +25,7 @@ def server_time():
     url = BaseAPI.base_url + 'server/time.json/{}'.format(trakt.api_key)
     response = requests.get(url)
     data = json.loads(response.content.decode('UTF-8'))
-    return data['timestamp']
+    return data.get('timestamp')
 
 
 def authenticate(username, password):
@@ -41,12 +41,10 @@ def auth_post(url, kwargs=None):
     """Create a post with provided authentication"""
     if '_TRAKT_US_NAME_' not in globals() or '_TRAKT_PASS_WD_' not in globals():
         raise InvalidCredentials
-    user = globals()['_TRAKT_US_NAME_']
-    password = globals()['_TRAKT_PASS_WD_']
     kwargs = kwargs or {}
-    kwargs['username'] = user
-    kwargs['password'] = password
-    response = requests.post(url, kwargs)
+    kwargs['username'] = globals()['_TRAKT_US_NAME_']
+    kwargs['password'] = globals()['_TRAKT_PASS_WD_']
+    response = requests.post(url, json.dumps(kwargs))
     return response
 
 
@@ -72,7 +70,7 @@ def slugify(value):
 
 class BaseAPI(object):
     """Base class containing all basic functionality of a Trakt.tv API call"""
-    base_url = 'http://api.trakt.tv/'
+    base_url = 'https://api.trakt.tv/'
     _logger = logging.getLogger('Trakt.API')
 
     @classmethod
@@ -83,10 +81,7 @@ class BaseAPI(object):
         """
         url = cls.base_url + uri
         cls._logger.debug('GET: {}'.format(url))
-        if args is None:
-            response = requests.get(url)
-        else:
-            response = requests.get(url, params=args)
+        response = requests.get(url, params=args)
         data = json.loads(response.content.decode('UTF-8', 'ignore'))
         return data
 

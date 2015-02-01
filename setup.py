@@ -11,8 +11,8 @@ with open('HISTORY.rst') as f:
 
 packages = ['trakt']
 requires = ['requests', 'proxy_tools', 'requests_oauthlib']
-description = 'Pythonic abstraction layer for easier scripting of the ' \
-              'Trakt.tv REST API.'
+description = ('Pythonic abstraction layer for easier scripting of the '
+               'Trakt.tv REST API.')
 
 setup(
     name='trakt',

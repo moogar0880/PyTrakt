@@ -6,46 +6,57 @@ import json
 import logging
 import requests
 import unicodedata
-from hashlib import sha1
 from collections import namedtuple
+from requests_oauthlib import OAuth2Session
 
 from proxy_tools import module_property
 
 import trakt
-from .errors import *
 
 __author__ = 'Jon Nappi'
-__all__ = ['BaseAPI', 'server_time', 'authenticate', 'auth_post', 'Genre',
-           'Comment', 'slugify']
+__all__ = ['BaseAPI', 'server_time', 'Genre', 'Comment', 'slugify', 'HEADERS']
+
+CLIENT_ID = 'd0113f50a0c6ff4d8977427a81e34057ecd54ebfa245f481d1e45baa47129629'
+CLIENT_SECRET = '807a4162cb179d4ba95e8a8cb23c7afd4386b66ef3f9a71de692b4c94b01e1ac'
+REDIRECT_URI = 'urn:ietf:wg:oauth:2.0:oob'
+
+HEADERS = {'Content-Type': 'application/json',
+           'trakt-api-version': '2',
+           'trakt-api-key': CLIENT_ID}
+
+
+def init(username):
+    """Generate an access_token to allow the the PyTrakt application to
+    authenticate via OAuth
+
+    :param username: Your trakt.tv username
+    :return: Your OAuth access token
+    """
+    authorization_base_url = 'https://api.trakt.tv/oauth/authorize'
+    token_url = 'https://api.trakt.tv/oauth/token'
+
+    # OAuth endpoints given in the API documentation
+    oauth = OAuth2Session(CLIENT_ID, redirect_uri=REDIRECT_URI, state=None)
+
+    # Redirect user to Trakt for authorization
+    authorization_url, state = oauth.authorization_url(authorization_base_url,
+                                                       username=username)
+    print('Please go here and authorize,', authorization_url)
+
+    # Get the authorization verifier code from the callback url
+    response = input('Paste the Code returned here: ')
+
+    # Fetch, assign, and return the access token
+    oauth.fetch_token(token_url, client_secret=CLIENT_SECRET, code=response)
+    trakt.api_key = oauth.token['access_token']
+    return oauth.token['access_token']
 
 
 @module_property
 def server_time():
     """Get the current timestamp (PST) from the trakt server."""
-    url = BaseAPI.base_url + 'server/time.json/{}'.format(trakt.api_key)
-    response = requests.get(url)
-    data = json.loads(response.content.decode('UTF-8'))
-    return data.get('timestamp')
-
-
-def authenticate(username, password):
-    """Provide authentication for a Trakt.tv account"""
-    from . import account
-    if not account.test(username, password):
-        raise InvalidCredentials
-    globals()['_TRAKT_US_NAME_'] = username
-    globals()['_TRAKT_PASS_WD_'] = sha1(password.encode('UTF-8')).hexdigest()
-
-
-def auth_post(url, kwargs=None):
-    """Create a post with provided authentication"""
-    if '_TRAKT_US_NAME_' not in globals() or '_TRAKT_PASS_WD_' not in globals():
-        raise InvalidCredentials
-    kwargs = kwargs or {}
-    kwargs['username'] = globals()['_TRAKT_US_NAME_']
-    kwargs['password'] = globals()['_TRAKT_PASS_WD_']
-    response = requests.post(url, json.dumps(kwargs))
-    return response
+    uri = 'server/time.json/{}'.format(trakt.api_key)
+    return BaseAPI._get_(uri).get('timestamp', None)
 
 
 Genre = namedtuple('Genre', ['name', 'slug'])
@@ -81,7 +92,9 @@ class BaseAPI(object):
         """
         url = cls.base_url + uri
         cls._logger.debug('GET: {}'.format(url))
-        response = requests.get(url, params=args)
+        HEADERS['Authorization'] = 'Bearer {}'.format(trakt.api_key)
+        cls._logger.debug('HEAD: {}'.format(HEADERS))
+        response = requests.get(url, params=args, headers=HEADERS)
         data = json.loads(response.content.decode('UTF-8', 'ignore'))
         return data
 
@@ -94,7 +107,8 @@ class BaseAPI(object):
         :param args: The args to pass to Trakt.tv
         """
         url = cls.base_url + uri
-        cls._logger.debug('POST: {}: <{}>'.format(url, args))
-        response = auth_post(url, args)
+        cls._logger.debug('POST: {}: [{}] <{}>'.format(url, HEADERS, args))
+        HEADERS['Authorization'] = 'Bearer {}'.format(trakt.api_key)
+        response = requests.post(url, json.dumps(args), headers=HEADERS)
         data = json.loads(response.content.decode('UTF-8', 'ignore'))
         return data

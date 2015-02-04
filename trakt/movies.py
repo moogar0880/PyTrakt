@@ -19,7 +19,7 @@ def dismiss_recommendation(title):
     """Dismiss the movie matching the specified criteria from showing up in
     recommendations.
     """
-    return 'recommendations/movies/{title}'.format(title=title)
+    return 'recommendations/movies/{title}'.format(title=slugify(title))
 
 
 @get
@@ -97,7 +97,7 @@ class Movie(BaseAPI):
         if len(kwargs) > 0:
             self._build(kwargs)
         else:
-            self._build(self._get_(self.ext_full))
+            self._get()
 
     @classmethod
     def search(cls, title):
@@ -106,6 +106,14 @@ class Movie(BaseAPI):
         :param title: The title to search for
         """
         return search(title, search_type='movie')
+
+    @get
+    def _get(self):
+        """Handle getting this :class:`Movie`'s data from trakt and building
+        our attributes from the returned data
+        """
+        data = yield self.ext_full
+        self._build(data)
 
     def _build(self, data):
         """Build this :class:`Movie` object with the data in *data*"""

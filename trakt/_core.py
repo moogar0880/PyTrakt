@@ -77,7 +77,10 @@ def get(f):
         HEADERS['Authorization'] = 'Bearer {}'.format(trakt.api_key)
         response = requests.get(url, headers=HEADERS)
         json_data = json.loads(response.content.decode('UTF-8', 'ignore'))
-        return generator.send(json_data)
+        try:
+            return generator.send(json_data)
+        except StopIteration:
+            return None
     return inner
 
 
@@ -114,7 +117,10 @@ def post(f):
         HEADERS['Authorization'] = 'Bearer {}'.format(trakt.api_key)
         response = requests.post(url, params=args, headers=HEADERS)
         json_data = json.loads(response.content.decode('UTF-8', 'ignore'))
-        return generator.send(json_data)
+        try:
+            return generator.send(json_data)
+        except StopIteration:
+            return None
     return inner
 
 
@@ -136,7 +142,10 @@ def put(f):
         HEADERS['Authorization'] = 'Bearer {}'.format(trakt.api_key)
         response = requests.put(url, params=args, headers=HEADERS)
         json_data = json.loads(response.content.decode('UTF-8', 'ignore'))
-        return generator.send(json_data)
+        try:
+            return generator.send(json_data)
+        except StopIteration:
+            return None
     return inner
 
 

@@ -1,6 +1,7 @@
 """Interfaces to all of the TV objects offered by the Trakt.tv API"""
 from . import BaseAPI
 import trakt
+
 __author__ = 'Jon Nappi'
 __all__ = ['Community', 'TraktRating', 'TraktStats']
 

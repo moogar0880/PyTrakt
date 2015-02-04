@@ -1,29 +1,11 @@
 """Interfaces to all of the Calendar objects offered by the Trakt.tv API"""
-from datetime import datetime
-
 from . import BaseAPI
 from .tv import TVEpisode
+from .utils import now, airs_date
 
 __author__ = 'Jon Nappi'
 __all__ = ['Calendar', 'PremiereCalendar', 'ShowCalendar', 'SeasonCalendar',
            'MovieCalendar']
-
-
-def _now_date_format():
-    """Get the current day in the format expected by each :class:`Calendar`"""
-    now = datetime.now()
-    year = now.year
-    month = now.month if now.month > 10 else '0{}'.format(now.month)
-    day = now.day if now.day > 10 else '0{}'.format(now.day)
-    return '{}-{}-{}'.format(year, month, day)
-
-
-def airs_date(airs_at):
-    """convert a timestamp of the form '2015-02-01T05:30:00.000-08:00' to a
-    python datetime object (with time zone information removed)
-    """
-    convertable = '-'.join(airs_at.split('-')[:-1])
-    return datetime.strptime(convertable, '%Y-%m-%dT%H:%M:%S.000')
 
 
 class Calendar(BaseAPI):
@@ -40,7 +22,7 @@ class Calendar(BaseAPI):
             days
         """
         super(Calendar, self).__init__()
-        self.date = date or _now_date_format()
+        self.date = date or now()
         self.days = days
         self.url = None
         self._episodes = []

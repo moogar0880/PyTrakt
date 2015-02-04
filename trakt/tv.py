@@ -2,25 +2,22 @@
 from datetime import datetime, timedelta
 from operator import itemgetter
 
-from proxy_tools import module_property
-
-from ._core import BaseAPI, auth_post, Genre, Comment, slugify
+from ._core import BaseAPI, Genre, Comment, Airs, delete
+from .utils import slugify, extract_ids
 from .community import TraktRating, TraktStats
 import trakt
+
 __author__ = 'Jon Nappi'
 __all__ = ['trending_shows', 'TVShow', 'TVEpisode', 'TVSeason', 'rate_shows',
            'get_recommended_shows', 'dismiss_recommendation', 'rate_episodes']
 
 
-def dismiss_recommendation(tvdb_id=None, title=None, year=None):
+@delete
+def dismiss_recommendation(title=None):
     """Dismiss the show matching the specified criteria from showing up in
     recommendations.
     """
-    url = '{}recommendations/shows/dismiss/{}'.format(BaseAPI.base_url,
-                                                      trakt.api_key)
-    args = {'tvdb_id': tvdb_id, 'title': title, 'year': year}
-    real_args = {x: args[x] for x in args if args[x] is not None}
-    auth_post(url, real_args)
+    return 'recommendations/shows/{title}'.format(title=title)
 
 
 def get_recommended_shows(genre=None, start_year=None, end_year=None,
@@ -38,7 +35,7 @@ def get_recommended_shows(genre=None, start_year=None, end_year=None,
     :param hide_collected: Set to False to show shows the user has collected.
     :param hide_watchlisted: Set to False to show shows on the user's watchlist
     """
-    ext = 'recommendations/shows/{}'.format(trakt.api_key)
+    ext = 'recommendations/shows'
     args = {'genre': genre, 'start_year': start_year, 'end_year': end_year,
             'hide_collected': hide_collected,
             'hide_watchlisted': hide_watchlisted}
@@ -79,30 +76,36 @@ def rate_episodes(episodes, rating):
         BaseAPI._post_(ext, args)
 
 
-@module_property
 def genres():
     """A list of all possible :class:`Movie` Genres"""
-    ext = 'genres/shows.json/{}'.format(trakt.api_key)
-    data = BaseAPI._get_(ext)
-    genres = []
-    for genre in data:
-        genres.append(Genre(genre['name'], genre['slug']))
-    return genres
+    data = BaseAPI._get_('genres/shows')
+    return [Genre(g['name'], g['slug']) for g in data]
 
 
-@module_property
+def popular_shows():
+    show_data = BaseAPI._get_('shows/popular')
+    shows = []
+    for show in show_data:
+        data = show.get('ids', {})
+        extract_ids(data)
+        data['year'] = show['year']
+        shows.append(TVShow(show['title'], **data))
+    return shows
+
+
 def trending_shows():
     """All :class:`TVShow`'s being watched right now"""
-    ext = 'shows/trending.json/{}'.format(trakt.api_key)
-    data = BaseAPI._get_(ext)
+    data = BaseAPI._get_('shows/trending')
     to_ret = []
     for show in data:
-        title = show.get('title')
-        to_ret.append(TVShow(title, **show))
+        show_data = show.pop('show')
+        ids = show_data.pop('ids')
+        extract_ids(ids)
+        show_data['watchers'] = show.get('watchers')
+        to_ret.append(TVShow(**show_data))
     return to_ret
 
 
-@module_property
 def updated_shows(timestamp=None):
     """All :class:`TVShow`'s updated since *timestamp* (PST). To establish a
     baseline timestamp, you can use the server/time method. It's recommended to
@@ -110,7 +113,7 @@ def updated_shows(timestamp=None):
     """
     y_day = datetime.now() - timedelta(1)
     ts = timestamp or int(y_day.strftime('%s')) * 1000
-    ext = 'shows/updated.json/{}/{}'.format(trakt.api_key, ts)
+    ext = 'shows/updates/{}'.format(ts)
     data = BaseAPI._get_(ext)
     to_ret = []
     for show in data['shows']:
@@ -124,16 +127,25 @@ class TVShow(BaseAPI):
     def __init__(self, title='', **kwargs):
         super(TVShow, self).__init__()
         self.top_watchers = self.top_episodes = self.year = self.tvdb_id = None
-        self.imdb_id = self.genres = self.certification = self.slug = None
+        self.imdb_id = self.genres = self.certification = None
         self.network = None
         self.seasons = []
         self.people = []
         self.title = title
+        self.slug = slugify(self.title)
         if len(kwargs) > 0:
             for key, val in kwargs.items():
                 setattr(self, key, val)
         else:
-            self.search()
+            ext = '/shows/{}?extended=full'.format(self.slug)
+            data = self._get_(ext)
+            data['first_aired'] = airs_date(data['first_aired'])
+            ids = data.pop('ids')
+            process_ids(ids)
+            data.update(ids)
+            data['airs'] = Airs(**data['airs'])
+            for key, val in data.items():
+                setattr(self, key, val)
 
     def cancel_watching(self):
         """Cancel watching the current show"""

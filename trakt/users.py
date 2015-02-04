@@ -1,11 +1,13 @@
 """Interfaces to all of the User objects offered by the Trakt.tv API"""
 from collections import namedtuple
 
-from . import BaseAPI, slugify
+from . import BaseAPI
 from .tv import TVShow, TVSeason, TVEpisode
+from .utils import slugify
 from .movies import Movie
-from .calendar import UserCalendar
+# from .calendar import UserCalendar
 import trakt
+
 __author__ = 'Jon Nappi'
 __all__ = ['User', 'UserList']
 
@@ -237,7 +239,7 @@ class User(BaseAPI):
             for key, val in kwargs.items():
                 setattr(self, key, val)
         else:
-            ext = 'user/profile.json/{}/{}'.format(trakt.api_key, self.username)
+            ext = 'users/{}'.format(self.username)
             data = self._get_(ext)
             for key, val in data.items():
                 if key == 'watched':

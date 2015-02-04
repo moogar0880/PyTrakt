@@ -1,6 +1,7 @@
 """Interfaces to all of the People objects offered by the Trakt.tv API"""
 from . import BaseAPI
 import trakt
+
 __author__ = 'Jon Nappi'
 __all__ = ['Person']
 
@@ -11,7 +12,7 @@ class Person(BaseAPI):
         super(Person, self).__init__()
         self.name = name
         self.url = self.biography = self.birthplace = self.tmdb_id = None
-        self.birthday = None
+        self.birthday = self.job = self.character = None
         self.images = []
         if len(kwargs) > 0:
             for key, val in kwargs.items():

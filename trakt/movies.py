@@ -5,7 +5,7 @@ from .sync import (Scrobbler, comment, rate, add_to_history,
                    remove_from_history, add_to_watchlist,
                    remove_from_watchlist, add_to_collection,
                    remove_from_collection, search)
-from ._core import BaseAPI, Alias, Comment, Genre, Translation, get, delete
+from ._core import Alias, Comment, Genre, Translation, get, delete
 from .utils import slugify, now, extract_ids
 from .people import Person
 
@@ -75,7 +75,7 @@ def updated_movies(timestamp=None):
 Release = namedtuple('Release', ['country', 'certification', 'release_date'])
 
 
-class Movie(BaseAPI):
+class Movie(object):
     """A Class representing a Movie object"""
     def __init__(self, title, year=None, **kwargs):
         super(Movie, self).__init__()
@@ -92,7 +92,7 @@ class Movie(BaseAPI):
         self.votes = self.language = self.available_translations = None
         self.genres = self.certification = None
         self._comments = self._images = self._aliases = self._people = None
-        self._ratings = None
+        self._ratings = self._releases = self._translations = None
 
         if len(kwargs) > 0:
             self._build(kwargs)
@@ -137,15 +137,16 @@ class Movie(BaseAPI):
         return self.ext + '?extended=images'
 
     @property
+    @get
     def aliases(self):
         """A list of :class:`Alias` objects representing all of the other
         titles that this :class:`Movie` is known by, and the countries where
         they go by their alternate titles
         """
         if self._aliases is None:
-            data = self._get_(self.ext + '/aliases')
+            data = yield (self.ext + '/aliases')
             self._aliases = [Alias(**alias) for alias in data]
-        return self._aliases
+        yield self._aliases
 
     @property
     def cast(self):
@@ -153,19 +154,19 @@ class Movie(BaseAPI):
         return [p for p in self.people if getattr(p, 'character')]
 
     @property
+    @get
     def comments(self):
         """All comments (shouts and reviews) for this :class:`Movie`. Most
         recent comments returned first.
         """
         # TODO (jnappi) Pagination
         from .users import User
-        ext = self.ext + '/comments'
-        data = self._get_(ext)
+        data = yield (self.ext + '/comments')
         self._comments = []
         for com in data:
             user = User(**com.pop('user'))
             self._comments.append(Comment(user=user, **com))
-        return self._comments
+        yield self._comments
 
     @property
     def crew(self):
@@ -183,20 +184,22 @@ class Movie(BaseAPI):
         }}
 
     @property
+    @get
     def images(self):
         """All of the artwork associated with this :class:`Movie`"""
         if self._images is None:
-            data = self._get_(self.images_ext)
+            data = yield self.images_ext
             self._images = data.get('images')
-        return self._images
+        yield self._images
 
     @property
+    @get
     def people(self):
         """A :const:`list` of all of the :class:`People` involved in this
         :class:`Movie`, including both cast and crew
         """
         if self._people is None:
-            data = self._get_(self.ext + '/people')
+            data = yield (self.ext + '/people')
             crew = data.get('crew')
             cast = []
             for c in data.get('cast'):
@@ -211,35 +214,36 @@ class Movie(BaseAPI):
                     person.update({'job': department.get('job')})
                     _crew.append(Person(**person))
             self._people = cast + _crew
-        return self._people
+        yield self._people
 
     @property
+    @get
     def ratings(self):
         """Ratings (between 0 and 10) and distribution for a movie."""
         if self._ratings is None:
-            self._ratings = self._get_(self.ext + '/ratings')
-        return self._ratings
+            self._ratings = yield (self.ext + '/ratings')
+        yield self._ratings
 
     @property
+    @get
     def related(self):
         """The top 10 :class:`Movie`'s related to this :class:`Movie`"""
-        ext = self.ext + '/related'
-        data = self._get_(ext)
+        data = yield (self.ext + '/related')
         movies = []
         for movie in data:
             movies.append(Movie(**movie))
-        return movies
+        yield movies
 
     @property
+    @get
     def watching_now(self):
         """A list of all :class:`User`'s watching a movie."""
         from .users import User
-        ext = self.ext + '/watching'
-        data = self._get_(ext)
+        data = yield self.ext + '/watching'
         users = []
         for user in data:
             users.append(User(**user))
-        return users
+        yield users
 
     def add_to_library(self):
         """Add this :class:`Movie` to your library."""
@@ -258,6 +262,7 @@ class Movie(BaseAPI):
         """Dismiss this movie from showing up in Movie Recommendations"""
         dismiss_recommendation(title=self.title)
 
+    @get
     def get_releases(self, country_code='us'):
         """Returns all :class:`Release`s for a movie including country,
         certification, and release date.
@@ -265,9 +270,10 @@ class Movie(BaseAPI):
         :param country_code: The 2 character country code to search from
         :return: a :const:`list` of :class:`Release` objects
         """
-        ext = self.ext + '/releases/{cc}'.format(cc=country_code)
-        data = self._get_(ext)
-        return [Release(**release) for release in data]
+        if self._releases is None:
+            data = yield self.ext + '/releases/{cc}'.format(cc=country_code)
+            self._releases = [Release(**release) for release in data]
+        yield self._releases
 
     def get_translations(self, country_code='us'):
         """Returns all :class:`Translation`s for a movie, including language
@@ -276,9 +282,13 @@ class Movie(BaseAPI):
         :param country_code: The 2 character country code to search from
         :return: a :const:`list` of :class:`Translation` objects
         """
-        ext = self.ext + '/translations/{cc}'.format(cc=country_code)
-        data = self._get_(ext)
-        return [Translation(**translation) for translation in data]
+        if self._translations is None:
+            data = yield self.ext + '/translations/{cc}'.format(
+                cc=country_code
+            )
+            self._translations = [Translation(**translation)
+                                  for translation in data]
+        return self._translations
 
     def mark_as_seen(self, watched_at=None):
         """Add this :class:`Movie`, watched outside of trakt, to your library.

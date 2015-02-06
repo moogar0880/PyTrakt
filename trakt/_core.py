@@ -72,8 +72,11 @@ def get(f):
     def inner(*args, **kwargs):
         generator = f(*args, **kwargs)
         uri = next(generator)
+        if not isinstance(uri, (str, tuple)):
+            # Allow properties to safetly yield arbitrary data
+            return uri
         url = BASE_URL + uri
-        logging.debug('GET: {}'.format(url))
+        logging.debug('GET: %s', url)
         HEADERS['Authorization'] = 'Bearer {}'.format(trakt.api_key)
         response = requests.get(url, headers=HEADERS)
         json_data = json.loads(response.content.decode('UTF-8', 'ignore'))
@@ -93,7 +96,7 @@ def delete(f):
     def inner(*args, **kwargs):
         uri = f(*args, **kwargs)
         url = BASE_URL + uri
-        logging.debug('DELETE: {}'.format(url))
+        logging.debug('DELETE: %s', url)
         HEADERS['Authorization'] = 'Bearer {}'.format(trakt.api_key)
         requests.delete(url, headers=HEADERS)
     return inner
@@ -113,7 +116,7 @@ def post(f):
         generator = f(*args, **kwargs)
         uri, data = next(generator)
         url = BASE_URL + uri
-        logging.debug('POST: {}'.format(url))
+        logging.debug('POST: %s', url)
         HEADERS['Authorization'] = 'Bearer {}'.format(trakt.api_key)
         response = requests.post(url, params=args, headers=HEADERS)
         json_data = json.loads(response.content.decode('UTF-8', 'ignore'))
@@ -138,7 +141,7 @@ def put(f):
         generator = f(*args, **kwargs)
         uri, data = next(generator)
         url = BASE_URL + uri
-        logging.debug('PUT: {}'.format(url))
+        logging.debug('PUT: %s', url)
         HEADERS['Authorization'] = 'Bearer {}'.format(trakt.api_key)
         response = requests.put(url, params=args, headers=HEADERS)
         json_data = json.loads(response.content.decode('UTF-8', 'ignore'))

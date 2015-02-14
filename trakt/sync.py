@@ -59,8 +59,9 @@ def search(query, search_type='movie'):
     valids = ('movie', 'show', 'episode', 'person', 'list')
     if search_type not in valids:
         raise ValueError('search_type must be one of {}'.format(valids))
-    return 'search?query={query}&type={type}'.format(query=query,
-                                                     type=search_type)
+    data = yield 'search?query={query}&type={type}'.format(query=query,
+                                                           type=search_type)
+    yield data
 
 
 class Scrobbler(BaseAPI):

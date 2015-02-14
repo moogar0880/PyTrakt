@@ -333,9 +333,7 @@ class Movie(object):
         return Scrobbler(self.to_json(), progress, app_version, app_date)
 
     def to_json(self):
-        return {'movie': {
-            'title': self.title, 'year': self.year, 'ids': self.ids
-        }}
+        return {'movie': {'title': self.title}}
 
     def __str__(self):
         """String representation of a :class:`Movie`"""

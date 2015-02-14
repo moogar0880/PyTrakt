@@ -1,67 +1,58 @@
 """Interfaces to all of the User objects offered by the Trakt.tv API"""
 from collections import namedtuple
 
-from . import BaseAPI
 from .tv import TVShow, TVSeason, TVEpisode
 from .utils import slugify
+from ._core import get, post, delete
 from .movies import Movie
-# from .calendar import UserCalendar
 import trakt
 
 __author__ = 'Jon Nappi'
-__all__ = ['User', 'UserList']
+__all__ = ['User', 'UserList', 'Request']
 
 
-Request = namedtuple('Request', ['username', 'protected', 'full_name',
-                                 'requested', 'vip', 'url', 'avatar', 'joined',
-                                 'about', 'location', 'age', 'gender'])
+class Request(namedtuple('Request', ['id', 'requested_at', 'user'])):
+    __slots__ = ()
+
+    @post
+    def approve(self):
+        yield 'users/requests/{id}'.format(id=self.id)
+
+    @delete
+    def deny(self):
+        yield 'users/requests/{id}'.format(id=self.id)
 
 
-def approve_request(user_name, follow_back=False):
-    """Approve a follower request from *user_name* if one exists"""
-    ext = 'network/approve/{}'.format(trakt.api_key)
-    args = {'user': user_name, 'follow_back': follow_back}
-    BaseAPI._post_(ext, args)
-
-
-def deny_request(user_name):
-    """Deny a follower request from *user_name* if one exists"""
-    ext = 'network/deny/{}'.format(trakt.api_key)
-    args = {'user': user_name}
-    BaseAPI._post_(ext, args)
-
-
+@post
 def follow(user_name):
     """Follow a user with *user_name*. If the user has a protected profile, the
     follow request will be in a pending state. If they have a public profile,
     they will be followed immediately.
     """
-    ext = 'network/follow/{}'.format(trakt.api_key)
-    args = {'user': user_name}
-    BaseAPI._post_(ext, args)
+    yield 'users/{username}/follow'.format(username=user_name)
 
 
-def unfollow(user_name):
-    """Unfollow a user you're currently following with a username of *user_name*
-    """
-    ext = 'network/unfollow/{}'.format(trakt.api_key)
-    args = {'user': user_name}
-    BaseAPI._post_(ext, args)
-
-
+@get
 def get_all_requests():
     """Get a list of all follower requests including the timestamp when the
     request was made. Use the approve and deny methods to manage each request.
     """
-    ext = 'network/requests/{}'.format(trakt.api_key)
-    data = BaseAPI._post_(ext)
+    data = yield 'users/requests'
     request_list = []
     for request in data:
+        request['user'] = User(**request.pop('user'))
         request_list.append(Request(**request))
     return request_list
 
 
-class UserList(BaseAPI):
+@delete
+def unfollow(user_name):
+    """Unfollow a user you're currently following with a username of *user_name*
+    """
+    yield 'users/{username}/follow'.format(username=user_name)
+
+
+class UserList(object):
     """A list created by a Trakt.tv :class:`User`"""
     def __init__(self, user_name, name=None, slug=None, description=None,
                  privacy='private', show_numbers=True, allow_shouts=True,
@@ -222,7 +213,7 @@ class UserList(BaseAPI):
         self._post_(url, args)
 
 
-class User(BaseAPI):
+class User(object):
     """A Trakt.tv User"""
     def __init__(self, username, **kwargs):
         super(User, self).__init__()
@@ -235,10 +226,13 @@ class User(BaseAPI):
         self._show_ratings = self._movie_ratings = None
         self._episode_watchlist = self._show_watchlist = None
         self._movie_watchlist = None
+
+        self._settings = None
+
         if len(kwargs) > 0:
-            for key, val in kwargs.items():
-                setattr(self, key, val)
+            self._build(kwargs)
         else:
+            self._get()
             ext = 'users/{}'.format(self.username)
             data = self._get_(ext)
             for key, val in data.items():
@@ -246,6 +240,12 @@ class User(BaseAPI):
                     pass
                 else:
                     setattr(self, '_' + key, val)
+
+    def _get(self):
+        pass
+
+    def _build(self, data):
+        pass
 
     def follow(self):
         """Follow this :class:`User`"""
@@ -255,29 +255,12 @@ class User(BaseAPI):
         """Unfollow this :class:`User` if you already follow them"""
         unfollow(self.username)
 
-    def get_calendar(self, date=None, days=None):
-        """Get this :class:`User`'s :class:`UserCalendar` for the specified date
-        range.
-        """
-        self._calendar = UserCalendar(self.username, date=date, days=days)
-        return self._calendar
-
     def get_list(self, title):
         """Get the specified list from this :class:`User`. Protected
         :class:`User`'s won't return any data unless you are friends. To view
         your own private lists, you will need to authenticate as yourself.
         """
         return UserList(self.username, title)
-
-    @property
-    def calendar(self):
-        """A :class:`UserCalendar` of this :class:`Users` shows that are airing
-        during the next 7 days. Protected users won't return any data
-        unless you are friends.
-        """
-        if self._calendar is None:
-            self._calendar = UserCalendar(self.username)
-        return self._calendar
 
     @property
     def last_activity(self):

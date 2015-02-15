@@ -1,5 +1,25 @@
 PyTrakt
 =======
+.. image:: https://travis-ci.org/moogar0880/PyTrakt.svg
+    :target: https://travis-ci.org/moogar0880/PyTrakt
+    :alt: Travis CI Status
+
+.. image:: https://pypip.in/d/trakt/badge.svg?style=flat
+    :target: https://pypi.python.org/pypi/trakt/
+    :alt: Downloads
+
+.. image:: https://pypip.in/v/trakt/badge.svg?style=flat
+    :target: https://pypi.python.org/pypi/trakt/
+    :alt: Latest Version
+
+.. image:: https://pypip.in/py_versions/trakt/badge.svg?style=flat
+    :target: https://pypi.python.org/pypi/trakt/
+    :alt: Supported Python versions
+
+.. image:: https://pypip.in/license/trakt/badge.svg?style=flat
+    :target: https://pypi.python.org/pypi/trakt/
+    :alt: License
+
 This module is designed to be a Pythonic interface to the `Trakt.tv <http://trakt.tv>`_.
 REST API. The official documentation for which can be found `here <http://trakt.tv/api-docs/>`_.
 trakt contains interfaces to all of the Trakt.tv functionality in an, ideally, easily

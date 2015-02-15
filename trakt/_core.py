@@ -1,100 +1,154 @@
 """Objects, properties, and methods to be shared across other modules in the
 trakt package
 """
-import re
 import json
 import logging
 import requests
-import unicodedata
-from hashlib import sha1
+from functools import wraps
 from collections import namedtuple
-
-from proxy_tools import module_property
+from requests_oauthlib import OAuth2Session
 
 import trakt
-from .errors import *
 
 __author__ = 'Jon Nappi'
-__all__ = ['BaseAPI', 'server_time', 'authenticate', 'auth_post', 'Genre',
-           'Comment', 'slugify']
+__all__ = ['Airs', 'Alias', 'Comment', 'Genre', 'Translation', 'get', 'delete',
+           'post', 'put']
+
+BASE_URL = 'https://api.trakt.tv/'
+CLIENT_ID = 'd0113f50a0c6ff4d8977427a81e34057ecd54ebfa245f481d1e45baa47129629'
+CLIENT_SECRET = ('807a4162cb179d4ba95e8a8cb23c7afd4386b66ef3f9a71de692b4c94b01'
+                 'e1ac')
+REDIRECT_URI = 'urn:ietf:wg:oauth:2.0:oob'
+
+HEADERS = {'Content-Type': 'application/json',
+           'trakt-api-version': '2',
+           'trakt-api-key': CLIENT_ID}
 
 
-@module_property
-def server_time():
-    """Get the current timestamp (PST) from the trakt server."""
-    url = BaseAPI.base_url + 'server/time.json/{}'.format(trakt.api_key)
-    response = requests.get(url)
-    data = json.loads(response.content.decode('UTF-8'))
-    return data.get('timestamp')
+def init(username):
+    """Generate an access_token to allow the the PyTrakt application to
+    authenticate via OAuth
 
-
-def authenticate(username, password):
-    """Provide authentication for a Trakt.tv account"""
-    from . import account
-    if not account.test(username, password):
-        raise InvalidCredentials
-    globals()['_TRAKT_US_NAME_'] = username
-    globals()['_TRAKT_PASS_WD_'] = sha1(password.encode('UTF-8')).hexdigest()
-
-
-def auth_post(url, kwargs=None):
-    """Create a post with provided authentication"""
-    if '_TRAKT_US_NAME_' not in globals() or '_TRAKT_PASS_WD_' not in globals():
-        raise InvalidCredentials
-    kwargs = kwargs or {}
-    kwargs['username'] = globals()['_TRAKT_US_NAME_']
-    kwargs['password'] = globals()['_TRAKT_PASS_WD_']
-    response = requests.post(url, json.dumps(kwargs))
-    return response
-
-
-Genre = namedtuple('Genre', ['name', 'slug'])
-Comment = namedtuple('Comment', ['id', 'inserted', 'text', 'text_html',
-                                 'spoiler', 'type', 'likes', 'replies', 'user',
-                                 'user_ratings'])
-
-
-def slugify(value):
-    """Converts to lowercase, removes non-word characters (alphanumerics and
-    underscores) and converts spaces to hyphens. Also strips leading and
-    trailing whitespace.
-
-    Borrowed from django.utils.text.slugify with some slight modifications
+    :param username: Your trakt.tv username
+    :return: Your OAuth access token
     """
-    value = unicodedata.normalize('NFKD',
-                                  value).encode('ascii',
-                                                'ignore').decode('ascii')
-    value = re.sub('[^\w\s-]', '', value).strip().lower()
-    return re.sub('[-\s]+', '-', value)
+    authorization_base_url = 'https://api.trakt.tv/oauth/authorize'
+    token_url = 'https://api.trakt.tv/oauth/token'
+
+    # OAuth endpoints given in the API documentation
+    oauth = OAuth2Session(CLIENT_ID, redirect_uri=REDIRECT_URI, state=None)
+
+    # Redirect user to Trakt for authorization
+    authorization_url, state = oauth.authorization_url(authorization_base_url,
+                                                       username=username)
+    print('Please go here and authorize,', authorization_url)
+
+    # Get the authorization verifier code from the callback url
+    response = input('Paste the Code returned here: ')
+
+    # Fetch, assign, and return the access token
+    oauth.fetch_token(token_url, client_secret=CLIENT_SECRET, code=response)
+    trakt.api_key = oauth.token['access_token']
+    return oauth.token['access_token']
 
 
-class BaseAPI(object):
-    """Base class containing all basic functionality of a Trakt.tv API call"""
-    base_url = 'https://api.trakt.tv/'
-    _logger = logging.getLogger('Trakt.API')
+Airs = namedtuple('Airs', ['day', 'time', 'timezone'])
+Alias = namedtuple('Alias', ['title', 'country'])
+Genre = namedtuple('Genre', ['name', 'slug'])
+Comment = namedtuple('Comment', ['id', 'parent_id', 'created_at', 'comment',
+                                 'spoiler', 'review', 'replies', 'user',
+                                 'likes'])
+Translation = namedtuple('Translation', ['title', 'overview', 'tagline',
+                                         'language'])
 
-    @classmethod
-    def _get_(cls, uri, args=None):
-        """Perform a GET API call against the Trakt.tv API against *uri*
 
-        :param uri: The uri extension to GET from
-        """
-        url = cls.base_url + uri
-        cls._logger.debug('GET: {}'.format(url))
-        response = requests.get(url, params=args)
-        data = json.loads(response.content.decode('UTF-8', 'ignore'))
-        return data
+def get(f):
+    """Perform a HTTP GET request using the provided uri yielded from the *f*
+    co-routine. The processed JSON results are then sent back to the co-routine
+    for post-processing, the results of which are then returned
 
-    @classmethod
-    def _post_(cls, uri, args=None):
-        """Perform a POST API call against the Trakt.tv API against *uri*,
-        passing args
+    :param f: Generator co-routine that yields uri, args, and processed results
+    :return: The results of the generator co-routine
+    """
+    @wraps(f)
+    def inner(*args, **kwargs):
+        generator = f(*args, **kwargs)
+        uri = next(generator)
+        if not isinstance(uri, (str, tuple)):
+            # Allow properties to safetly yield arbitrary data
+            return uri
+        url = BASE_URL + uri
+        logging.debug('GET: %s', url)
+        HEADERS['Authorization'] = 'Bearer {}'.format(trakt.api_key)
+        response = requests.get(url, headers=HEADERS)
+        json_data = json.loads(response.content.decode('UTF-8', 'ignore'))
+        try:
+            return generator.send(json_data)
+        except StopIteration:
+            return None
+    return inner
 
-        :param uri: The uri extension to POST to
-        :param args: The args to pass to Trakt.tv
-        """
-        url = cls.base_url + uri
-        cls._logger.debug('POST: {}: <{}>'.format(url, args))
-        response = auth_post(url, args)
-        data = json.loads(response.content.decode('UTF-8', 'ignore'))
-        return data
+
+def delete(f):
+    """Perform an HTTP DELETE request using the provided uri
+
+    :param f: Function that returns a uri to delete to
+    """
+    @wraps(f)
+    def inner(*args, **kwargs):
+        uri = f(*args, **kwargs)
+        url = BASE_URL + uri
+        logging.debug('DELETE: %s', url)
+        HEADERS['Authorization'] = 'Bearer {}'.format(trakt.api_key)
+        requests.delete(url, headers=HEADERS)
+    return inner
+
+
+def post(f):
+    """Perform an HTTP POST request using the provided uri and optional args
+    yielded from the *f* co-routine. The processed JSON results are then sent
+    back to the co-routine for post-processing, the results of which are then
+    returned
+
+    :param f: Generator co-routine that yields uri, args, and processed results
+    :return: The results of the generator co-routine
+    """
+    @wraps(f)
+    def inner(*args, **kwargs):
+        generator = f(*args, **kwargs)
+        uri, data = next(generator)
+        url = BASE_URL + uri
+        logging.debug('POST: %s', url)
+        HEADERS['Authorization'] = 'Bearer {}'.format(trakt.api_key)
+        response = requests.post(url, params=data, headers=HEADERS)
+        json_data = json.loads(response.content.decode('UTF-8', 'ignore'))
+        try:
+            return generator.send(json_data)
+        except StopIteration:
+            return None
+    return inner
+
+
+def put(f):
+    """Perform an HTTP PUT request using the provided uri and optional args
+    yielded from the *f* co-routine. The processed JSON results are then sent
+    back to the co-routine for post-processing, the results of which are then
+    returned
+
+    :param f: Generator co-routine that yields uri, args, and processed results
+    :return: The results of the generator co-routine
+    """
+    @wraps(f)
+    def inner(*args, **kwargs):
+        generator = f(*args, **kwargs)
+        uri, data = next(generator)
+        url = BASE_URL + uri
+        logging.debug('PUT: %s', url)
+        HEADERS['Authorization'] = 'Bearer {}'.format(trakt.api_key)
+        response = requests.put(url, params=args, headers=HEADERS)
+        json_data = json.loads(response.content.decode('UTF-8', 'ignore'))
+        try:
+            return generator.send(json_data)
+        except StopIteration:
+            return None
+    return inner

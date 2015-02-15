@@ -1,43 +1,59 @@
 """Interfaces to all of the People objects offered by the Trakt.tv API"""
-from . import BaseAPI
-import trakt
+from ._core import get
+from trakt.utils import slugify, extract_ids
+
 __author__ = 'Jon Nappi'
 __all__ = ['Person']
 
 
-class Person(BaseAPI):
+class Person(object):
     """A Class representing a trakt.tv Person such as an Actor or Director"""
     def __init__(self, name, **kwargs):
         super(Person, self).__init__()
         self.name = name
-        self.url = self.biography = self.birthplace = self.tmdb_id = None
-        self.birthday = None
-        self.images = []
+        self.biography = self.birthplace = self.tmdb_id = self.birthday = None
+        self.job = self.character = self._images = None
+
         if len(kwargs) > 0:
-            for key, val in kwargs.items():
-                setattr(self, key, val)
+            self._build(kwargs)
         else:
-            self._search()
+            self._get()
 
-    def _search(self):
-        """Search for this :class:`Person` via the Trakt.tv API"""
-        def formatted(name):
-            """Because actors aren't likely to have special characters in their
-            name (although they're probably more likely to than anyone else), we
-            don't need to slugify their names, just replace spaces and lower()
-            """
-            return name.replace(' ', '+').lower()
+    @property
+    def ext(self):
+        return 'people/{id}'.format(id=slugify(self.name))
 
-        ext = 'search/people.json/{}?query={}'.format(trakt.api_key,
-                                                      formatted(self.name))
-        data = self._get_(ext)
-        for person in data:
-            if person['name'] == self.name:
-                for key, val in person.items():
-                    setattr(self, key, val)
-                break
+    @property
+    def ext_full(self):
+        return self.ext + '?extended=full'
+
+    @property
+    def images_ext(self):
+        return self.ext + '?extended=images'
+
+    @get
+    def _get(self):
+        data = yield self.ext_full
+        self._build(data)
+
+    def _build(self, data):
+        extract_ids(data)
+        for key, val in data.items():
+            if hasattr(self, '_' + key):
+                setattr(self, '_' + key, val)
+            else:
+                setattr(self, key, val)
+
+    @property
+    @get
+    def images(self):
+        """All of the artwork associated with this :class:`Person`"""
+        if self._images is None:
+            data = yield self.images_ext
+            self._images = data.get('images')
+        yield self._images
 
     def __str__(self):
         """String representation of a :class:`Person`"""
-        return '<Person>: {}'.format(self.name)
+        return '<Person>: {0}'.format(self.name)
     __repr__ = __str__

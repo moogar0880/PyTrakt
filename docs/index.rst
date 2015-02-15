@@ -57,7 +57,6 @@ including example usages.
 
    getstarted.rst
    errors.rst
-   account.rst
    calendar.rst
    movies.rst
    people.rst

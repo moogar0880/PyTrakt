@@ -1,338 +1,325 @@
 """Interfaces to all of the Movie objects offered by the Trakt.tv API"""
-import json
-import requests
-from datetime import datetime
+from collections import namedtuple
 
-from proxy_tools import module_property
-
-from . import BaseAPI, auth_post, Genre, Comment, __version__, slugify
-import trakt
+from .sync import (Scrobbler, comment, rate, add_to_history,
+                   remove_from_history, add_to_watchlist,
+                   remove_from_watchlist, add_to_collection,
+                   remove_from_collection, search)
+from ._core import Alias, Comment, Genre, Translation, get, delete
+from .utils import slugify, now, extract_ids
+from .people import Person
 
 __author__ = 'Jon Nappi'
 __all__ = ['Movie', 'updated_movies', 'rate_movies', 'dismiss_recommendation',
-           'get_recommended_movies']
+           'get_recommended_movies', 'genres', 'trending_movies']
 
 
-def dismiss_recommendation(imdb_id=None, tmdb_id=None, title=None, year=None):
+@delete
+def dismiss_recommendation(title):
     """Dismiss the movie matching the specified criteria from showing up in
     recommendations.
     """
-    url = '{}recommendations/movies/dismiss/{}'.format(BaseAPI.base_url,
-                                                       trakt.api_key)
-    args = {'imdb_id': imdb_id, 'tmdb_id': tmdb_id, 'title': title,
-            'year': year}
-    real_args = {x: args[x] for x in args if args[x] is not None}
-    auth_post(url, real_args)
+    return 'recommendations/movies/{title}'.format(title=slugify(title))
 
 
-def get_recommended_movies(genre=None, start_year=None, end_year=None,
-                           hide_collected=True, hide_watchlisted=True):
+@get
+def get_recommended_movies():
     """Get a list of :class:`Movie`'s recommended based on your watching
     history and your friends. Results are returned with the top recommendation
     first.
-
-    :param genre: Genre slug to filter by. See movies.genres for a list of valid
-        genres.
-    :param start_year: 4 digit year to filter movies released in this year or
-        later.
-    :param end_year: 4 digit year to filter movies released in this year or
-        earlier.
-    :param hide_collected: Set to False to show movies the user has collected.
-    :param hide_watchlisted: Set to False to show movies on the user's watchlist
     """
-    url = '{}recommendations/movies/{}'.format(BaseAPI.base_url, trakt.api_key)
-    if isinstance(genre, Genre):
-        slug = genre.slug
-    else:
-        slug = genre
-    args = {'genre': slug, 'start_year': start_year, 'end_year': end_year,
-            'hide_collected': hide_collected,
-            'hide_watchlisted': hide_watchlisted}
-    real_args = {x: args[x] for x in args if args[x] is not None}
-    response = auth_post(url, real_args)
-    data = json.loads(response.content.decode('UTF-8', 'ignore'))
+    data = yield 'recommendations/movies'
     movies = []
     for movie in data:
+        extract_ids(movie)
         movies.append(Movie(**movie))
-    return movies
+    yield movies
 
 
-def rate_movies(movies, rating):
-    """Apply *rating* to all :class:`Movie`'s in *movies*
-
-    :param movies: A `list` of :class:`Movie` objects to rate
-    :param rating: The rating to apply to *movies*
-    """
-    valid_ratings = ['love', 'hate', 'unrate'] + list(range(11))
-    if rating in valid_ratings:
-        url = '{}rate/movies/{}'.format(BaseAPI.base_url, trakt.api_key)
-        movie_list = []
-        for movie in movies:
-            d = {'imdb_id': movie.imdb_id, 'title': movie.title,
-                 'year': movie.year, 'rating': rating}
-            movie_list.append(d)
-        args = {'movies': movie_list}
-        auth_post(url, args)
-
-
-@module_property
+@get
 def genres():
     """A list of all possible :class:`Movie` Genres"""
-    url = BaseAPI.base_url + '/genres/movies.json/{}'.format(trakt.api_key)
-    response = requests.get(url)
-    data = json.loads(response.content.decode('UTF-8'))
-    genre_list = []
-    for genre in data:
-        genre_list.append(Genre(genre['name'], genre['slug']))
-    return genre_list
+    data = yield 'genres/movies'
+    yield [Genre(g['name'], g['slug']) for g in data]
 
 
-@module_property
+@get
 def trending_movies():
     """All :class:`Movie`'s being watched right now"""
-    url = BaseAPI.base_url + '/movies/trending.json/{}'.format(trakt.api_key)
-    response = requests.get(url)
-    data = json.loads(response.content.decode('UTF-8', 'ignore'))
+    data = yield '/movies/trending'
     to_ret = []
     for movie in data:
-        to_ret.append(Movie(**movie))
-    return to_ret
+        watchers = movie.pop('watchers')
+        to_ret.append(Movie(watchers=watchers, **movie.pop('movie')))
+    yield to_ret
 
 
+@get
 def updated_movies(timestamp=None):
     """Returns all movies updated since a timestamp. The server time is in PST.
     To establish a baseline timestamp, you can use the server/time method. It's
     recommended to store the timestamp so you can be efficient in using this
     method.
     """
-    ts = timestamp or trakt.server_time
-    url = BaseAPI.base_url + '/movies/updated.json/{}/{}'
-    url = url.format(trakt.api_key, ts)
-    response = requests.get(url)
-    data = json.loads(response.content.decode('UTF-8', 'ignore'))
+    ts = timestamp or now()
+    data = yield 'movies/updates/{start_date}'.format(start_date=ts)
     to_ret = []
-    for movie in data['movies']:
-        to_ret.append(Movie(**movie))
-    return to_ret
+    for movie in data:
+        mov = movie.pop('movie')
+        extract_ids(mov)
+        mov.update({'updated_at': movie.pop('updated_at')})
+        to_ret.append(Movie(**mov))
+    yield to_ret
 
 
-class Movie(BaseAPI):
+Release = namedtuple('Release', ['country', 'certification', 'release_date'])
+
+
+class Movie(object):
     """A Class representing a Movie object"""
     def __init__(self, title, year=None, **kwargs):
         super(Movie, self).__init__()
         self.title = title
         self.year = int(year) if year is not None else year
-        self.released_iso = self.tmdb_id = self.imdb_id = self.duration = None
-        self.url = self._comments = self.genres = self.certification = None
-        self.overview = None
-        self.url_extension = 'search/movies/{}?query='.format(trakt.api_key)
-        self._checked_in = False
-        self.images = {}
+        if self.year is not None:
+            self.slug = slugify('-'.join([self.title, str(self.year)]))
+        else:
+            self.slug = slugify(self.title)
+
+        self.released = self.tmdb_id = self.imdb_id = self.duration = None
+        self.trakt_id = self.tagline = self.overview = self.runtime = None
+        self.updated_at = self.trailer = self.homepage = self.rating = None
+        self.votes = self.language = self.available_translations = None
+        self.genres = self.certification = None
+        self._comments = self._images = self._aliases = self._people = None
+        self._ratings = self._releases = self._translations = None
+
         if len(kwargs) > 0:
             self._build(kwargs)
         else:
-            self._search(self.title)
+            self._get()
 
-    def _search(self, title):
+    @classmethod
+    def search(cls, title):
         """Perform a search for the specified *title*
 
         :param title: The title to search for
         """
-        query = title.replace(' ', '%20')
-        ext = self.url_extension + query
-        data = self._get_(ext)
-        if data is not None and self.year is not None:
-            for movie in data:
-                title = movie['title'].lower()
-                if movie['year'] == self.year and title == self.title.lower():
-                    data = movie
-                    break
-            if isinstance(data, list):
-                data = data[0]
-        elif data is not None and self.year is None:
-            data = data[0]
-        if data is not None and data != []:
-            self._build(data)
-        try:
-            release = getattr(self, 'released')
-            release = float(release)
-            utc = datetime.utcfromtimestamp(release)
-            self.released_iso = str(utc).replace(' ', 'T')
-        except AttributeError:
-            pass
+        return search(title, search_type='movie')
+
+    @get
+    def _get(self):
+        """Handle getting this :class:`Movie`'s data from trakt and building
+        our attributes from the returned data
+        """
+        data = yield self.ext_full
+        self._build(data)
 
     def _build(self, data):
         """Build this :class:`Movie` object with the data in *data*"""
+        extract_ids(data)
         for key, val in data.items():
-            if key == 'genres':
-                self.genres = []
-                for genre in val:
-                    slug = slugify(genre)
-                    self.genres.append(Genre(genre, slug))
+            if hasattr(self, '_' + key):
+                setattr(self, '_' + key, val)
             else:
                 setattr(self, key, val)
 
-    def checkin(self, venue_id=None, venue_name=None, facebook=False,
-                twitter=False, tumblr=False, path=False):
-        """Check into this :class:`Movie` on Trakt.tv. Think of this method as
-        in between a seen and a scrobble. After checking in, Trakt will
-        automatically display it as watching then switch over to watched status
-        once the duration has elapsed.
-
-        :param venue_id: Foursquare venue ID
-        :param venue_name: Custom venue name for display purposes.
-        :param facebook: Flag to share on Facebook
-        :param twitter: Flag to share on Twitter
-        :param tumblr: Flag to share on tumblr
-        :param path: Flag to share on path?
-        """
-        ext = 'movie/checkin/{}'.format(trakt.api_key)
-        share = {'facebook': facebook, 'twitter': twitter, 'tumblr': tumblr,
-                 'path': path}
-        args = {'app_version': __version__, 'app_date': 'June 4 2011',
-                'share': share, 'venue_id': venue_id, 'venue_name': venue_name}
-        for key, val in self._generic_json.items():
-            args[key] = val
-        real_args = {x: args[x] for x in args if args[x] is not None}
-        self._post_(ext, real_args)
-
-    def cancel_checkin(self):
-        """Notify trakt that the current user is no longer watching this
-        :class:`Movie`
-        """
-        ext = 'movie/cancelcheckin/{}'.format(trakt.api_key)
-        self._post_(ext)
-
-    def cancel_watching(self):
-        """Notify trakt that the current user has stopped watching this
-        :class:`Movie`
-        """
-        ext = 'movie/cancelwatching/{}'.format(trakt.api_key)
-        self._post_(ext)
-
-    def comment(self, comment, spoiler=False, review=False):
-        """Add a comment (shout or review) to this :class:`Move` on trakt."""
-        ext = '/comment/episode/{}'.format(trakt.api_key)
-        args = {'title': self.title, 'year': self.year, 'comment': comment,
-                'spoiler': spoiler, 'review': review}
-        if self.tmdb_id == '' or self.tmdb_id is None:
-            args['imdb_id'] = self.imdb_id
-        else:
-            args['tmdb_id'] = self.tmdb_id
-        self._post_(ext, args)
-
-    def dismiss(self):
-        """Dismiss this movie from showing up in Movie Recommendations"""
-        dismiss_recommendation(imdb_id=self.imdb_id, tmdb_id=self.tmdb_id,
-                               title=self.title, year=self.year)
-
-    def add_to_library(self):
-        """Add this :class:`Movie` to your library."""
-        ext = 'movie/library/{}'.format(trakt.api_key)
-        args = self._generic_json
-        del args['duration']
-        real_args = {'movies': [args]}
-        self._post_(ext, real_args)
-
-    def remove_from_library(self):
-        """Remove this :class:`Movie` from your library."""
-        ext = 'movie/unlibrary/{}'.format(trakt.api_key)
-        args = self._generic_json
-        del args['duration']
-        real_args = {'movies': [args]}
-        self._post_(ext, real_args)
-
-    def add_to_watchlist(self):
-        """Add this :class:`Movie` to your watchlist"""
-        ext = 'movie/watchlist/{}'.format(trakt.api_key)
-        args = {'movies': [{'imdb_id': self.imdb_id, 'title': self.title,
-                            'year': self.year}]}
-        self._post_(ext, args)
-
-    def start_watching(self, progress, media_center_version, media_center_date):
-        """Notify trakt that the current user has started watching this
-        :class:`Movie`.
-
-        :param progress: % progress, integer 0-100. It is recommended to call
-            the watching API every 15 minutes, then call the scrobble API near
-            the end of the movie to lock it in.
-        :param media_center_version: Version number of the media center, be as
-            specific as you can including nightly build number, etc. Used to
-            help debug your plugin.
-        :param media_center_date: Build date of the media center. Used to help
-            debug your plugin.
-        """
-        ext = 'movie/watching/{}'.format(trakt.api_key)
-        args = {'progress': progress, 'media_center_date': media_center_date,
-                'media_center_version': media_center_version,
-                'plugin_version': __version__}
-        for key, val in self._generic_json.items():
-            args[key] = val
-        real_args = {x: args[x] for x in args if args[x] is not None}
-        self._post_(ext, real_args)
+    @property
+    def ext(self):
+        """Base uri to retrieve basic information about this :class:`Movie`"""
+        return 'movies/{slug}'.format(slug=self.slug)
 
     @property
+    def ext_full(self):
+        """Uri to retrieve all information about this :class:`Movie`"""
+        return self.ext + '?extended=full'
+
+    @property
+    def images_ext(self):
+        """Uri to retrieve additional image information"""
+        return self.ext + '?extended=images'
+
+    @property
+    @get
+    def aliases(self):
+        """A list of :class:`Alias` objects representing all of the other
+        titles that this :class:`Movie` is known by, and the countries where
+        they go by their alternate titles
+        """
+        if self._aliases is None:
+            data = yield (self.ext + '/aliases')
+            self._aliases = [Alias(**alias) for alias in data]
+        yield self._aliases
+
+    @property
+    def cast(self):
+        """All of the cast members that worked on this :class:`Movie`"""
+        return [p for p in self.people if getattr(p, 'character')]
+
+    @property
+    @get
     def comments(self):
         """All comments (shouts and reviews) for this :class:`Movie`. Most
         recent comments returned first.
         """
+        # TODO (jnappi) Pagination
         from .users import User
-        trakt_title = self.url.split('/')[-1]
-        ext = 'movie/comments.json/{}/{}'.format(trakt.api_key, trakt_title)
-        data = self._get_(ext)
+        data = yield (self.ext + '/comments')
         self._comments = []
-        for comment in data:
-            user = User(comment.pop('user'))
-            self._comments.append(Comment(user=user, **comment))
-        return self._comments
+        for com in data:
+            user = User(**com.pop('user'))
+            self._comments.append(Comment(user=user, **com))
+        yield self._comments
 
     @property
+    def crew(self):
+        """All of the crew members that worked on this :class:`Movie`"""
+        return [p for p in self.people if getattr(p, 'job')]
+
+    @property
+    def ids(self):
+        """Accessor to the trakt, imdb, and tmdb ids, as well as the trakt.tv
+        slug
+        """
+        return {'ids': {
+            'trakt': self.trakt_id, 'slug': self.slug, 'imdb': self.imdb_id,
+            'tmdb': self.tmdb_id
+        }}
+
+    @property
+    @get
+    def images(self):
+        """All of the artwork associated with this :class:`Movie`"""
+        if self._images is None:
+            data = yield self.images_ext
+            self._images = data.get('images')
+        yield self._images
+
+    @property
+    @get
+    def people(self):
+        """A :const:`list` of all of the :class:`People` involved in this
+        :class:`Movie`, including both cast and crew
+        """
+        if self._people is None:
+            data = yield (self.ext + '/people')
+            crew = data.get('crew')
+            cast = []
+            for c in data.get('cast'):
+                person = c.pop('person')
+                character = c.pop('character')
+                cast.append(Person(character=character, **person))
+
+            _crew = []
+            for key in crew:
+                for department in crew.get(key):  # lists
+                    person = department.get('person')
+                    person.update({'job': department.get('job')})
+                    _crew.append(Person(**person))
+            self._people = cast + _crew
+        yield self._people
+
+    @property
+    @get
+    def ratings(self):
+        """Ratings (between 0 and 10) and distribution for a movie."""
+        if self._ratings is None:
+            self._ratings = yield (self.ext + '/ratings')
+        yield self._ratings
+
+    @property
+    @get
     def related(self):
         """The top 10 :class:`Movie`'s related to this :class:`Movie`"""
-        ext = 'movie/related.format/{}/{}/hidewatched'.format(trakt.api_key,
-                                                              self.title)
-        response = self._post_(ext)
-        data = json.loads(response.content.decode('UTF-8'))
+        data = yield (self.ext + '/related')
         movies = []
         for movie in data:
             movies.append(Movie(**movie))
-        return movies
+        yield movies
 
-    def mark_as_seen(self, last_played=None):
-        """Add this :class:`Movie`, watched outside of trakt, to your library."""
-        ext = 'movie/seen/{}'.format(trakt.api_key)
-        args = self._generic_json
-        del args['duration']
-        if last_played is not None:
-            args['last_played'] = last_played
-        real_args = {'movies': [args]}
-        self._post_(ext, real_args)
+    @property
+    @get
+    def watching_now(self):
+        """A list of all :class:`User`'s watching a movie."""
+        from .users import User
+        data = yield self.ext + '/watching'
+        users = []
+        for user in data:
+            users.append(User(**user))
+        yield users
+
+    def add_to_library(self):
+        """Add this :class:`Movie` to your library."""
+        add_to_collection(self)
+    add_to_collection = add_to_library
+
+    def add_to_watchlist(self):
+        """Add this :class:`Movie` to your watchlist"""
+        add_to_watchlist(self)
+
+    def comment(self, comment_body, spoiler=False, review=False):
+        """Add a comment (shout or review) to this :class:`Move` on trakt."""
+        comment(self, comment_body, spoiler, review)
+
+    def dismiss(self):
+        """Dismiss this movie from showing up in Movie Recommendations"""
+        dismiss_recommendation(title=self.title)
+
+    @get
+    def get_releases(self, country_code='us'):
+        """Returns all :class:`Release`s for a movie including country,
+        certification, and release date.
+
+        :param country_code: The 2 character country code to search from
+        :return: a :const:`list` of :class:`Release` objects
+        """
+        if self._releases is None:
+            data = yield self.ext + '/releases/{cc}'.format(cc=country_code)
+            self._releases = [Release(**release) for release in data]
+        yield self._releases
+
+    def get_translations(self, country_code='us'):
+        """Returns all :class:`Translation`s for a movie, including language
+        and translated values for title, tagline and overview.
+
+        :param country_code: The 2 character country code to search from
+        :return: a :const:`list` of :class:`Translation` objects
+        """
+        if self._translations is None:
+            data = yield self.ext + '/translations/{cc}'.format(
+                cc=country_code
+            )
+            self._translations = [Translation(**translation)
+                                  for translation in data]
+        yield self._translations
+
+    def mark_as_seen(self, watched_at=None):
+        """Add this :class:`Movie`, watched outside of trakt, to your library.
+        """
+        add_to_history(self, watched_at)
 
     def mark_as_unseen(self):
         """Remove this :class:`Movie`, watched outside of trakt, from your
         library.
         """
-        ext = 'movie/unseen/{}'.format(trakt.api_key)
-        args = self._generic_json
-        del args['duration']
-        real_args = {'movies': [args]}
-        self._post_(ext, real_args)
+        remove_from_history(self)
 
     def rate(self, rating):
         """Rate this :class:`Movie` on trakt. Depending on the current users
         settings, this may also send out social updates to facebook, twitter,
         tumblr, and path.
         """
-        valid_ratings = ['love', 'hate', 'unrate'] + list(range(11))
-        if rating in valid_ratings:
-            ext = 'rate/movie/{}'.format(trakt.api_key)
-            args = {'rating': rating}
-            for key, val in self._generic_json.items():
-                if key != 'duration':
-                    args[key] = val
-            self._post_(ext, args)
+        rate(self, rating)
 
-    def scrobble(self, progress, media_center_version, media_center_date):
+    def remove_from_library(self):
+        """Remove this :class:`Movie` from your library."""
+        remove_from_collection(self)
+    remove_from_collection = remove_from_library
+
+    def remove_from_watchlist(self):
+        remove_from_watchlist(self)
+
+    def scrobble(self, progress, app_version, app_date):
         """Notify trakt that the current user has finished watching a movie.
         This commits this :class:`Movie` to the current users profile. You
         should use movie/watching prior to calling this method.
@@ -340,69 +327,16 @@ class Movie(BaseAPI):
         :param progress: % progress, integer 0-100. It is recommended to call
             the watching API every 15 minutes, then call the scrobble API near
             the end of the movie to lock it in.
-        :param media_center_version: Version number of the media center, be as
-            specific as you can including nightly build number, etc. Used to
-            help debug your plugin.
-        :param media_center_date: Build date of the media center. Used to help
-            debug your plugin.
+        :param app_version: Version number of the media center, be as specific
+            as you can including nightly build number, etc. Used to help debug
+            your plugin.
+        :param app_date: Build date of the media center. Used to help debug
+            your plugin.
         """
-        ext = 'movie/scrobble/{}'.format(trakt.api_key)
-        args = {'progress': progress, 'media_center_date': media_center_date,
-                'media_center_version': media_center_version,
-                'plugin_version': __version__}
-        for key, val in self._generic_json.items():
-            args[key] = val
-        real_args = {x: args[x] for x in args if args[x] is not None}
-        self._post_(ext, real_args)
+        return Scrobbler(self.to_json(), progress, app_version, app_date)
 
-    def watching(self, progress, media_center_version, media_center_date):
-        """Check into this :class:`Movie` on Trakt.tv. Think of this method as
-        in between a seen and a scrobble. After checking in, Trakt will
-        automatically display it as watching then switch over to watched status
-        once the duration has elapsed.
-
-        :param progress: % progress, integer 0-100. It is recommended to call
-            the watching API every 15 minutes, then call the scrobble API near
-            the end of the movie to lock it in.
-        :param media_center_version: Version number of the media center, be as
-            specific as you can including nightly build number, etc. Used to
-            help debug your plugin.
-        :param media_center_date: Build date of the media center. Used to help
-            debug your plugin.
-        """
-        ext = 'movie/checkin/{}'.format(trakt.api_key)
-        args = {'progress': progress, 'media_center_date': media_center_date,
-                'media_center_version': media_center_version,
-                'plugin_version': __version__}
-        for key, val in self._generic_json.items():
-            args[key] = val
-        real_args = {x: args[x] for x in args if args[x] is not None}
-        self._post_(ext, real_args)
-
-    @property
-    def watching_now(self):
-        """A list of all :class:`User`'s watching a movie."""
-        from .users import User
-        ext = 'movie/watchingnow.json/{}/{}'.format(trakt.api_key, self.imdb_id)
-        data = self._post_(ext)
-        users = []
-        for user in data:
-            users.append(User(**user))
-        return users
-
-    @property
-    def _list_json(self):
-        """The JSON representation of this :class:`Movie` needed for adding it
-        into a :class:`UserList`
-        """
-        return {'type': 'movie', 'imdb_id': self.imdb_id, 'title': self.title,
-                'year': self.year}
-
-    @property
-    def _generic_json(self):
-        """"""
-        return {'imdb_id': self.imdb_id, 'title': self.title, 'year': self.year,
-                'duration': self.duration}
+    def to_json(self):
+        return {'movie': {'title': self.title}}
 
     def __str__(self):
         """String representation of a :class:`Movie`"""

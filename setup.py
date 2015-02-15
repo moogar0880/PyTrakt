@@ -8,11 +8,12 @@ with open('README.rst') as f:
     readme = f.read()
 with open('HISTORY.rst') as f:
     history = f.read()
+with open('requirements.txt') as f:
+    requires = [line.strip() for line in f if line.strip()]
 
 packages = ['trakt']
-requires = ['requests', 'proxy_tools']
-description = 'Pythonic abstraction layer for easier scripting of the ' \
-              'Trakt.tv REST API.'
+description = ('Pythonic abstraction layer for easier scripting of the '
+               'Trakt.tv REST API.')
 
 setup(
     name='trakt',
@@ -24,6 +25,7 @@ setup(
     url='https://github.com/moogar0880/PyTrakt',
     packages=packages,
     install_requires=requires,
+    license='Apache 2.0',
     zip_safe=False,
     classifiers=(
         'Development Status :: 5 - Production/Stable',

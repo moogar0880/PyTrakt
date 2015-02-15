@@ -1,226 +1,153 @@
 """Interfaces to all of the User objects offered by the Trakt.tv API"""
 from collections import namedtuple
 
-from . import BaseAPI, slugify
-from .tv import TVShow, TVSeason, TVEpisode
+from .tv import TVShow, TVEpisode
+from .utils import slugify, extract_ids
+from ._core import get, post, delete
 from .movies import Movie
-from .calendar import UserCalendar
-import trakt
+from .people import Person
+
 __author__ = 'Jon Nappi'
-__all__ = ['User', 'UserList']
+__all__ = ['User', 'UserList', 'Request', 'follow', 'get_all_requests',
+           'unfollow']
 
 
-Request = namedtuple('Request', ['username', 'protected', 'full_name',
-                                 'requested', 'vip', 'url', 'avatar', 'joined',
-                                 'about', 'location', 'age', 'gender'])
+class Request(namedtuple('Request', ['id', 'requested_at', 'user'])):
+    __slots__ = ()
+
+    @post
+    def approve(self):
+        yield 'users/requests/{id}'.format(id=self.id)
+
+    @delete
+    def deny(self):
+        yield 'users/requests/{id}'.format(id=self.id)
 
 
-def approve_request(user_name, follow_back=False):
-    """Approve a follower request from *user_name* if one exists"""
-    ext = 'network/approve/{}'.format(trakt.api_key)
-    args = {'user': user_name, 'follow_back': follow_back}
-    BaseAPI._post_(ext, args)
-
-
-def deny_request(user_name):
-    """Deny a follower request from *user_name* if one exists"""
-    ext = 'network/deny/{}'.format(trakt.api_key)
-    args = {'user': user_name}
-    BaseAPI._post_(ext, args)
-
-
+@post
 def follow(user_name):
     """Follow a user with *user_name*. If the user has a protected profile, the
     follow request will be in a pending state. If they have a public profile,
     they will be followed immediately.
     """
-    ext = 'network/follow/{}'.format(trakt.api_key)
-    args = {'user': user_name}
-    BaseAPI._post_(ext, args)
+    yield 'users/{username}/follow'.format(username=user_name)
 
 
-def unfollow(user_name):
-    """Unfollow a user you're currently following with a username of *user_name*
-    """
-    ext = 'network/unfollow/{}'.format(trakt.api_key)
-    args = {'user': user_name}
-    BaseAPI._post_(ext, args)
-
-
+@get
 def get_all_requests():
     """Get a list of all follower requests including the timestamp when the
     request was made. Use the approve and deny methods to manage each request.
     """
-    ext = 'network/requests/{}'.format(trakt.api_key)
-    data = BaseAPI._post_(ext)
+    data = yield 'users/requests'
     request_list = []
     for request in data:
+        request['user'] = User(**request.pop('user'))
         request_list.append(Request(**request))
-    return request_list
+    yield request_list
 
 
-class UserList(BaseAPI):
+@delete
+def unfollow(user_name):
+    """Unfollow a user you're currently following with a username of *user_name*
+    """
+    yield 'users/{username}/follow'.format(username=user_name)
+
+
+class UserList(namedtuple('UserList', ['name', 'description', 'privacy',
+                                       'display_numbers', 'allow_comments',
+                                       'updated_at', 'item_count', 'likes',
+                                       'trakt', 'slug', 'creator'])):
     """A list created by a Trakt.tv :class:`User`"""
-    def __init__(self, user_name, name=None, slug=None, description=None,
-                 privacy='private', show_numbers=True, allow_shouts=True,
-                 **kwargs):
-        super(UserList, self).__init__()
-        self.username = user_name
-        self._name = name
-        self._description = description
-        self._privacy = privacy
-        self._show_numbers = show_numbers
-        self._allow_shouts = allow_shouts
-        self.slug = slug
-        self.url = None
-        self.items = []
-        # If there was no slug passed in but there was a name, we know we're
-        # creating a new UserList
-        if slug is None and name is not None:
-            ext = 'lists/add/{}'.format(trakt.api_key)
-            args = {'name': self._name, 'description': self._description,
-                    'privacy': self._privacy, 'show_numbers': self._show_numbers,
-                    'allow_shouts': self._allow_shouts}
-            real_args = {x: args[x] for x in args if args[x] is not None}
-            response = self._post_(ext, real_args)
-            self._build(response)
-        elif len(kwargs) > 0:
-            self._build(kwargs)
-        else:
-            self._search(self.slug or slugify(self._name))
 
-    def _build(self, data):
-        """Build this object from the fields in *data*"""
-        private = ('name', 'description', 'privacy', 'show_numbers',
-                   'allow_shouts')
-        for key, val in data.items():
-            if key in private:
-                setattr(self, '_' + key, val)
-            else:
-                setattr(self, key, val)
+    def __init__(self, *args, **kwargs):
+        super(UserList, self).__init__(*args, **kwargs)
+        self._items = list()
 
-    def _search(self, slug):
-        """Search for an existing UserList"""
-        ext = '/user/list.json/{}/{}/{}'.format(trakt.api_key, self.username,
-                                                slug)
-        data = self._get_(ext)
-        for key, val in data.items():
-            if key != 'items':
-                setattr(self, key, val)
-            else:
-                self.items = []
-                for item in val:
-                    item_type = item.get('type')
-                    for item_key, item_val in item.items():
-                        if item_type == 'movie':
-                            movie_data = item_val['movie']
-                            title = movie_data.get('title', None)
-                            self.items.append(Movie(title, **movie_data))
-                        elif item_type == 'show':
-                            show_data = item_val['show']
-                            title = show_data.get('title', None)
-                            self.items.append(TVShow(title, **show_data))
+    def __iter__(self, *args, **kwargs):
+        """Iterate over the items in this user list"""
+        return self._items.__iter__(*args, **kwargs)
 
-    def add_items(self, items):
+    @classmethod
+    @post
+    def create(cls, name, creator, description=None, privacy='private',
+               display_numbers=False, allow_comments=True):
+        """Create a new custom class:`UserList`. *name* is the only required
+        field, but the other info is recommended.
+
+        :param name: Name of the list.
+        :param description:	Description of this list.
+        :param privacy:	Valid values are 'private', 'friends', or 'public'
+        :param display_numbers: Bool, should each item be numbered?
+        :param allow_comments: Bool, are comments allowed?
+        """
+        args = {'name': name, 'privacy': privacy,
+                'display_numbers': display_numbers,
+                'allow_comments': allow_comments}
+        if description is not None:
+            args['description'] = description
+        data = yield 'users/{user}/lists'.format(user=creator), args
+        extract_ids(data)
+        yield UserList(creator=creator, **data)
+
+    @classmethod
+    @get
+    def get(cls, title, creator):
+        """Returns a single custom :class:`UserList`
+
+        :param title: Name of the list.
+        """
+        data = yield 'users/{user}/lists/{id}'.format(user=creator,
+                                                      id=slugify(title))
+        extract_ids(data)
+        yield UserList(creator=creator, **data)
+
+    @post
+    def add_items(self, *items):
         """Add *items* to this :class:`UserList`, where items is an iterable"""
-        items_list = []
-        trakt_types = (TVShow, TVSeason, TVEpisode, Movie)
-        for item in items:
-            if isinstance(item, dict):
-                items_list.append(item)
-            elif isinstance(item, trakt_types):
-                self.items.append(item)
-                items_list.append(item._list_json)
-        ext = 'lists/items/add/{}'.format(trakt.api_key)
-        args = {'slug': self.slug, 'items': items_list}
-        self._post_(ext, args)
+        movies = [m.ids for m in items if isinstance(m, Movie)]
+        shows = [s.ids for s in items if isinstance(s, TVShow)]
+        people = [p.ids for p in items if isinstance(p, Person)]
+        self._items = items
+        args = {'movies': movies, 'shows': shows, 'people': people}
+        uri = 'users/{user}/lists/{id}/items'.format(user=self.creator,
+                                                     id=self.trakt)
+        yield uri, args
 
-    def remove_items(self, items):
+    @delete
+    def delete_list(self):
+        """Delete this :class:`UserList`"""
+        yield 'users/{user}/lists/{id}'.format(user=self.creator,
+                                               id=self.trakt)
+
+    @post
+    def like(self):
+        """Like this :class:`UserList`. Likes help determine popular lists.
+        Only one like is allowed per list per user.
+        """
+        uri = 'users/{user}/lists/{id}/like'
+        yield uri.format(user=self.creator, id=self.trakt), None
+
+    @delete
+    def remove_items(self, *items):
         """Remove *items* to this :class:`UserList`, where items is an iterable
         """
-        items_list = []
-        trakt_types = (TVShow, TVSeason, TVEpisode, Movie)
-        for item in items:
-            if isinstance(item, dict):
-                items_list.append(item)
-            elif isinstance(item, trakt_types):
-                self.items.append(item)
-                items_list.append(item._list_json)
-        ext = 'lists/items/delete/{}'.format(trakt.api_key)
-        args = {'slug': self.slug, 'items': items_list}
-        self._post_(ext, args)
+        movies = [m.ids for m in items if isinstance(m, Movie)]
+        shows = [s.ids for s in items if isinstance(s, TVShow)]
+        people = [p.ids for p in items if isinstance(p, Person)]
+        self._items = items
+        args = {'movies': movies, 'shows': shows, 'people': people}
+        uri = 'users/{user}/lists/{id}/items'.format(user=self.creator,
+                                                     id=self.trakt)
+        yield uri, args
 
-    def __property_update(self, key, val):
-        """Update an attribute of this :class:`UserList`"""
-        ext = 'lists/update/{}'.format(trakt.api_key)
-        args = {'slug': self.slug, key: val}
-        self._post_(ext, args)
-        setattr(self, key, val)
-
-    def __len__(self):
-        """Return the length of this :class:`UserList`"""
-        return len(self.items)
-
-    @property
-    def name(self):
-        """The list name. This must be unique across the Trakt.tv system."""
-        return self._name
-    @name.setter
-    def name(self, value):
-        self.__property_update('name', value)
-
-    @property
-    def description(self):
-        """Optional but recommended description of what the list contains."""
-        return self._description
-    @description.setter
-    def description(self, value):
-        self.__property_update('description', value)
-
-    @property
-    def privacy(self):
-        """Privacy level of this :class:`UserList` must be one of private,
-        friends, or public.
-        """
-        return self._privacy
-    @privacy.setter
-    def privacy(self, value):
-        valid = ('private', 'friends', 'public')
-        if value in valid:
-            self.__property_update('privacy', value)
-
-    @property
-    def show_numbers(self):
-        """A boolean flag to determine if this  :class:`UserList` should show
-        numbers for each item. This is useful for ranked lists. Must be True or
-        False
-        """
-        return self._show_numbers
-    @show_numbers.setter
-    def show_numbers(self, value):
-        if isinstance(value, bool):
-            self.__property_update('show_numbers', value)
-
-    @property
-    def allow_shouts(self):
-        """A boolean flag to determine if this :class:`UserList` allows
-        discussion by users who have access. Must be True or False
-        """
-        return self._allow_shouts
-    @allow_shouts.setter
-    def allow_shouts(self, value):
-        if isinstance(value, bool):
-            self.__property_update('allow_shouts', value)
-
-    def delete(self):
-        """Delete this :class:`UserList`"""
-        ext = 'lists/delete/{}'.format(trakt.api_key)
-        url = self.base_url + ext
-        args = {'slug': self.slug}
-        self._post_(url, args)
+    @delete
+    def unlike(self):
+        """Remove a like on this :class:`UserList`."""
+        uri = 'users/{username}/lists/{id}/like'
+        yield uri.format(username=self.creator, id=self.trakt), None
 
 
-class User(BaseAPI):
+class User(object):
     """A Trakt.tv User"""
     def __init__(self, username, **kwargs):
         super(User, self).__init__()
@@ -229,198 +156,30 @@ class User(BaseAPI):
         self._movies = self._movie_collection = self._movies_watched = None
         self._shows = self._show_collection = self._shows_watched = None
         self._lists = self._followers = self._following = self._friends = None
-        self._collected = self._watched = self._episode_ratings = None
-        self._show_ratings = self._movie_ratings = None
+        self._collected = self._watched_shows = self._episode_ratings = None
+        self._show_ratings = self._movie_ratings = self._watched_movies = None
         self._episode_watchlist = self._show_watchlist = None
         self._movie_watchlist = None
+
+        self._settings = None
+
         if len(kwargs) > 0:
-            for key, val in kwargs.items():
-                setattr(self, key, val)
+            self._build(kwargs)
         else:
-            ext = 'user/profile.json/{}/{}'.format(trakt.api_key, self.username)
-            data = self._get_(ext)
-            for key, val in data.items():
-                if key == 'watched':
-                    pass
-                else:
-                    setattr(self, '_' + key, val)
+            self._get()
 
-    def follow(self):
-        """Follow this :class:`User`"""
-        follow(self.username)
+    def _get(self):
+        """Get this :class:`User` from the trakt.tv API"""
+        data = yield 'users/{username}'.format(username=self.username)
+        self._build(data)
 
-    def unfollow(self):
-        """Unfollow this :class:`User` if you already follow them"""
-        unfollow(self.username)
-
-    def get_calendar(self, date=None, days=None):
-        """Get this :class:`User`'s :class:`UserCalendar` for the specified date
-        range.
-        """
-        self._calendar = UserCalendar(self.username, date=date, days=days)
-        return self._calendar
-
-    def get_list(self, title):
-        """Get the specified list from this :class:`User`. Protected
-        :class:`User`'s won't return any data unless you are friends. To view
-        your own private lists, you will need to authenticate as yourself.
-        """
-        return UserList(self.username, title)
+    def _build(self, data):
+        """Build our this :class:`User` object"""
+        for key, val in data.items():
+            setattr(self, key, val)
 
     @property
-    def calendar(self):
-        """A :class:`UserCalendar` of this :class:`Users` shows that are airing
-        during the next 7 days. Protected users won't return any data
-        unless you are friends.
-        """
-        if self._calendar is None:
-            self._calendar = UserCalendar(self.username)
-        return self._calendar
-
-    @property
-    def last_activity(self):
-        """The last timestamp of certain activities on this :class:`User`'s
-        account. This is useful with syncing since timestamps are set for both
-        actions and unactions (i.e. seen and unseen). For example, run this API
-        on a regular basis and cache the timestamp. If the timestamp is newer
-        than what you have cached, sync up the changes for that section."""
-        if self._last_activity is None:
-            ext = 'user/lastactivity.json/{}/{}'.format(trakt.api_key,
-                                                        self.username)
-            data = self._get_(ext)
-            self._last_activity = data
-        return self._last_activity
-
-    @property
-    def watching(self):
-        """The :class:`TVEpisode` or :class:`Movie` this :class:`User` is
-        currently watching. If they aren't watching anything, a blank object
-        will be returned. Protected users won't return any data unless you are
-        friends.
-        """
-        ext = 'user/watching.json/{}/{}'.format(trakt.api_key, self.username)
-        data = self._get_(ext)
-        if len(data) > 0:
-            media_type = data.get('type')
-            if media_type == 'movie':
-                pass
-            elif media_type == 'episode':
-                pass
-
-        return self._watching
-
-    def __movie_list(self, url):
-        """Return a list of :class:`Movie` objects returned from the provided
-        url extension
-        """
-        data = self._get_(url)
-        to_ret = []
-        if len(data) > 0:
-            for movie_data in data:
-                to_ret.append(Movie(**movie_data))
-        return to_ret
-
-    def __str__(self):
-        """String representation of a :class:`User`"""
-        return '<User>: {}'.format(self.username.encode('ascii', 'ignore'))
-    __repr__ = __str__
-
-    @property
-    def movies(self):
-        """All :class:`Movie`'s in this :class:`User`'s library. Each movie will
-        indicate if it's in this :class:`User`'s collection and how many plays
-        it has. Protected :class:`User`'s won't return any data unless you are
-        friends.
-        """
-        ext = 'user/library/movies/all.json/{}/{}'.format(trakt.api_key,
-                                                          self.username)
-        self._movies = self.__movie_list(ext)
-        return self._movies
-
-    @property
-    def movie_collection(self):
-        """All :class:`Movie`'s in this :class:`User`'s library collection.
-        Collection items might include blu-rays, dvds, and digital downloads.
-        Protected users won't return any data unless you are friends.
-        """
-        ext = 'user/library/movies/collection.json/{}/{}'.format(trakt.api_key,
-                                                                 self.username)
-        self._movie_collection = self.__movie_list(ext)
-        return self._movie_collection
-
-    @property
-    def movies_watched(self):
-        """All :class:`Movie`'s in this :class:`User`'s library collection.
-        Collection items might include blu-rays, dvds, and digital downloads.
-        Protected users won't return any data unless you are friends.
-        """
-        ext = '/user/library/movies/watched.json/{}/{}'.format(trakt.api_key,
-                                                               self.username)
-        url = self.base_url + ext
-        self._movies_watched = self.__movie_list(url)
-        return self._movies_watched
-
-    @property
-    def shows(self):
-        """All :class:`Movie`'s in this :class:`User`'s library. Each movie will
-        indicate if it's in this :class:`User`'s collection and how many plays
-        it has. Protected :class:`User`'s won't return any data unless you are
-        friends.
-        """
-        ext = 'user/library/shows/all.json/{}/{}'.format(trakt.api_key,
-                                                         self.username)
-        data = self._get_(ext)
-        if len(data) > 0:
-            self._shows = []
-            for show_data in data:
-                self._shows.append(TVShow(**show_data))
-        return self._shows
-
-    @property
-    def show_collection(self):
-        """All :class:`Movie`'s in this :class:`User`'s library collection.
-        Collection items might include blu-rays, dvds, and digital downloads.
-        Protected users won't return any data unless you are friends.
-        """
-        ext = 'user/library/shows/collection.json/{}/{}'.format(trakt.api_key,
-                                                                self.username)
-        data = self._get_(ext)
-        if len(data) > 0:
-            self._show_collection = []
-            for show_data in data:
-                self._show_collection.append(TVShow(**show_data))
-        return self._show_collection
-
-    @property
-    def show_watched(self):
-        """All :class:`Movie`'s in this :class:`User`'s library collection.
-        Collection items might include blu-rays, dvds, and digital downloads.
-        Protected users won't return any data unless you are friends.
-        """
-        ext = 'user/library/shows/watched.json/{}/{}'.format(trakt.api_key,
-                                                             self.username)
-        data = self._get_(ext)
-        if len(data) > 0:
-            self._shows_watched = []
-            for show_data in data:
-                self._shows_watched.append(TVShow(**show_data))
-        return self._shows_watched
-
-    @property
-    def lists(self):
-        """All custom lists for this :class:`User`. Protected :class:`User`'s
-        won't return any data unless you are friends. To view your own private
-        lists, you will need to authenticate as yourself.
-        """
-        ext = 'user/lists.json/{}/{}'.format(trakt.api_key, self.username)
-        data = self._get_(ext)
-        if len(data) > 0:
-            self._lists = []
-            for list_data in data:
-                self._lists.append(UserList(**list_data))
-        return self._lists
-
-    @property
+    @get
     def followers(self):
         """A list of all followers including the since timestamp which is when
         the relationship began. Protected users won't return any data unless
@@ -428,15 +187,16 @@ class User(BaseAPI):
         display data either.
         """
         if self._followers is None:
-            ext = 'user/network/followers.json/{}/{}'.format(trakt.api_key,
-                                                             self.username)
-            data = self._get_(ext)
+            data = yield 'users/{user}/followers'.format(user=self.username)
             self._followers = []
             for user in data:
-                self._followers.append(User(**user))
-        return self._followers
+                user_data = user.pop('user')
+                date = user.pop('followed_at')
+                self._followers.append(User(followed_at=date, **user_data))
+        yield self._followers
 
     @property
+    @get
     def following(self):
         """A list of all user's this :class:`User` follows including the since
         timestamp which is when the relationship began. Protected users won't
@@ -444,15 +204,16 @@ class User(BaseAPI):
         that are protected won't display data either.
         """
         if self._following is None:
-            ext = 'user/network/following.json/{}/{}'.format(trakt.api_key,
-                                                             self.username)
-            data = self._get_(ext)
+            data = yield 'users/{user}/following'.format(user=self.username)
             self._following = []
             for user in data:
-                self._following.append(User(**user))
-        return self._following
+                user_data = user.pop('user')
+                date = user.pop('followed_at')
+                self._following.append(User(followed_at=date, **user_data))
+        yield self._following
 
     @property
+    @get
     def friends(self):
         """A list of this :class:`User`'s friends (a 2 way relationship where
         each user follows the other) including the since timestamp which is when
@@ -461,134 +222,179 @@ class User(BaseAPI):
         display data either.
         """
         if self._friends is None:
-            ext = 'user/network/friends.json/{}/{}'.format(trakt.api_key,
-                                                           self.username)
-            data = self._get_(ext)
-            self._friends = []
+            data = yield 'users/{user}/friends'.format(user=self.username)
             for user in data:
-                self._friends.append(User(**user))
-        return self._friends
+                user_data = user.pop('user')
+                date = user.pop('friends_at')
+                self._friends.append(User(followed_at=date, **user_data))
+        yield self._friends
 
     @property
-    def collected(self):
-        """Collected progress for all :class:`TVShow`'s in this
-        :class:`User`'s collection.
+    @get
+    def lists(self):
+        """All custom lists for this :class:`User`. Protected :class:`User`'s
+        won't return any data unless you are friends. To view your own private
+        lists, you will need to authenticate as yourself.
         """
-        if self._collected is None:
-            ext = 'user/progress/collected.json/{}/{}/'.format(trakt.api_key,
-                                                               self.username)
-            data = self._get_(ext)
-            self._collected = []
-            for show in data:
-                self._collected.append(TVShow(**show))
-        return self._collected
+        if self._lists is None:
+            data = yield 'users/{username}/lists'.format(
+                username=self.username
+            )
+            self._lists = [UserList(creator=self.username, **extract_ids(ul))
+                           for ul in data]
+        yield self._lists
 
     @property
-    def watched(self):
+    @get
+    def movie_collection(self):
+        """All :class:`Movie`'s in this :class:`User`'s library collection.
+        Collection items might include blu-rays, dvds, and digital downloads.
+        Protected users won't return any data unless you are friends.
+        """
+        if self._movie_collection is None:
+            ext = 'users/{username}/collection/movies?extended=metadata'
+            data = yield ext.format(username=self.username)
+            self._movie_collection = []
+            for movie in data:
+                mov = movie.pop('movie')
+                extract_ids(mov)
+                movie['movie'] = mov
+                self._movie_collection.append(Movie(**movie))
+        yield self._movie_collection
+
+    @property
+    @get
+    def settings(self):
+        """This :class:`User`'s settings"""
+        if self._settings is None:
+            data = yield 'users/settings'
+            data.pop('user')
+            self._settings = data
+        yield self._settings
+
+    @property
+    @get
+    def show_collection(self):
+        """All :class:`Movie`'s in this :class:`User`'s library collection.
+        Collection items might include blu-rays, dvds, and digital downloads.
+        Protected users won't return any data unless you are friends.
+        """
+        if self._show_collection is None:
+            ext = 'users/{username}/collection/shows?extended=metadata'
+            data = yield ext.format(username=self.username)
+            self._show_collection = []
+            for movie in data:
+                mov = movie.pop('movie')
+                extract_ids(mov)
+                movie['movie'] = mov
+                self._show_collection.append(Movie(**movie))
+        yield self._show_collection
+
+    @property
+    @get
+    def watched_movies(self):
+        """Watched profess for all :class:`Movie`'s in this :class:`User`'s
+        collection.
+        """
+        if self._watched_movies is None:
+            data = yield 'users/{user}/watched/movies'.format(
+                user=self.username
+            )
+            self._watched_movies = []
+            for movie in data:
+                movie_data = movie.pop('movie')
+                extract_ids(movie_data)
+                movie_data.update(movie)
+                self._watched_movies.append(Movie(**movie_data))
+        yield self._watched_movies
+
+    @property
+    @get
+    def watched_shows(self):
         """Watched profess for all :class:`TVShow`'s in this :class:`User`'s
         collection.
         """
-        if self._watched is None:
-            ext = 'user/progress/watched.json/{}/{}/'.format(trakt.api_key,
-                                                             self.username)
-            data = self._get_(ext)
-            self._watched = []
+        if self._watched_shows is None:
+            data = yield 'users/{user}/watched/shows'.format(
+                user=self.username
+            )
+            self._watched_shows = []
             for show in data:
-                self._watched.append(TVShow(**show))
-        return self._watched
+                show_data = show.pop('show')
+                extract_ids(show_data)
+                show_data.update(show)
+                self._watched_shows.append(TVShow(**show_data))
+        yield self._watched_shows
 
     @property
-    def episode_ratings(self):
-        """All :class:`TVEpisodes` this :class:`User` has rated"""
-        if self._episode_ratings is None:
-            ext = 'user/ratings/episodes.json/{}/{}/'.format(trakt.api_key,
-                                                             self.username)
-            data = self._get_(ext)
-            self._episode_ratings = []
-            for episode in data:
-                show = episode['show']['title']
-                season = episode['episode']['season']
-                episode_num = episode['episode']['number']
-                flattened_data = {}
-                for key, val in episode.items():
-                    if isinstance(val, dict):
-                        for inner_key, inner_val in val.items():
-                            flattened_data[inner_key] = inner_val
-                    else:
-                        flattened_data[key] = val
-                self._episode_ratings.append(TVEpisode(show, season,
-                                                       episode_num,
-                                                       flattened_data))
-        return self._episode_ratings
+    @get
+    def watching(self):
+        """The :class:`TVEpisode` or :class:`Movie` this :class:`User` is
+        currently watching. If they aren't watching anything, a blank object
+        will be returned. Protected users won't return any data unless you are
+        friends.
+        """
+        data = yield 'users/{user}/watching'.format(self.username)
+        media_type = data.pop('type')
+        if media_type == 'movie':
+            movie_data = data.pop('movie')
+            extract_ids(movie_data)
+            movie_data.update(data)
+            yield Movie(**movie_data)
+        else:  # media_type == 'episode'
+            ep_data = data.pop('episode')
+            extract_ids(ep_data)
+            sh_data = data.pop('show')
+            ep_data.update(data, show=sh_data.get('title'))
+            yield TVEpisode(**ep_data)
 
-    @property
-    def show_ratings(self):
-        """All :class:`TVShow`'s this :class:`User` has rated"""
-        if self._show_ratings is None:
-            ext = 'user/ratings/shows.json/{}/{}/'.format(trakt.api_key,
-                                                          self.username)
-            data = self._get_(ext)
-            self._show_ratings = []
-            for show in data:
-                self._show_ratings.append(TVShow(**show))
-        return self._show_ratings
+    @staticmethod
+    def get_follower_requests():
+        """Return a list of all pending follower requests for the authenticated
+        user
+        """
+        return get_all_requests()
 
-    @property
-    def movie_ratings(self):
-        """All :class:`Movie`'s this :class:`User` has rated"""
-        if self._movie_ratings is None:
-            ext = 'user/ratings/movies.json/{}/{}/'.format(trakt.api_key,
-                                                           self.username)
-            data = self._get_(ext)
-            self._movie_ratings = []
-            for movie in data:
-                self._movie_ratings.append(Movie(**movie))
-        return self._movie_ratings
+    def get_list(self, title):
+        """Get the specified list from this :class:`User`. Protected
+        :class:`User`'s won't return any data unless you are friends. To view
+        your own private lists, you will need to authenticate as yourself.
+        """
+        return UserList.get(title, self.username)
 
-    @property
-    def episode_watchlist(self):
-        """All :class:`TVEpisode`'s this :class:`User`'s watchlist"""
-        if self._episode_watchlist is None:
-            ext = 'user/watchlist/episodes.json/{}/{}/'.format(trakt.api_key,
-                                                               self.username)
-            data = self._get_(ext)
-            self._episode_watchlist = []
-            for episode in data:
-                show = episode['show']['title']
-                season = episode['episode']['season']
-                episode_num = episode['episode']['number']
-                flattened_data = {}
-                for key, val in episode.items():
-                    if isinstance(val, dict):
-                        for inner_key, inner_val in val.items():
-                            flattened_data[inner_key] = inner_val
-                    else:
-                        flattened_data[key] = val
-                self._episode_watchlist.append(TVEpisode(show, season,
-                                                         episode_num,
-                                                         flattened_data))
-        return self._episode_watchlist
+    @get
+    def get_ratings(self, media_type='movie', rating=None):
+        """Get a user's ratings filtered by type. You can optionally filter for
+        a specific rating between 1 and 10.
 
-    @property
-    def show_watchlist(self):
-        """All :class:`TVShow`'s this :class:`User`'s watchlist"""
-        if self._show_watchlist is None:
-            ext = 'user/watchlist/shows.json/{}/{}/'.format(trakt.api_key,
-                                                            self.username)
-            data = self._get_(ext)
-            self._show_watchlist = []
-            for show in data:
-                self._show_watchlist.append(TVShow(**show))
-        return self._show_watchlist
+        :param media_type: The type of media to search for. Must be one of
+            'movies', 'shows', 'seasons', 'episodes'
+        :param rating: Optional rating between 1 and 10
+        """
+        uri = 'users/{user}/ratings/{type}'.format(user=self.username,
+                                                   type=media_type)
+        if rating is not None:
+            uri += '/{rating}'.format(rating=rating)
+        data = yield uri
+        yield data
 
-    @property
-    def movie_watchlist(self):
-        """All :class:`Movie`'s this :class:`User`'s watchlist"""
-        if self._movie_watchlist is None:
-            ext = 'user/watchlist/movies.json/{}/{}/'.format(trakt.api_key,
-                                                             self.username)
-            data = self._get_(ext)
-            self._movie_watchlist = []
-            for movie in data:
-                self._movie_watchlist.append(Movie(**movie))
-        return self._movie_watchlist
+    @get
+    def get_stats(self):
+        """Returns stats about the movies, shows, and episodes a user has
+        watched and collected
+        """
+        data = yield 'users/{user}/stats'.format(user=self.username)
+        yield data
+
+    def follow(self):
+        """Follow this :class:`User`"""
+        follow(self.username)
+
+    def unfollow(self):
+        """Unfollow this :class:`User`, if you already follow them"""
+        unfollow(self.username)
+
+    def __str__(self):
+        """String representation of a :class:`User`"""
+        return '<User>: {}'.format(self.username.encode('ascii', 'ignore'))
+    __repr__ = __str__

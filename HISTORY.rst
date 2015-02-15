@@ -1,5 +1,12 @@
 Release History
 ^^^^^^^^^^^^^^^
+1.0.0 (2015-02-15)
+++++++++++++++++++
+
+* PyTrakt now utilizes Trakt's new API 2.0
+* API Keys can now obtained via the `trakt.init` function
+* Note: POSTS have been hit or miss, but get's all appear to be working
+
 0.3.6 (2015-01-15)
 ++++++++++++++++++
 

@@ -10,7 +10,7 @@ with open('HISTORY.rst') as f:
     history = f.read()
 
 packages = ['trakt']
-requires = ['requests', 'proxy_tools', 'requests_oauthlib']
+requires = ['requests', 'requests_oauthlib']
 description = ('Pythonic abstraction layer for easier scripting of the '
                'Trakt.tv REST API.')
 

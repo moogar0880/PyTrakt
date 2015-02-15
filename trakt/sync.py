@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
-import collections
+"""This module contains Trakt.tv sync endpoint support functions"""
 
-from ._core import get, post, BaseAPI
+from ._core import get, post
 
 __author__ = 'Jon Nappi'
+__all__ = ['Scrobbler', 'comment', 'rate', 'add_to_history',
+           'add_to_watchlist', 'remove_from_history', 'remove_from_watchlist',
+           'add_to_collection', 'remove_from_collection', 'search']
 
 
 @post
@@ -12,46 +15,46 @@ def comment(media, comment_body, spoiler=False, review=False):
         review = True
     data = dict(comment=comment_body, spoiler=spoiler, review=review)
     data.update(media.to_json())
-    return 'comments', data
+    yield 'comments', data
 
 
 @post
 def rate(media, rating):
-    if not isinstance(media, collections.Iterable):
-        media = [media]  # Figure out how the hell to process this data
     data = dict(rating=rating)
     data.update(media.to_json())
-    return 'sync/ratings', data
+    yield 'sync/ratings', data
 
 
 @post
 def add_to_history(media, watched_at):
-    pass
+    data = dict(watched_at=watched_at)
+    data.update(media.to_json())
+    yield 'sync/history', data
 
 
 @post
 def add_to_watchlist(media):
-    pass
+    yield 'sync/watchlist', media.to_json()
 
 
 @post
 def remove_from_history(media):
-    pass
+    yield 'sync/history/remove', media.to_json()
 
 
 @post
 def remove_from_watchlist(media):
-    pass
+    yield 'sync/watchlist/remove', media.to_json()
 
 
 @post
 def add_to_collection(media):
-    pass
+    yield 'sync/collection', media.to_json()
 
 
 @post
 def remove_from_collection(media):
-    pass
+    yield 'sync/collection/remove', media.to_json()
 
 
 @get
@@ -64,8 +67,23 @@ def search(query, search_type='movie'):
     yield data
 
 
-class Scrobbler(BaseAPI):
+class Scrobbler(object):
+    """Scrobbling is a seemless and automated way to track what you're watching
+    in a media center. This class allows the media center to easily send events
+    that correspond to starting, pausing, stopping or finishing a movie or
+    episode.
+    """
+
     def __init__(self, media, progress, app_version, app_date):
+        """Create a new :class:`Scrobbler` instance
+
+        :param media: The media object you're scrobbling. Must be either a
+            :class:`Movie` or :class:`TVEpisode` type
+        :param progress: The progress made through *media* at the time of
+            creation
+        :param app_version: The media center application version
+        :param app_date: The date that *app_version* was released
+        """
         super(Scrobbler, self).__init__()
         self.progress, self.version = progress, app_version
         self.media, self.date = media, app_date
@@ -73,32 +91,54 @@ class Scrobbler(BaseAPI):
             self.start()
 
     def start(self):
-        self._post_('scrobble/start')
+        """Start scrobbling this :class:`Scrobbler`'s *media* object"""
+        self._post('scrobble/start')
 
     def pause(self):
-        self._post_('scrobble/pause')
+        """Pause the scrobbling of this :class:`Scrobbler`'s *media* object"""
+        self._post('scrobble/pause')
 
     def stop(self):
-        self._post_('scrobble/stop')
+        """Stop the scrobbling of this :class:`Scrobbler`'s *media* object"""
+        self._post('scrobble/stop')
 
     def finish(self):
+        """Complete the scrobbling this :class:`Scrobbler`'s *media* object"""
         if self.progress < 80.0:
             self.progress = 100.0
         self.stop()
 
     def update(self, progress):
+        """Update the scobbling progress of this :class:`Scrobbler`'s *media*
+        object
+        """
         self.progress = progress
         self.start()
 
-    def _post_(self, uri, args=None):
+    @post
+    def _post(self, uri, args=None):
+        """Handle actually posting the scrobbling data to trakt
+
+        :param uri: The uri to post to
+        :param args: Any additional data to post to trakt alond with the
+            generic scrobbling data
+        """
         payload = dict(progress=self.progress, app_version=self.version,
                        date=self.date)
         payload.update(self.media.to_json())
-        super(Scrobbler, self)._post_(uri, payload)
+        if args is not None:
+            payload.update(args)
+        yield uri, payload
 
     def __enter__(self):
+        """Context manager support for `with Scrobbler` syntax. Begins
+        scrobbling the :class:`Scrobller`'s *media* object
+        """
         self.start()
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        """Context manager support for `with Scrobbler` syntax. Completes
+        scrobbling the :class:`Scrobller`'s *media* object
+        """
         self.finish()

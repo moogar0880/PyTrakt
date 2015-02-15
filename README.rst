@@ -1,5 +1,9 @@
 PyTrakt
 =======
+.. image:: https://travis-ci.org/moogar0880/PyTrakt.svg
+    :target: https://travis-ci.org/moogar0880/PyTrakt
+    :alt: Travis CI Status
+
 .. image:: https://pypip.in/d/trakt/badge.svg?style=flat
     :target: https://pypi.python.org/pypi/trakt/
     :alt: Downloads

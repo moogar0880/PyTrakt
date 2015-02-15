@@ -12,7 +12,7 @@ import trakt
 
 __author__ = 'Jon Nappi'
 __all__ = ['Airs', 'Alias', 'Comment', 'Genre', 'Translation', 'get', 'delete',
-           'post', 'put']
+           'post', 'put', 'init']
 
 BASE_URL = 'https://api.trakt.tv/'
 CLIENT_ID = 'd0113f50a0c6ff4d8977427a81e34057ecd54ebfa245f481d1e45baa47129629'

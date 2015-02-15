@@ -80,7 +80,7 @@ def updated_shows(timestamp=None):
     for show in data['shows']:
         title = show.get('title')
         to_ret.append(TVShow(title, **show))
-    return to_ret
+    yield to_ret
 
 
 class TVShow(object):
@@ -276,6 +276,7 @@ class TVShow(object):
         """Dismiss this movie from showing up in Movie Recommendations"""
         dismiss_recommendation(title=self.title)
 
+    @get
     def get_translations(self, country_code='us'):
         """Returns all :class:`Translation`'s for a movie, including language
         and translated values for title, tagline and overview.
@@ -289,7 +290,7 @@ class TVShow(object):
             )
             self._translations = [Translation(**translation)
                                   for translation in data]
-        return self._translations
+        yield self._translations
 
     def mark_as_seen(self, watched_at=None):
         """Add this :class:`Movie`, watched outside of trakt, to your library.

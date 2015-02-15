@@ -291,7 +291,7 @@ class Movie(object):
             )
             self._translations = [Translation(**translation)
                                   for translation in data]
-        return self._translations
+        yield self._translations
 
     def mark_as_seen(self, watched_at=None):
         """Add this :class:`Movie`, watched outside of trakt, to your library.

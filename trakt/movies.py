@@ -119,7 +119,10 @@ class Movie(object):
         """Build this :class:`Movie` object with the data in *data*"""
         extract_ids(data)
         for key, val in data.items():
-            setattr(self, key, val)
+            if hasattr(self, '_' + key):
+                setattr(self, '_' + key, val)
+            else:
+                setattr(self, key, val)
 
     @property
     def ext(self):

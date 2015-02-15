@@ -39,7 +39,10 @@ class Person(object):
     def _build(self, data):
         extract_ids(data)
         for key, val in data.items():
-            setattr(self, key, val)
+            if hasattr(self, '_' + key):
+                setattr(self, '_' + key, val)
+            else:
+                setattr(self, key, val)
 
     @property
     @get

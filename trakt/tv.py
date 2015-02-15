@@ -117,7 +117,10 @@ class TVShow(object):
     def _build(self, data):
         extract_ids(data)
         for key, val in data.items():
-            setattr(self, key, val)
+            if hasattr(self, '_' + key):
+                setattr(self, '_' + key, val)
+            else:
+                setattr(self, key, val)
 
     @property
     def ext(self):
@@ -446,9 +449,9 @@ class TVEpisode(object):
         self.show = show
         self.season = season
         self.number = number
-        self.overview = self.title = self.year = self.tvdb_id = None
-        self.trakt_id = self.tmdb_id = self.tvdb_id = self.imdb_id = None
-        self.tvrage_id = self._stats = None
+        self.overview = self.title = self.year = None
+        self.trakt = self.tmdb = self.tvdb = self.imdb = None
+        self.tvrage = self._stats = None
         self._images = []
         self._comments = []
         self._translations = []
@@ -471,7 +474,10 @@ class TVEpisode(object):
         """Build this :class:`Movie` object with the data in *data*"""
         extract_ids(data)
         for key, val in data.items():
-            setattr(self, key, val)
+            if hasattr(self, '_' + key):
+                setattr(self, '_' + key, val)
+            else:
+                setattr(self, key, val)
 
     @property
     @get
@@ -598,6 +604,17 @@ class TVEpisode(object):
         """Add a comment (shout or review) to this :class:`TVEpisode` on trakt.
         """
         comment(self, comment_body, spoiler, review)
+
+    def to_json(self):
+        """Return this :class:`TVEpisode` as a trakt recognizable JSON object
+        """
+        return {
+            'episode': {
+                'ids': {
+                    'trakt': self.trakt
+                }
+            }
+        }
 
     def __repr__(self):
         return '<TVEpisode>: {} S{}E{} {}'.format(self.show, self.season,

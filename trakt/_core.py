@@ -11,11 +11,13 @@ from requests_oauthlib import OAuth2Session
 import trakt
 
 __author__ = 'Jon Nappi'
-__all__ = ['BaseAPI', 'Airs', 'Alias', 'Comment', 'Genre', 'Translation']
+__all__ = ['Airs', 'Alias', 'Comment', 'Genre', 'Translation', 'get', 'delete',
+           'post', 'put']
 
 BASE_URL = 'https://api.trakt.tv/'
 CLIENT_ID = 'd0113f50a0c6ff4d8977427a81e34057ecd54ebfa245f481d1e45baa47129629'
-CLIENT_SECRET = '807a4162cb179d4ba95e8a8cb23c7afd4386b66ef3f9a71de692b4c94b01e1ac'
+CLIENT_SECRET = ('807a4162cb179d4ba95e8a8cb23c7afd4386b66ef3f9a71de692b4c94b01'
+                 'e1ac')
 REDIRECT_URI = 'urn:ietf:wg:oauth:2.0:oob'
 
 HEADERS = {'Content-Type': 'application/json',
@@ -118,7 +120,7 @@ def post(f):
         url = BASE_URL + uri
         logging.debug('POST: %s', url)
         HEADERS['Authorization'] = 'Bearer {}'.format(trakt.api_key)
-        response = requests.post(url, params=args, headers=HEADERS)
+        response = requests.post(url, params=data, headers=HEADERS)
         json_data = json.loads(response.content.decode('UTF-8', 'ignore'))
         try:
             return generator.send(json_data)
@@ -150,37 +152,3 @@ def put(f):
         except StopIteration:
             return None
     return inner
-
-
-class BaseAPI(object):
-    """Base class containing all basic functionality of a Trakt.tv API call"""
-    base_url = 'https://api.trakt.tv/'
-    _logger = logging.getLogger('Trakt.API')
-
-    @classmethod
-    def _get_(cls, uri, args=None):
-        """Perform a GET API call against the Trakt.tv API against *uri*
-
-        :param uri: The uri extension to GET from
-        """
-        url = cls.base_url + uri
-        cls._logger.debug('GET: {}'.format(url))
-        HEADERS['Authorization'] = 'Bearer {}'.format(trakt.api_key)
-        response = requests.get(url, params=args, headers=HEADERS)
-        data = json.loads(response.content.decode('UTF-8', 'ignore'))
-        return data
-
-    @classmethod
-    def _post_(cls, uri, args=None):
-        """Perform a POST API call against the Trakt.tv API against *uri*,
-        passing args
-
-        :param uri: The uri extension to POST to
-        :param args: The args to pass to Trakt.tv
-        """
-        url = cls.base_url + uri
-        cls._logger.debug('POST: {}: [{}] <{}>'.format(url, HEADERS, args))
-        HEADERS['Authorization'] = 'Bearer {}'.format(trakt.api_key)
-        response = requests.post(url, json.dumps(args), headers=HEADERS)
-        data = json.loads(response.content.decode('UTF-8', 'ignore'))
-        return data

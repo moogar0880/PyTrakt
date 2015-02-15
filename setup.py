@@ -8,9 +8,10 @@ with open('README.rst') as f:
     readme = f.read()
 with open('HISTORY.rst') as f:
     history = f.read()
+with open('requirements.txt') as f:
+    requires = [line.strip() for line in f if line.strip()]
 
 packages = ['trakt']
-requires = ['requests', 'requests_oauthlib']
 description = ('Pythonic abstraction layer for easier scripting of the '
                'Trakt.tv REST API.')
 

@@ -63,6 +63,10 @@ class UserList(namedtuple('UserList', ['name', 'description', 'privacy',
         super(UserList, self).__init__(*args, **kwargs)
         self._items = list()
 
+    def __iter__(self, *args, **kwargs):
+        """Iterate over the items in this user list"""
+        return self._items.__iter__(*args, **kwargs)
+
     @classmethod
     @post
     def create(cls, name, creator, description=None, privacy='private',

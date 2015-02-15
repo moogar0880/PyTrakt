@@ -9,8 +9,8 @@ from .utils import slugify, extract_ids, airs_date
 from .people import Person
 
 __author__ = 'Jon Nappi'
-__all__ = ['trending_shows', 'TVShow', 'TVEpisode', 'TVSeason', 'rate_shows',
-           'get_recommended_shows', 'dismiss_recommendation', 'rate_episodes']
+__all__ = ['trending_shows', 'TVShow', 'TVEpisode', 'TVSeason',
+           'get_recommended_shows', 'dismiss_recommendation']
 
 
 @delete
@@ -277,7 +277,7 @@ class TVShow(object):
         dismiss_recommendation(title=self.title)
 
     def get_translations(self, country_code='us'):
-        """Returns all :class:`Translation`s for a movie, including language
+        """Returns all :class:`Translation`'s for a movie, including language
         and translated values for title, tagline and overview.
 
         :param country_code: The 2 character country code to search from
@@ -553,7 +553,7 @@ class TVEpisode(object):
         return str(self.overview)
 
     def get_translations(self, country_code='us'):
-        """Returns all :class:`Translation`s for a movie, including language
+        """Returns all :class:`Translation`'s for a movie, including language
         and translated values for title, tagline and overview.
 
         :param country_code: The 2 character country code to search from

@@ -11,7 +11,7 @@ def slugify(value):
     underscores) and converts spaces to hyphens. Also strips leading and
     trailing whitespace.
 
-    Borrowed from django.utils.text.slugify with some slight modifications
+    Adapted from django.utils.text.slugify
     """
     value = unicodedata.normalize('NFKD',
                                   value).encode('ascii',
@@ -38,7 +38,11 @@ def now():
 
 
 def extract_ids(id_dict):
+    """Extract the inner `ids` dict out of trakt JSON responses and insert them
+    into the containing `dict`. Then return the input `dict`
+    """
     id_dict.update(id_dict.pop('ids', {}))
+    return id_dict
 
 
 class Paginator(list):

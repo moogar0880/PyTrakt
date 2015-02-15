@@ -24,6 +24,7 @@ setup(
     url='https://github.com/moogar0880/PyTrakt',
     packages=packages,
     install_requires=requires,
+    license='Apache 2.0',
     zip_safe=False,
     classifiers=(
         'Development Status :: 5 - Production/Stable',

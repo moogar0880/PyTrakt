@@ -519,7 +519,7 @@ class TVEpisode(object):
         slug
         """
         return {'ids': {
-            'trakt': self.trakt_id, 'imdb': self.imdb_id, 'tmdb': self.tmdb_id
+            'trakt': self.trakt, 'imdb': self.imdb, 'tmdb': self.tmdb
         }}
 
     @property
@@ -566,7 +566,7 @@ class TVEpisode(object):
             )
             self._translations = [Translation(**translation)
                                   for translation in data]
-        return self._translations
+        yield self._translations
 
     def rate(self, rating):
         """Rate this :class:`TVEpisode` on trakt. Depending on the current users

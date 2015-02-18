@@ -9,7 +9,8 @@ class TraktException(BaseException):
 
 
 class InvalidAPIKey(TraktException):
-    """Custom trakt exception to be raised if the provided API Key is invalid"""
+    """Custom trakt exception to be raised if the provided API Key is invalid
+    """
     pass
 
 

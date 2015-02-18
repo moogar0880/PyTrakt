@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import re
+import sys
 import unicodedata
 from datetime import datetime
 
@@ -13,6 +14,8 @@ def slugify(value):
 
     Adapted from django.utils.text.slugify
     """
+    if sys.version_info[0] == 2:
+        value = unicode(value)
     value = unicodedata.normalize('NFKD',
                                   value).encode('ascii',
                                                 'ignore').decode('ascii')

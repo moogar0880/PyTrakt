@@ -1,6 +1,12 @@
 Release History
 ^^^^^^^^^^^^^^^
-1.0.0 (2015-02-15)
+1.0.2 (2015-02-17)
+++++++++++++++++++
+
+* Fixes Generator issue detailed in #7
+* Fixes Python 2x Unicode bug
+
+1.0.1 (2015-02-15)
 ++++++++++++++++++
 
 * PyTrakt now utilizes Trakt's new API 2.0

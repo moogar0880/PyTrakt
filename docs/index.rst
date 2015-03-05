@@ -62,6 +62,7 @@ including example usages.
    people.rst
    tv.rst
    users.rst
+   core.rst
 
 
 Indices and tables

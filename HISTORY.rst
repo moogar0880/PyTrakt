@@ -7,6 +7,7 @@ Release History
 * Add additional debug logging for API responses
 * Add tmdb_id to the `TVShow.ids` attribute
 * Fixed `trakt.init` to instruct users on how to create a new OAuth application
+* * Fixed `TVSeason.to_json` to return accurately scoped season information
 * Updated documentation on APIv2's Authentication patterns
 
 1.0.3 (2015-02-28)

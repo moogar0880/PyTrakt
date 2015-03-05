@@ -1,7 +1,7 @@
 """Interfaces to all of the TV objects offered by the Trakt.tv API"""
 from datetime import datetime, timedelta
 
-from ._core import Airs, Alias, Comment, Genre, Translation, delete, get
+from .core import Airs, Alias, Comment, Genre, Translation, delete, get
 from .sync import (Scrobbler, rate, comment, add_to_collection,
                    add_to_watchlist, add_to_history, remove_from_collection,
                    remove_from_watchlist, remove_from_history, search)
@@ -27,7 +27,7 @@ def get_recommended_shows():
     history and your friends. Results are returned with the top recommendation
     first.
     """
-    data = yield'recommendations/shows'
+    data = yield 'recommendations/shows'
     shows = []
     for show in data:
         shows.append(TVShow(**show))
@@ -85,6 +85,7 @@ def updated_shows(timestamp=None):
 
 class TVShow(object):
     """A Class representing a TV Show object"""
+
     def __init__(self, title='', **kwargs):
         super(TVShow, self).__init__()
         self.top_watchers = self.top_episodes = self.year = self.tvdb_id = None
@@ -124,7 +125,7 @@ class TVShow(object):
 
     @property
     def ext(self):
-        return '/shows/{slug}'.format(slug=self.slug)
+        return 'shows/{slug}'.format(slug=self.slug)
 
     @property
     def ext_full(self):
@@ -160,6 +161,7 @@ class TVShow(object):
         """
         # TODO (jnappi) Pagination
         from .users import User
+
         data = yield (self.ext + '/comments')
         self._comments = []
         for com in data:
@@ -179,7 +181,7 @@ class TVShow(object):
         """
         return {'ids': {
             'trakt': self.trakt_id, 'slug': self.slug, 'imdb': self.imdb_id,
-            'tmdb': self.tmdb_id
+            'tmdb': self.tmdb_id, 'tvdb': self.tvdb_id
         }}
 
     @property
@@ -253,6 +255,7 @@ class TVShow(object):
     def watching_now(self):
         """A list of all :class:`User`'s watching a movie."""
         from .users import User
+
         data = yield self.ext + '/watching'
         users = []
         for user in data:
@@ -262,6 +265,7 @@ class TVShow(object):
     def add_to_library(self):
         """Add this :class:`Movie` to your library."""
         add_to_collection(self)
+
     add_to_collection = add_to_library
 
     def add_to_watchlist(self):
@@ -313,6 +317,7 @@ class TVShow(object):
     def remove_from_library(self):
         """Remove this :class:`Movie` from your library."""
         remove_from_collection(self)
+
     remove_from_collection = remove_from_library
 
     def remove_from_watchlist(self):
@@ -342,11 +347,13 @@ class TVShow(object):
     def __str__(self):
         """Return a string representation of a :class:`TVShow`"""
         return '<TVShow> {}'.format(self.title.encode('ascii', 'ignore'))
+
     __repr__ = __str__
 
 
 class TVSeason(object):
     """Container for TV Seasons"""
+
     def __init__(self, show, season=1, slug=None, **kwargs):
         super(TVSeason, self).__init__()
         self.show = show
@@ -389,6 +396,7 @@ class TVSeason(object):
         """
         # TODO (jnappi) Pagination
         from .users import User
+
         data = yield (self.ext + '/comments')
         self._comments = []
         for com in data:
@@ -409,6 +417,7 @@ class TVSeason(object):
     def watching_now(self):
         """A list of all :class:`User`'s watching a movie."""
         from .users import User
+
         data = yield self.ext + '/watching'
         users = []
         for user in data:
@@ -418,6 +427,7 @@ class TVSeason(object):
     def add_to_library(self):
         """Add this :class:`Movie` to your library."""
         add_to_collection(self)
+
     add_to_collection = add_to_library
 
     def mark_as_seen(self, watched_at=None):
@@ -434,17 +444,28 @@ class TVSeason(object):
     def remove_from_library(self):
         """Remove this :class:`Movie` from your library."""
         remove_from_collection(self)
+
     remove_from_collection = remove_from_library
+
+    def to_json(self):
+        """Return this :class:`TVSeason` as a Trakt consumable API blob"""
+        # I hate that this extra lookup needs to happen here, but I can't see
+        # any other way of getting around not having the data on the show...
+        show_obj = TVShow(self.slug).to_json()
+        show_obj.update({'seasons': [{'number': self.season}]})
+        return {'shows': [show_obj]}
 
     def __str__(self):
         title = ['<TVSeason>:', self.show, 'Season', self.season]
         title = map(str, title)
         return ' '.join(title)
+
     __repr__ = __str__
 
 
 class TVEpisode(object):
     """Container for TV Episodes"""
+
     def __init__(self, show, season, number=-1, **kwargs):
         super(TVEpisode, self).__init__()
         self.show = show
@@ -488,6 +509,7 @@ class TVEpisode(object):
         """
         # TODO (jnappi) Pagination
         from .users import User
+
         data = yield (self.ext + '/comments')
         self._comments = []
         for com in data:
@@ -544,6 +566,7 @@ class TVEpisode(object):
     def watching_now(self):
         """A list of all :class:`User`'s watching a movie."""
         from .users import User
+
         data = yield self.ext + '/watching'
         users = []
         for user in data:
@@ -578,6 +601,7 @@ class TVEpisode(object):
     def add_to_library(self):
         """Add this :class:`TVEpisode` to your Trakt.tv library"""
         add_to_collection(self)
+
     add_to_collection = add_to_library
 
     def add_to_watchlist(self):
@@ -595,6 +619,7 @@ class TVEpisode(object):
     def remove_from_library(self):
         """Remove this :class:`TVEpisode` from your library"""
         remove_from_collection(self)
+
     remove_from_collection = remove_from_library
 
     def remove_from_watchlist(self):
@@ -620,4 +645,5 @@ class TVEpisode(object):
     def __repr__(self):
         return '<TVEpisode>: {} S{}E{} {}'.format(self.show, self.season,
                                                   self.number, self.title)
+
     __str__ = __repr__

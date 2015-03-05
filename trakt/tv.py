@@ -179,7 +179,7 @@ class TVShow(object):
         """
         return {'ids': {
             'trakt': self.trakt_id, 'slug': self.slug, 'imdb': self.imdb_id,
-            'tmdb': self.tmdb_id
+            'tmdb': self.tmdb_id, 'tvdb': self.tvdb_id
         }}
 
     @property

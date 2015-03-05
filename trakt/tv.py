@@ -27,7 +27,7 @@ def get_recommended_shows():
     history and your friends. Results are returned with the top recommendation
     first.
     """
-    data = yield'recommendations/shows'
+    data = yield 'recommendations/shows'
     shows = []
     for show in data:
         shows.append(TVShow(**show))
@@ -124,7 +124,7 @@ class TVShow(object):
 
     @property
     def ext(self):
-        return '/shows/{slug}'.format(slug=self.slug)
+        return 'shows/{slug}'.format(slug=self.slug)
 
     @property
     def ext_full(self):

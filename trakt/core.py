@@ -191,7 +191,11 @@ class Core(object):
         """
         @wraps(f)
         def inner(*args, **kwargs):
-            url, generator, _ = self._get_first(f, *args, **kwargs)
+            resp = self._get_first(f, *args, **kwargs)
+            if not isinstance(resp, tuple):
+                # Handle cached property responses
+                return resp
+            url, generator, _ = resp
             json_data = self._handle_request('get', url)
             try:
                 return generator.send(json_data)

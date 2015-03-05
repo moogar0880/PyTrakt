@@ -2,8 +2,8 @@
 from collections import namedtuple
 
 from .tv import TVShow, TVEpisode
+from .core import get, post, delete
 from .utils import slugify, extract_ids
-from ._core import get, post, delete
 from .movies import Movie
 from .people import Person
 

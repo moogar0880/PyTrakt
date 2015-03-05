@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """This module contains Trakt.tv sync endpoint support functions"""
 
-from ._core import get, post
+from .core import get, post
 from .utils import slugify, extract_ids
 
 __author__ = 'Jon Nappi'

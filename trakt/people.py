@@ -1,5 +1,5 @@
 """Interfaces to all of the People objects offered by the Trakt.tv API"""
-from ._core import get
+from .core import get
 from trakt.utils import slugify, extract_ids
 
 __author__ = 'Jon Nappi'

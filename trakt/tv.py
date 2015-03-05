@@ -1,7 +1,7 @@
 """Interfaces to all of the TV objects offered by the Trakt.tv API"""
 from datetime import datetime, timedelta
 
-from ._core import Airs, Alias, Comment, Genre, Translation, delete, get
+from .core import Airs, Alias, Comment, Genre, Translation, delete, get
 from .sync import (Scrobbler, rate, comment, add_to_collection,
                    add_to_watchlist, add_to_history, remove_from_collection,
                    remove_from_watchlist, remove_from_history, search)

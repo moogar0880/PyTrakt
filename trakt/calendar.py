@@ -1,6 +1,6 @@
 """Interfaces to all of the Calendar objects offered by the Trakt.tv API"""
 from .tv import TVEpisode
-from ._core import get
+from .core import get
 from .utils import now, airs_date
 
 __author__ = 'Jon Nappi'

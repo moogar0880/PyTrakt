@@ -5,7 +5,7 @@ from .sync import (Scrobbler, comment, rate, add_to_history,
                    remove_from_history, add_to_watchlist,
                    remove_from_watchlist, add_to_collection,
                    remove_from_collection, search)
-from ._core import Alias, Comment, Genre, Translation, get, delete
+from .core import Alias, Comment, Genre, Translation, get, delete
 from .utils import slugify, now, extract_ids
 from .people import Person
 

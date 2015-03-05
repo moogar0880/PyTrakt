@@ -1,12 +1,5 @@
 """Objects, properties, and methods to be shared across other modules in the
 trakt package
-
-import logging
-logging.basicConfig(level=logging.DEBUG)
-import trakt
-trakt.api_key = '3f15016ea3ef5bd3a03bbd90c5824a254f0d56626ee3b99a8c28290e2e05d3df'
-from trakt.tv import TVShow
-crowd = TVShow('The IT Crowd')
 """
 from __future__ import print_function
 import os

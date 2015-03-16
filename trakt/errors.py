@@ -17,6 +17,14 @@ class TraktException(BaseException):
         return self.message
 
 
+class BadRequestException(TraktException):
+    """TraktException type to be raised when a 401 return code is recieved"""
+    http_code = 400
+
+    def __init__(self):
+        self.message = "Bad Request - request couldn't be parsed"
+
+
 class OAuthException(TraktException):
     """TraktException type to be raised when a 401 return code is recieved"""
     http_code = 401

@@ -170,10 +170,15 @@ class Core(object):
         :return: The decoded JSON response from the Trakt API
         :raises TraktException: If any non-200 return code is encountered
         """
-        self.logger.debug('GET: %s', url)
-        HEADERS['Authorization'] = 'Bearer {}'.format(api_key)
-        response = requests.request(method, url, params=data, headers=HEADERS)
-        self.logger.debug('RESPONSE [GET] (%s): %s', url, str(response))
+        self.logger.debug('%s: %s', method, url)
+        HEADERS['Authorization'] = 'Bearer {0}'.format(api_key)
+        if method == 'get':  # GETs need to pass data as params, not body
+            response = requests.request(method, url, params=data,
+                                        headers=HEADERS)
+        else:
+            response = requests.request(method, url, data=json.dumps(data),
+                                        headers=HEADERS)
+        self.logger.debug('RESPONSE [%s] (%s): %s', method, url, str(response))
         if response.status_code in self.error_map:
             raise self.error_map[response.status_code]()
         json_data = json.loads(response.content.decode('UTF-8', 'ignore'))

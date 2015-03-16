@@ -1,5 +1,12 @@
 Release History
 ^^^^^^^^^^^^^^^
+2.0.1 (2015-03-15)
+++++++++++++++++++
+
+* Fixed TVEpisode Scrobbling Bug (#13)
+* Fixed DEBUG logging messages to properly reflect HTTP Methods
+* Added a 400 HTTP Response Code Exception type
+
 2.0.0 (2015-03-04)
 ++++++++++++++++++
 

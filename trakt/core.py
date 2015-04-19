@@ -58,7 +58,7 @@ def init(username, client_id=None, client_secret=None, store=False):
         print('http://trakt.tv/oauth/applications')
         client_id = input('Please enter your client id: ')
         client_secret = input('Please enter your client secret: ')
-    CLIENT_ID, client_secret = client_id, client_secret
+    CLIENT_ID, CLIENT_SECRET = client_id, client_secret
     HEADERS['trakt-api-key'] = CLIENT_ID
 
     authorization_base_url = 'https://api.trakt.tv/oauth/authorize'

@@ -1,5 +1,10 @@
 Release History
 ^^^^^^^^^^^^^^^
+2.1.0 (2015-??-??)
+++++++++++++++++++
+
+* Add Trakt PIN Authentication mechanism
+
 2.0.2 (2015-04-18)
 ++++++++++++++++++
 

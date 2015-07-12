@@ -18,7 +18,7 @@ __all__ = ['Airs', 'Alias', 'Comment', 'Genre', 'Translation', 'get', 'delete',
 
 #: The base url for the Trakt API. Can be modified to run against different
 #: Trakt.tv environments
-BASE_URL = 'https://api.trakt.tv/'
+BASE_URL = 'https://api-v2launch.trakt.tv/'
 
 #: The Trakt.tv OAuth Client ID for your OAuth Application
 CLIENT_ID = None
@@ -61,8 +61,8 @@ def init(username, client_id=None, client_secret=None, store=False):
     CLIENT_ID, CLIENT_SECRET = client_id, client_secret
     HEADERS['trakt-api-key'] = CLIENT_ID
 
-    authorization_base_url = 'https://api.trakt.tv/oauth/authorize'
-    token_url = 'https://api.trakt.tv/oauth/token'
+    authorization_base_url = 'https://api-v2launch.trakt.tv/oauth/authorize'
+    token_url = 'https://api-v2launch.trakt.tv/oauth/token'
 
     # OAuth endpoints given in the API documentation
     oauth = OAuth2Session(CLIENT_ID, redirect_uri=REDIRECT_URI, state=None)

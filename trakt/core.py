@@ -60,7 +60,7 @@ def _store(**kwargs):
         json.dump(kwargs, config_file)
 
 
-def _pin_auth(pin=None, store=False):
+def pin_auth(client_id, client_secret, pin=None, store=False):
     """Generate an access_token from a Trakt API PIN code.
 
     :param pin: Optional Trakt API PIN code. If one is not specified, you will
@@ -70,25 +70,30 @@ def _pin_auth(pin=None, store=False):
         the security conscious
     :return: Your OAuth access token
     """
-    global api_key
+    global api_key, HEADERS, CLIENT_ID, CLIENT_SECRET, REDIRECT_URI
+    CLIENT_ID, CLIENT_SECRET = client_id, client_secret
     if pin is None:
         print('If you do not have a Trakt.tv PIN, please visit the following '
-              'url and log in to generate one')
+              'url and log in to generate one.')
         print(PIN_URL)
         pin = input('Please enter your PIN: ')
-    args = {'code': pin, 'redirect_uri': REDIRECT_URI,
-            'grant_type': 'authorization_code'}
-    response = requests.post('https://api-v2launch.trakt.tv/oauth/token',
-                             data=args)
-    HEADERS['trakt-api-key'] = response.json().get('access_token', '')
-    api_key = HEADERS['trakt-api-key']
+    args = {'code': pin,
+            'redirect_uri': REDIRECT_URI,
+            'grant_type': 'authorization_code',
+            'client_id': CLIENT_ID,
+            'client_secret': CLIENT_SECRET}
+
+    response = requests.post(''.join([BASE_URL, '/oauth/token']), data=args)
+    api_key = response.json().get('access_token', None)
+    HEADERS['trakt-api-key'] = CLIENT_ID
 
     if store:
-        _store(api_key=HEADERS['trakt-api-key'])
-    return HEADERS['trakt-api-key']
+        _store(CLIENT_ID=CLIENT_ID, CLIENT_SECRET=CLIENT_SECRET,
+               api_key=api_key)
+    return api_key
 
 
-def _oauth_auth(username, client_id, client_secret, store=False):
+def oauth_auth(username, client_id, client_secret, store=False):
     """Generate an access_token to allow your application to authenticate via
     OAuth
 
@@ -100,7 +105,7 @@ def _oauth_auth(username, client_id, client_secret, store=False):
         the security conscious
     :return: Your OAuth access token
     """
-    global CLIENT_ID, CLIENT_SECRET, api_key
+    global BASE_URL, CLIENT_ID, CLIENT_SECRET, api_key
     if client_id is None and client_secret is None:
         print('If you do not have a client ID and secret. Please visit the '
               'following url to create them.')
@@ -110,8 +115,8 @@ def _oauth_auth(username, client_id, client_secret, store=False):
     CLIENT_ID, CLIENT_SECRET = client_id, client_secret
     HEADERS['trakt-api-key'] = CLIENT_ID
 
-    authorization_base_url = 'https://api-v2launch.trakt.tv/oauth/authorize'
-    token_url = 'https://api-v2launch.trakt.tv/oauth/token'
+    authorization_base_url = ''.join([BASE_URL, '/oauth/authorize'])
+    token_url = ''.join([BASE_URL, '/oauth/token'])
 
     # OAuth endpoints given in the API documentation
     oauth = OAuth2Session(CLIENT_ID, redirect_uri=REDIRECT_URI, state=None)
@@ -137,9 +142,9 @@ def _oauth_auth(username, client_id, client_secret, store=False):
 def init(*args, **kwargs):
     """Run the auth function specified by *AUTH_METHOD*"""
     if AUTH_METHOD == PIN_AUTH:
-        return _pin_auth(*args, **kwargs)
+        return pin_auth(*args, **kwargs)
     else:
-        return _oauth_auth(*args, **kwargs)
+        return oauth_auth(*args, **kwargs)
 
 
 Airs = namedtuple('Airs', ['day', 'time', 'timezone'])

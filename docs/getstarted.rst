@@ -10,10 +10,40 @@ key you can interactively run PyTrakt's `init` function like detailed below:
 Example Usage
 ^^^^^^^^^^^^^
 The simplest way to generate an API key is to let `trakt.init` walk you through
-the process of generating one from scratch, like so
+the process of generating one from scratch. Currently PyTrakt supports both OAuth
+and PIN auth methods (the default is PIN).
+
+PIN Auth
+^^^^^^^^
+You can authenticate to trakt via PIN Auth like so,
+
 ::
 
     >>> from trakt import init
+    >>> init()
+    If you do not have a Trakt.tv PIN, please visit the following url and log in to generate one.
+    https://trakt.tv/pin/1334
+    Please enter your PIN:
+    >>> # Once you've pasted your PIN, you'll be completely authenticated and
+    >>> # ready to use PyTrakt
+
+If you already have a Trakt PIN generated, you can provide it to the `init` function
+
+::
+
+    >>> from trakt import init
+    >>> init('MY_PIN')
+
+And you're all set
+
+OAuth Auth
+^^^^^^^^^^
+You can also initialize using OAuth authentication like so,
+
+::
+
+    >>> from trakt import init
+    >>> trakt.AUTH_METHOD = trakt.OAUTH_AUTH  # Set the auth method to OAuth
     >>> init('myusername')
     If you do not have a client ID and secret. Please visit the following url to create them.
     http://trakt.tv/oauth/applications

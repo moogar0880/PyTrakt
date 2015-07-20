@@ -1,5 +1,15 @@
 Release History
 ^^^^^^^^^^^^^^^
+2.1.0 (2015-07-19)
+++++++++++++++++++
+
+* Add Trakt PIN Authentication (#15)
+
+2.0.3 (2015-07-12)
+++++++++++++++++++
+
+* Fix BASE_URL to point at correct v2 API (#19)
+
 2.0.2 (2015-04-18)
 ++++++++++++++++++
 

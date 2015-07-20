@@ -60,7 +60,21 @@ def _store(**kwargs):
         json.dump(kwargs, config_file)
 
 
-def pin_auth(client_id, client_secret, pin=None, store=False):
+def _get_client_info():
+    """Helper function to poll the user for Client ID and Client Secret
+    strings
+
+    :return: A 2-tuple of client_id, client_secret
+    """
+    print('If you do not have a client ID and secret. Please visit the '
+          'following url to create them.')
+    print('http://trakt.tv/oauth/applications')
+    client_id = input('Please enter your client id: ')
+    client_secret = input('Please enter your client secret: ')
+    return client_id, client_secret
+
+
+def pin_auth(pin=None, client_id=None, client_secret=None, store=False):
     """Generate an access_token from a Trakt API PIN code.
 
     :param pin: Optional Trakt API PIN code. If one is not specified, you will
@@ -72,6 +86,8 @@ def pin_auth(client_id, client_secret, pin=None, store=False):
     """
     global api_key, HEADERS, CLIENT_ID, CLIENT_SECRET, REDIRECT_URI
     CLIENT_ID, CLIENT_SECRET = client_id, client_secret
+    if client_id is None and client_secret is None:
+        CLIENT_ID, CLIENT_SECRET = _get_client_info()
     if pin is None:
         print('If you do not have a Trakt.tv PIN, please visit the following '
               'url and log in to generate one.')
@@ -93,7 +109,7 @@ def pin_auth(client_id, client_secret, pin=None, store=False):
     return api_key
 
 
-def oauth_auth(username, client_id, client_secret, store=False):
+def oauth_auth(username, client_id=None, client_secret=None, store=False):
     """Generate an access_token to allow your application to authenticate via
     OAuth
 
@@ -107,11 +123,7 @@ def oauth_auth(username, client_id, client_secret, store=False):
     """
     global BASE_URL, CLIENT_ID, CLIENT_SECRET, api_key
     if client_id is None and client_secret is None:
-        print('If you do not have a client ID and secret. Please visit the '
-              'following url to create them.')
-        print('http://trakt.tv/oauth/applications')
-        client_id = input('Please enter your client id: ')
-        client_secret = input('Please enter your client secret: ')
+        client_id, client_secret = _get_client_info()
     CLIENT_ID, CLIENT_SECRET = client_id, client_secret
     HEADERS['trakt-api-key'] = CLIENT_ID
 

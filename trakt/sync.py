@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 """This module contains Trakt.tv sync endpoint support functions"""
+from datetime import datetime
 
 from .core import get, post
-from .utils import slugify, extract_ids
+from .utils import slugify, extract_ids, timestamp
 
 __author__ = 'Jon Nappi'
 __all__ = ['Scrobbler', 'comment', 'rate', 'add_to_history',
@@ -32,29 +33,38 @@ def comment(media, comment_body, spoiler=False, review=False):
 
 
 @post
-def rate(media, rating):
+def rate(media, rating, rated_at=None):
     """Add a rating from 1 to 10 to a :class:`Movie`, :class:`TVShow`, or
     :class:`TVEpisode`
 
     :param media: The media object to post a rating to
     :param rating: A rating from 1 to 10 for the media item
+    :param rated_at: A `datetime.datetime` object indicating the time at which
+        this rating was created
     """
-    data = dict(rating=rating)
-    data.update(media.to_json())
-    yield 'sync/ratings', data
+    if rated_at is None:
+        rated_at = datetime.now()
+
+    data = dict(rating=rating, rated_at=timestamp(rated_at))
+    data.update(media.ids)
+    yield 'sync/ratings', {media.media_type + 's': [data]}
 
 
 @post
-def add_to_history(media, watched_at):
+def add_to_history(media, watched_at=None):
     """Add a :class:`Movie`, :class:`TVShow`, or :class:`TVEpisode` to your
     watched history
 
     :param media: The media object to add to your history
-    :param watched_at: A trakt formatted timestampt that *media* was watched at
+    :param watched_at: A `datetime.datetime` object indicating the time at
+        which this media item was viewed
     """
-    data = dict(watched_at=watched_at)
-    data.update(media.to_json())
-    yield 'sync/history', data
+    if watched_at is None:
+        watched_at = datetime.now()
+
+    data = dict(watched_at=timestamp(watched_at))
+    data.update(media.ids)
+    yield 'sync/history', {media.media_type + 's': [data]}
 
 
 @post

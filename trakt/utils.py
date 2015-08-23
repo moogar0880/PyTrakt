@@ -42,6 +42,12 @@ def now():
     return '{}-{}-{}'.format(year, month, day)
 
 
+def timestamp(date_object):
+    """Generate a trakt formatted timestamp from the given date object"""
+    fmt = '%Y-%m-%d:T%H:%M:%S.000Z'
+    return date_object.strftime(fmt)
+
+
 def extract_ids(id_dict):
     """Extract the inner `ids` dict out of trakt JSON responses and insert them
     into the containing `dict`. Then return the input `dict`

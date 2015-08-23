@@ -88,6 +88,7 @@ class TVShow(object):
 
     def __init__(self, title='', **kwargs):
         super(TVShow, self).__init__()
+        self.media_type = 'show'
         self.top_watchers = self.top_episodes = self.year = self.tvdb_id = None
         self.imdb_id = self.genres = self.certification = self.network = None
         self.trakt_id = self.tmdb_id = self._aliases = self._comments = None
@@ -452,6 +453,7 @@ class TVEpisode(object):
 
     def __init__(self, show, season, number=-1, **kwargs):
         super(TVEpisode, self).__init__()
+        self.media_type = 'episode'
         self.show = show
         self.season = season
         self.number = number

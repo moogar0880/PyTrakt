@@ -79,6 +79,7 @@ class Movie(object):
     """A Class representing a Movie object"""
     def __init__(self, title, year=None, **kwargs):
         super(Movie, self).__init__()
+        self.media_type = 'movie'
         self.title = title
         self.year = int(year) if year is not None else year
         if self.year is not None:

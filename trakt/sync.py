@@ -47,7 +47,7 @@ def rate(media, rating, rated_at=None):
 
     data = dict(rating=rating, rated_at=timestamp(rated_at))
     data.update(media.ids)
-    yield 'sync/ratings', {media.media_type + 's': [data]}
+    yield 'sync/ratings', {media.media_type: [data]}
 
 
 @post
@@ -64,7 +64,7 @@ def add_to_history(media, watched_at=None):
 
     data = dict(watched_at=timestamp(watched_at))
     data.update(media.ids)
-    yield 'sync/history', {media.media_type + 's': [data]}
+    yield 'sync/history', {media.media_type: [data]}
 
 
 @post

@@ -1,5 +1,12 @@
 Release History
 ^^^^^^^^^^^^^^^
+2.2.0 (2015-08-23)
+++++++++++++++++++
+
+* A TVSeason's `episodes` attribute is now dynamically generated from all episodes in that season
+* `sync.rate` and `sync.add_to_history` now properly make valid requests (#21)
+* Note: `sync.add_to_history`'s `watched_at` argument is now expected to be a datetime object, in order to match `sync.rate`
+
 2.1.0 (2015-07-19)
 ++++++++++++++++++
 

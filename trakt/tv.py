@@ -2,6 +2,7 @@
 from datetime import datetime, timedelta
 
 from .core import Airs, Alias, Comment, Genre, Translation, delete, get
+from .errors import NotFoundException
 from .sync import (Scrobbler, rate, comment, add_to_collection,
                    add_to_watchlist, add_to_history, remove_from_collection,
                    remove_from_watchlist, remove_from_history, search)
@@ -88,7 +89,7 @@ class TVShow(object):
 
     def __init__(self, title='', **kwargs):
         super(TVShow, self).__init__()
-        self.media_type = 'show'
+        self.media_type = 'shows'
         self.top_watchers = self.top_episodes = self.year = self.tvdb_id = None
         self.imdb_id = self.genres = self.certification = self.network = None
         self.trakt_id = self.tmdb_id = self._aliases = self._comments = None
@@ -344,7 +345,7 @@ class TVSeason(object):
         self.show = show
         self.season = season
         self.slug = slug or slugify(show)
-        self.episodes = []
+        self._episodes = None
         self._comments = []
         self._ratings = []
         self.ext = 'shows/{id}/seasons/{season}'.format(id=self.slug,
@@ -364,14 +365,8 @@ class TVSeason(object):
 
     def _build(self, data):
         """Build this :class:`Movie` object with the data in *data*"""
-        if isinstance(data, list):
-            for episode in data:
-                if self.season == episode.pop('season'):
-                    extract_ids(episode)
-                    self.episodes.append(TVEpisode(self.show, self.season,
-                                                   episode_data=episode))
-        else:
-            self.episodes.append(TVEpisode(self.show, self.season, **data))
+        for key, val in data.items():
+            setattr(self, key, val)
 
     @property
     @get
@@ -388,6 +383,41 @@ class TVSeason(object):
             user = User(**com.pop('user'))
             self._comments.append(Comment(user=user, **com))
         yield self._comments
+
+    @property
+    def episodes(self):
+        """A list of :class:`TVEpisode` objects representing all of the
+        Episodes in this :class:`TVSeason`. Because there is no "Get all
+        episodes for a season" endpoint on the trakt api
+        """
+        if self._episodes is None:
+            self._episodes = []
+            index = 1
+            while True:  # Dangerous? Perhaps, but it works
+                try:
+                    ep = self._episode_getter(index)
+                    self._episodes.append(ep)
+                except NotFoundException:
+                    break
+                index += 1
+        return self._episodes
+
+    @get
+    def _episode_getter(self, episode):
+        """Recursive episode getter generator. Will attempt to get the
+        speicifed episode for this season, and if the requested episode wasn't
+        found, then we return :const:`None` to indicate to the `episodes`
+        property that we've already yielded all valid episodes for this season.
+
+        :param episode: An int corresponding to the number of the episode
+            we're trying to retrieve
+        """
+        episode_extension = '/episodes/{}?extended=full'.format(episode)
+        try:
+            data = yield (self.ext + episode_extension)
+            yield TVEpisode(show=self.show, **data)
+        except NotFoundException:
+            yield None
 
     @property
     @get
@@ -453,7 +483,7 @@ class TVEpisode(object):
 
     def __init__(self, show, season, number=-1, **kwargs):
         super(TVEpisode, self).__init__()
-        self.media_type = 'episode'
+        self.media_type = 'episodes'
         self.show = show
         self.season = season
         self.number = number

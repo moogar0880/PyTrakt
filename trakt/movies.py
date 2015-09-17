@@ -193,7 +193,7 @@ class Movie(object):
         """All of the artwork associated with this :class:`Movie`"""
         if self._images is None:
             data = yield self.images_ext
-            self._images = data.get('images')
+            self._images = data.get('images', {})
         yield self._images
 
     @property
@@ -204,9 +204,9 @@ class Movie(object):
         """
         if self._people is None:
             data = yield (self.ext + '/people')
-            crew = data.get('crew')
+            crew = data.get('crew', {})
             cast = []
-            for c in data.get('cast'):
+            for c in data.get('cast', []):
                 person = c.pop('person')
                 character = c.pop('character')
                 cast.append(Person(character=character, **person))

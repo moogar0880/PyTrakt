@@ -37,7 +37,7 @@ def get_recommended_shows():
 
 @get
 def genres():
-    """A list of all possible :class:`Movie` Genres"""
+    """A list of all possible :class:`TVShow` Genres"""
     data = yield 'genres/shows'
     yield [Genre(g['name'], g['slug']) for g in data]
 
@@ -142,7 +142,7 @@ class TVShow(object):
     @get
     def aliases(self):
         """A list of :class:`Alias` objects representing all of the other
-        titles that this :class:`Movie` is known by, and the countries where
+        titles that this :class:`TVShow` is known by, and the countries where
         they go by their alternate titles
         """
         if self._aliases is None:
@@ -152,13 +152,13 @@ class TVShow(object):
 
     @property
     def cast(self):
-        """All of the cast members that worked on this :class:`Movie`"""
+        """All of the cast members that worked on this :class:`TVShow`"""
         return [p for p in self.people if getattr(p, 'character')]
 
     @property
     @get
     def comments(self):
-        """All comments (shouts and reviews) for this :class:`Movie`. Most
+        """All comments (shouts and reviews) for this :class:`TVShow`. Most
         recent comments returned first.
         """
         # TODO (jnappi) Pagination
@@ -173,7 +173,7 @@ class TVShow(object):
 
     @property
     def crew(self):
-        """All of the crew members that worked on this :class:`Movie`"""
+        """All of the crew members that worked on this :class:`TVShow`"""
         return [p for p in self.people if getattr(p, 'job')]
 
     @property
@@ -189,23 +189,23 @@ class TVShow(object):
     @property
     @get
     def images(self):
-        """All of the artwork associated with this :class:`Movie`"""
+        """All of the artwork associated with this :class:`TVShow`"""
         if self._images is None:
             data = yield self.images_ext
-            self._images = data.get('images')
+            self._images = data.get('images', {})
         yield self._images
 
     @property
     @get
     def people(self):
         """A :const:`list` of all of the :class:`People` involved in this
-        :class:`Movie`, including both cast and crew
+        :class:`TVShow`, including both cast and crew
         """
         if self._people is None:
             data = yield (self.ext + '/people')
-            crew = data.get('crew')
+            crew = data.get('crew', {})
             cast = []
-            for c in data.get('cast'):
+            for c in data.get('cast', []):
                 person = c.pop('person')
                 character = c.pop('character')
                 cast.append(Person(character=character, **person))
@@ -230,7 +230,7 @@ class TVShow(object):
     @property
     @get
     def related(self):
-        """The top 10 :class:`Movie`'s related to this :class:`Movie`"""
+        """The top 10 :class:`TVShow`'s related to this :class:`TVShow`"""
         data = yield (self.ext + '/related')
         shows = []
         for show in data:
@@ -265,13 +265,13 @@ class TVShow(object):
         yield users
 
     def add_to_library(self):
-        """Add this :class:`Movie` to your library."""
+        """Add this :class:`TVShow` to your library."""
         add_to_collection(self)
 
     add_to_collection = add_to_library
 
     def add_to_watchlist(self):
-        """Add this :class:`Movie` to your watchlist"""
+        """Add this :class:`TVShow` to your watchlist"""
         add_to_watchlist(self)
 
     def comment(self, comment_body, spoiler=False, review=False):
@@ -299,25 +299,25 @@ class TVShow(object):
         yield self._translations
 
     def mark_as_seen(self, watched_at=None):
-        """Add this :class:`Movie`, watched outside of trakt, to your library.
+        """Add this :class:`TVShow`, watched outside of trakt, to your library.
         """
         add_to_history(self, watched_at)
 
     def mark_as_unseen(self):
-        """Remove this :class:`Movie`, watched outside of trakt, from your
+        """Remove this :class:`TVShow`, watched outside of trakt, from your
         library.
         """
         remove_from_history(self)
 
     def rate(self, rating):
-        """Rate this :class:`Movie` on trakt. Depending on the current users
+        """Rate this :class:`TVShow` on trakt. Depending on the current users
         settings, this may also send out social updates to facebook, twitter,
         tumblr, and path.
         """
         rate(self, rating)
 
     def remove_from_library(self):
-        """Remove this :class:`Movie` from your library."""
+        """Remove this :class:`TVShow` from your library."""
         remove_from_collection(self)
 
     remove_from_collection = remove_from_library
@@ -357,21 +357,21 @@ class TVSeason(object):
 
     @get
     def _get(self):
-        """Handle getting this :class:`Movie`'s data from trakt and building
+        """Handle getting this :class:`TVSeason`'s data from trakt and building
         our attributes from the returned data
         """
         data = yield self.ext
         self._build(data)
 
     def _build(self, data):
-        """Build this :class:`Movie` object with the data in *data*"""
+        """Build this :class:`TVSeason` object with the data in *data*"""
         for key, val in data.items():
             setattr(self, key, val)
 
     @property
     @get
     def comments(self):
-        """All comments (shouts and reviews) for this :class:`Movie`. Most
+        """All comments (shouts and reviews) for this :class:`TVSeason`. Most
         recent comments returned first.
         """
         # TODO (jnappi) Pagination
@@ -440,24 +440,24 @@ class TVSeason(object):
         yield users
 
     def add_to_library(self):
-        """Add this :class:`Movie` to your library."""
+        """Add this :class:`TVSeason` to your library."""
         add_to_collection(self)
 
     add_to_collection = add_to_library
 
     def mark_as_seen(self, watched_at=None):
-        """Add this :class:`Movie`, watched outside of trakt, to your library.
+        """Add this :class:`TVSeason`, watched outside of trakt, to your library.
         """
         add_to_history(self, watched_at)
 
     def mark_as_unseen(self):
-        """Remove this :class:`Movie`, watched outside of trakt, from your
+        """Remove this :class:`TVSeason`, watched outside of trakt, from your
         library.
         """
         remove_from_history(self)
 
     def remove_from_library(self):
-        """Remove this :class:`Movie` from your library."""
+        """Remove this :class:`TVSeason` from your library."""
         remove_from_collection(self)
 
     remove_from_collection = remove_from_library
@@ -502,14 +502,14 @@ class TVEpisode(object):
 
     @get
     def _get(self):
-        """Handle getting this :class:`Movie`'s data from trakt and building
-        our attributes from the returned data
+        """Handle getting this :class:`TVEpisode`'s data from trakt and
+        building our attributes from the returned data
         """
         data = yield self.ext_full
         self._build(data)
 
     def _build(self, data):
-        """Build this :class:`Movie` object with the data in *data*"""
+        """Build this :class:`TVEpisode` object with the data in *data*"""
         extract_ids(data)
         for key, val in data.items():
             if hasattr(self, '_' + key):
@@ -520,7 +520,7 @@ class TVEpisode(object):
     @property
     @get
     def comments(self):
-        """All comments (shouts and reviews) for this :class:`Movie`. Most
+        """All comments (shouts and reviews) for this :class:`TVEpisode`. Most
         recent comments returned first.
         """
         # TODO (jnappi) Pagination
@@ -563,10 +563,10 @@ class TVEpisode(object):
     @property
     @get
     def images(self):
-        """All of the artwork associated with this :class:`Movie`"""
+        """All of the artwork associated with this :class:`TVEpisode`"""
         if self._images is None:
             data = yield self.images_ext
-            self._images = data.get('images')
+            self._images = data.get('images', {})
         yield self._images
 
     @property

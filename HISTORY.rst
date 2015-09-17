@@ -1,5 +1,11 @@
 Release History
 ^^^^^^^^^^^^^^^
+2.2.1 (2015-09-16)
+++++++++++++++++++
+
+* Add default values to non-critical `dict.get` calls (#23)
+* Updated some documentation.
+
 2.2.0 (2015-08-23)
 ++++++++++++++++++
 

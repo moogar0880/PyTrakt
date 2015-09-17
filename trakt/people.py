@@ -50,7 +50,7 @@ class Person(object):
         """All of the artwork associated with this :class:`Person`"""
         if self._images is None:
             data = yield self.images_ext
-            self._images = data.get('images')
+            self._images = data.get('images', {})
         yield self._images
 
     def __str__(self):

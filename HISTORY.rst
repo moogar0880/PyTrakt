@@ -1,5 +1,11 @@
 Release History
 ^^^^^^^^^^^^^^^
+2.2.2 (2015-09-20)
+++++++++++++++++++
+
+* Fix a bug loading `trakt.calendar.SeasonCalendar` (#25)
+* Added new personalized Calendar classes to `trakt.calendar` module
+
 2.2.1 (2015-09-16)
 ++++++++++++++++++
 

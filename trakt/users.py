@@ -3,7 +3,7 @@ from collections import namedtuple
 
 from .tv import TVShow, TVEpisode
 from .core import get, post, delete
-from .utils import slugify, extract_ids
+from .utils import slugify, extract_ids, unicode_safe
 from .movies import Movie
 from .people import Person
 
@@ -396,5 +396,5 @@ class User(object):
 
     def __str__(self):
         """String representation of a :class:`User`"""
-        return '<User>: {}'.format(self.username.encode('ascii', 'ignore'))
+        return '<User>: {}'.format(unicode_safe(self.username))
     __repr__ = __str__

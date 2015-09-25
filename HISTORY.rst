@@ -1,5 +1,11 @@
 Release History
 ^^^^^^^^^^^^^^^
+2.2.3 (2015-09-21)
+++++++++++++++++++
+
+# Fix a bug with loading calendars of `TVEpisode` objects. Thanks @Dreamersoul (#28)
+# Fix a bug with `TVEpisode.__str__` (and some others) not properly escaping non-ascii characters on Python 2.x (#27)
+
 2.2.2 (2015-09-20)
 ++++++++++++++++++
 

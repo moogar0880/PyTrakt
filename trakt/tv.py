@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Interfaces to all of the TV objects offered by the Trakt.tv API"""
 from datetime import datetime, timedelta
 
@@ -6,7 +7,7 @@ from .errors import NotFoundException
 from .sync import (Scrobbler, rate, comment, add_to_collection,
                    add_to_watchlist, add_to_history, remove_from_collection,
                    remove_from_watchlist, remove_from_history, search)
-from .utils import slugify, extract_ids, airs_date
+from .utils import slugify, extract_ids, airs_date, unicode_safe
 from .people import Person
 
 __author__ = 'Jon Nappi'
@@ -332,7 +333,7 @@ class TVShow(object):
 
     def __str__(self):
         """Return a string representation of a :class:`TVShow`"""
-        return '<TVShow> {}'.format(self.title.encode('ascii', 'ignore'))
+        return '<TVShow> {}'.format(unicode_safe(self.title))
 
     __repr__ = __str__
 
@@ -672,8 +673,8 @@ class TVEpisode(object):
             }
         }
 
-    def __repr__(self):
+    def __str__(self):
         return '<TVEpisode>: {} S{}E{} {}'.format(self.show, self.season,
-                                                  self.number, self.title)
-
-    __str__ = __repr__
+                                                  self.number,
+                                                  unicode_safe(self.title))
+    __repr__ = __str__

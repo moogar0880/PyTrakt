@@ -56,6 +56,12 @@ def extract_ids(id_dict):
     return id_dict
 
 
+def unicode_safe(s):
+    if sys.version_info[0] == 3:
+        return s
+    return s.encode('ascii', 'ignore').decode('ascii')
+
+
 class Paginator(list):
     def __init__(self, iterable, page_size=10):
         super(Paginator, self).__init__(iterable)

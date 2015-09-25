@@ -6,7 +6,7 @@ from .sync import (Scrobbler, comment, rate, add_to_history,
                    remove_from_watchlist, add_to_collection,
                    remove_from_collection, search)
 from .core import Alias, Comment, Genre, Translation, get, delete
-from .utils import slugify, now, extract_ids
+from .utils import slugify, now, extract_ids, unicode_safe
 from .people import Person
 
 __author__ = 'Jon Nappi'
@@ -341,5 +341,5 @@ class Movie(object):
 
     def __str__(self):
         """String representation of a :class:`Movie`"""
-        return '<Movie>: {}'.format(self.title.encode('ascii', 'ignore'))
+        return '<Movie>: {}'.format(unicode_safe(self.title))
     __repr__ = __str__

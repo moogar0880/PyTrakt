@@ -1,5 +1,10 @@
 Release History
 ^^^^^^^^^^^^^^^
+2.2.4 (2015-09-25)
+++++++++++++++++++
+
+* Fix a bug with authentication prompts on Python 2.x. Thanks @Dreamersoul (#30)
+
 2.2.3 (2015-09-21)
 ++++++++++++++++++
 

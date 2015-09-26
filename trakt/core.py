@@ -11,6 +11,7 @@ from collections import namedtuple
 from requests_oauthlib import OAuth2Session
 
 from . import errors
+import sys
 
 __author__ = 'Jon Nappi'
 __all__ = ['Airs', 'Alias', 'Comment', 'Genre', 'Translation', 'get', 'delete',
@@ -69,8 +70,12 @@ def _get_client_info():
     print('If you do not have a client ID and secret. Please visit the '
           'following url to create them.')
     print('http://trakt.tv/oauth/applications')
-    client_id = input('Please enter your client id: ')
-    client_secret = input('Please enter your client secret: ')
+    if sys.version_info > (3,):
+        client_id = input('Please enter your client id: ')
+        client_secret = input('Please enter your client secret: ')
+    else:
+        client_id = raw_input('Please enter your client id: ')
+        client_secret = raw_input('Please enter your client secret: ')
     return client_id, client_secret
 
 
@@ -92,7 +97,10 @@ def pin_auth(pin=None, client_id=None, client_secret=None, store=False):
         print('If you do not have a Trakt.tv PIN, please visit the following '
               'url and log in to generate one.')
         print(PIN_URL)
-        pin = input('Please enter your PIN: ')
+        if sys.version_info > (3,):
+            pin = input('Please enter your PIN: ')
+        else:
+            pin = raw_input('Please enter your PIN: ')
     args = {'code': pin,
             'redirect_uri': REDIRECT_URI,
             'grant_type': 'authorization_code',
@@ -139,8 +147,10 @@ def oauth_auth(username, client_id=None, client_secret=None, store=False):
     print('Please go here and authorize,', authorization_url)
 
     # Get the authorization verifier code from the callback url
-    response = input('Paste the Code returned here: ')
-
+    if sys.version_info > (3,):
+        response = input('Paste the Code returned here: ')
+    else:
+        response = raw_input("Paste the Code returned here: ")
     # Fetch, assign, and return the access token
     oauth.fetch_token(token_url, client_secret=CLIENT_SECRET, code=response)
     api_key = oauth.token['access_token']

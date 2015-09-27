@@ -246,6 +246,41 @@ class User(object):
 
     @property
     @get
+    def watchlist_shows(self):
+        """Returns all watchlist shows of :class:`User`.
+        """
+        if self._show_watchlist is None:
+            data = yield 'users/{username}/watchlist/shows'.format(
+                username=self.username,
+            )
+            self._show_watchlist = []
+            for show in data:
+                show_data = show.pop('show')
+                extract_ids(show_data)
+                show_data.update(show)
+                self._show_watchlist.append(TVShow(**show_data))
+            yield self._show_watchlist
+        yield self._show_watchlist
+
+    @property
+    @get
+    def watchlist_movies(self):
+        """Returns all watchlist movies of :class:`User`.
+        """
+        if self._movie_watchlist is None:
+            data = yield 'users/{username}/watchlist/movies'.format(
+                username=self.username,
+            )
+            self._movie_watchlist = []
+            for movie in data:
+                mov = movie.pop('movie')
+                extract_ids(mov)
+                self._movie_watchlist.append(Movie(**mov))
+            yield self._movie_watchlist
+        yield self._movie_watchlist
+
+    @property
+    @get
     def movie_collection(self):
         """All :class:`Movie`'s in this :class:`User`'s library collection.
         Collection items might include blu-rays, dvds, and digital downloads.

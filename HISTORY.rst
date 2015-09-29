@@ -1,5 +1,10 @@
 Release History
 ^^^^^^^^^^^^^^^
+2.2.5 (2015-09-29)
+++++++++++++++++++
+
+* Added `User.watchlist_movies` and `User.watchlist_shows` properties to the `trake.users.User` class. Thanks @a904guy! (#32)
+
 2.2.4 (2015-09-25)
 ++++++++++++++++++
 

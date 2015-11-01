@@ -151,6 +151,42 @@ def search(query, search_type='movie'):
         yield [Person(**d.pop('person')) for d in data]
 
 
+@get
+def search_by_id(query, id_type='imdb'):
+    """Perform a search query by using a Trakt.tv ID or other external ID
+
+    :param query: Your search string
+    :param id_type: The type of object you're looking for. Must be one of
+        'trakt-movie', 'trakt-show', 'trakt-episode', 'imdb', 'tmdb', 'tvdb' or 'tvrage'
+    """
+    valids = ('trakt-movie', 'trakt-show', 'trakt-episode', 'imdb', 'tmdb', 'tvdb', 'tvrage')
+    if id_type not in valids:
+        raise ValueError('search_type must be one of {}'.format(valids))
+    data = yield 'search?id={query}&id_type={id_type}'.format(
+        query=slugify(query), id_type=id_type)
+
+    for media_item in data:
+        extract_ids(media_item)
+
+    results = []
+    for d in data:
+        if 'episode' in d:
+            from .tv import TVEpisode
+            show = d.pop('show')
+            extract_ids(d['episode'])
+            results.append(TVEpisode(show['title'], **d['episode']))
+        elif 'movie' in d:
+            from .movies import Movie
+            results.append(Movie(**d.pop('movie')))
+        elif 'show' in d:
+            from .tv import TVShow
+            results.append(TVShow(**d.pop('show')))
+        elif 'person' in d:
+            from .people import Person
+            results.append(Person(**d.pop('person')))
+    yield results
+
+
 class Scrobbler(object):
     """Scrobbling is a seemless and automated way to track what you're watching
     in a media center. This class allows the media center to easily send events

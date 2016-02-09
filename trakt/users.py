@@ -369,7 +369,7 @@ class User(object):
         will be returned. Protected users won't return any data unless you are
         friends.
         """
-        data = yield 'users/{user}/watching'.format(self.username)
+        data = yield 'users/{user}/watching'.format(user=self.username)
         media_type = data.pop('type')
         if media_type == 'movie':
             movie_data = data.pop('movie')

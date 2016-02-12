@@ -15,7 +15,7 @@ import sys
 
 __author__ = 'Jon Nappi'
 __all__ = ['Airs', 'Alias', 'Comment', 'Genre', 'Translation', 'get', 'delete',
-           'post', 'put', 'init', 'api_key']
+           'post', 'put', 'init', 'api_key', 'AUTH_METHOD', 'PIN_AUTH', 'OAUTH_AUTH']
 
 #: The base url for the Trakt API. Can be modified to run against different
 #: Trakt.tv environments

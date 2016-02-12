@@ -1,2 +1,2 @@
-requests==2.4.3
-requests-oauthlib==0.4.2
+requests>=2.9
+requests-oauthlib>=0.6

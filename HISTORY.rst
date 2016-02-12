@@ -1,5 +1,11 @@
 Release History
 ^^^^^^^^^^^^^^^
+2.3.0 (2016-02-12)
+++++++++++++++++++
+
+* Expose documented vars, fix watching query (#39)
+* Add easier customization for PIN Authentication url (#38)
+
 2.2.5 (2015-09-29)
 ++++++++++++++++++
 
@@ -110,4 +116,3 @@ Release History
 ++++++++++++++++++
 
 * Initial Release
-

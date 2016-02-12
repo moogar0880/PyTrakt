@@ -19,10 +19,12 @@ You can authenticate to trakt via PIN Auth like so,
 
 ::
 
-    >>> from trakt import init
-    >>> init()
+    >>> import trakt
+    >>> trakt.APPLICATION_ID = 'MY_APPLICATION_ID'
+    >>> # to get an id for your app, visit https://trakt.tv/oauth/applications
+    >>> trakt.init()
     If you do not have a Trakt.tv PIN, please visit the following url and log in to generate one.
-    https://trakt.tv/pin/1334
+    https://trakt.tv/pin/MY_APPLICATION_ID
     Please enter your PIN:
     >>> # Once you've pasted your PIN, you'll be completely authenticated and
     >>> # ready to use PyTrakt
@@ -97,4 +99,3 @@ These can be set like so
 
 This is all of the authentication you'll need to perform to use the latest version
 of Trakt's API
-

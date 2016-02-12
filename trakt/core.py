@@ -6,12 +6,12 @@ import os
 import json
 import logging
 import requests
+import sys
 from functools import wraps
 from collections import namedtuple
 from requests_oauthlib import OAuth2Session
 
 from . import errors
-import sys
 
 __author__ = 'Jon Nappi'
 __all__ = ['Airs', 'Alias', 'Comment', 'Genre', 'Translation', 'get', 'delete',
@@ -48,8 +48,8 @@ OAUTH_AUTH = 'OAUTH'
 #: The currently enabled authentication method. Default is ``PIN_AUTH``
 AUTH_METHOD = PIN_AUTH
 
-#: PyTrakt PIN url for PIN Authentication
-PIN_URL = 'https://trakt.tv/pin/1334'
+#: The ID of the application to register with, when using PIN authentication
+APPLICATION_ID = None
 
 
 def _store(**kwargs):
@@ -93,10 +93,16 @@ def pin_auth(pin=None, client_id=None, client_secret=None, store=False):
     CLIENT_ID, CLIENT_SECRET = client_id, client_secret
     if client_id is None and client_secret is None:
         CLIENT_ID, CLIENT_SECRET = _get_client_info()
+    if pin is None and APPLICATION_ID is None:
+        print('You must set the APPLICATION_ID of the Trakt application you '
+              'wish to use. You can find this ID by visiting the following URL')
+        print('https://trakt.tv/oauth/applications')
+        sys.exit(1)
     if pin is None:
         print('If you do not have a Trakt.tv PIN, please visit the following '
               'url and log in to generate one.')
-        print(PIN_URL)
+        pin_url = 'https://trakt.tv/pin/{id}'.format(id=APPLICATION_ID)
+        print(pin_url)
         if sys.version_info > (3,):
             pin = input('Please enter your PIN: ')
         else:
@@ -113,7 +119,7 @@ def pin_auth(pin=None, client_id=None, client_secret=None, store=False):
 
     if store:
         _store(CLIENT_ID=CLIENT_ID, CLIENT_SECRET=CLIENT_SECRET,
-               api_key=api_key)
+               api_key=api_key, APPLICATION_ID=APPLICATION_ID)
     return api_key
 
 

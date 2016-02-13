@@ -288,6 +288,8 @@ class Core(object):
         self.logger.debug('RESPONSE [%s] (%s): %s', method, url, str(response))
         if response.status_code in self.error_map:
             raise self.error_map[response.status_code]()
+        elif response.status_code == 204:  # HTTP no content
+            return None
         json_data = json.loads(response.content.decode('UTF-8', 'ignore'))
         return json_data
 

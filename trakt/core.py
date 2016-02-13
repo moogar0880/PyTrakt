@@ -15,7 +15,7 @@ from . import errors
 
 __author__ = 'Jon Nappi'
 __all__ = ['Airs', 'Alias', 'Comment', 'Genre', 'Translation', 'get', 'delete',
-           'post', 'put', 'init', 'api_key', 'AUTH_METHOD', 'PIN_AUTH', 'OAUTH_AUTH']
+           'post', 'put', 'init', 'OAUTH_TOKEN', 'AUTH_METHOD', 'PIN_AUTH', 'OAUTH_AUTH']
 
 #: The base url for the Trakt API. Can be modified to run against different
 #: Trakt.tv environments
@@ -36,8 +36,8 @@ HEADERS = {'Content-Type': 'application/json', 'trakt-api-version': '2'}
 #: Default path for where to store your trakt.tv API authentication information
 CONFIG_PATH = os.path.join(os.path.expanduser('~'), '.pytrakt.json')
 
-#: Your personal Trakt.tv API Key
-api_key = None
+#: Your personal Trakt.tv OAUTH Bearer Token
+OAUTH_TOKEN = api_key = None
 
 #: Flag used to enable Trakt PIN authentication
 PIN_AUTH = 'PIN'
@@ -61,21 +61,34 @@ def _store(**kwargs):
         json.dump(kwargs, config_file)
 
 
-def _get_client_info():
+def _get_client_info(app_id=False):
     """Helper function to poll the user for Client ID and Client Secret
     strings
 
     :return: A 2-tuple of client_id, client_secret
     """
+    global APPLICATION_ID
     print('If you do not have a client ID and secret. Please visit the '
           'following url to create them.')
     print('http://trakt.tv/oauth/applications')
     if sys.version_info > (3,):
         client_id = input('Please enter your client id: ')
         client_secret = input('Please enter your client secret: ')
+        if app_id:
+            msg = 'Please enter your application ID ({default}): '.format(
+                default=APPLICATION_ID)
+            user_input = input(msg)
+            if user_input:
+                APPLICATION_ID = user_input
     else:
         client_id = raw_input('Please enter your client id: ')
         client_secret = raw_input('Please enter your client secret: ')
+        if app_id:
+            msg = 'Please enter your application ID ({default}): '.format(
+                default=APPLICATION_ID)
+            user_input = raw_input(msg)
+            if user_input:
+                APPLICATION_ID = user_input
     return client_id, client_secret
 
 
@@ -89,10 +102,10 @@ def pin_auth(pin=None, client_id=None, client_secret=None, store=False):
         the security conscious
     :return: Your OAuth access token
     """
-    global api_key, HEADERS, CLIENT_ID, CLIENT_SECRET, REDIRECT_URI
+    global OAUTH_TOKEN, HEADERS, CLIENT_ID, CLIENT_SECRET, REDIRECT_URI
     CLIENT_ID, CLIENT_SECRET = client_id, client_secret
     if client_id is None and client_secret is None:
-        CLIENT_ID, CLIENT_SECRET = _get_client_info()
+        CLIENT_ID, CLIENT_SECRET = _get_client_info(app_id=True)
     if pin is None and APPLICATION_ID is None:
         print('You must set the APPLICATION_ID of the Trakt application you '
               'wish to use. You can find this ID by visiting the following URL')
@@ -114,13 +127,12 @@ def pin_auth(pin=None, client_id=None, client_secret=None, store=False):
             'client_secret': CLIENT_SECRET}
 
     response = requests.post(''.join([BASE_URL, '/oauth/token']), data=args)
-    api_key = response.json().get('access_token', None)
-    HEADERS['trakt-api-key'] = CLIENT_ID
+    OAUTH_TOKEN = response.json().get('access_token', None)
 
     if store:
         _store(CLIENT_ID=CLIENT_ID, CLIENT_SECRET=CLIENT_SECRET,
-               api_key=api_key, APPLICATION_ID=APPLICATION_ID)
-    return api_key
+               OAUTH_TOKEN=OAUTH_TOKEN, APPLICATION_ID=APPLICATION_ID)
+    return OAUTH_TOKEN
 
 
 def oauth_auth(username, client_id=None, client_secret=None, store=False):
@@ -135,7 +147,7 @@ def oauth_auth(username, client_id=None, client_secret=None, store=False):
         the security conscious
     :return: Your OAuth access token
     """
-    global BASE_URL, CLIENT_ID, CLIENT_SECRET, api_key
+    global BASE_URL, CLIENT_ID, CLIENT_SECRET, OAUTH_TOKEN
     if client_id is None and client_secret is None:
         client_id, client_secret = _get_client_info()
     CLIENT_ID, CLIENT_SECRET = client_id, client_secret
@@ -159,11 +171,11 @@ def oauth_auth(username, client_id=None, client_secret=None, store=False):
         response = raw_input("Paste the Code returned here: ")
     # Fetch, assign, and return the access token
     oauth.fetch_token(token_url, client_secret=CLIENT_SECRET, code=response)
-    api_key = oauth.token['access_token']
+    OAUTH_TOKEN = oauth.token['access_token']
 
     if store:
         _store(CLIENT_ID=CLIENT_ID, CLIENT_SECRET=CLIENT_SECRET,
-               api_key=api_key)
+               OAUTH_TOKEN=OAUTH_TOKEN)
     return oauth.token['access_token']
 
 
@@ -192,7 +204,7 @@ def _bootstrapped(f):
     """
     @wraps(f)
     def inner(*args, **kwargs):
-        global CLIENT_ID, CLIENT_SECRET, api_key
+        global CLIENT_ID, CLIENT_SECRET, OAUTH_TOKEN
         if CLIENT_ID is None or CLIENT_SECRET is None and \
                 os.path.exists(CONFIG_PATH):
             # Load in trakt API auth data fron CONFIG_PATH
@@ -201,9 +213,15 @@ def _bootstrapped(f):
 
             CLIENT_ID = config_data.get('CLIENT_ID', None)
             CLIENT_SECRET = config_data.get('CLIENT_SECRET', None)
-            api_key = config_data['api_key']
+            OAUTH_TOKEN = config_data['OAUTH_TOKEN']
+
+            # For backwards compatability with trakt<=2.3.0
+            if api_key is not None and OAUTH_TOKEN is None:
+                OAUTH_TOKEN = api_key
 
             HEADERS['trakt-api-key'] = CLIENT_ID
+            # HEADERS['trakt-api-key'] = OAUTH_TOKEN
+            HEADERS['Authorization'] = 'Bearer {token}'.format(token=OAUTH_TOKEN)
         return f(*args, **kwargs)
     return inner
 
@@ -258,7 +276,9 @@ class Core(object):
         :raises TraktException: If any non-200 return code is encountered
         """
         self.logger.debug('%s: %s', method, url)
-        HEADERS['Authorization'] = 'Bearer {0}'.format(api_key)
+        HEADERS['Authorization'] = 'Bearer {0}'.format(OAUTH_TOKEN)
+        self.logger.debug('headers: %s', str(HEADERS))
+        self.logger.debug('method, url :: %s, %s', method, url)
         if method == 'get':  # GETs need to pass data as params, not body
             response = requests.request(method, url, params=data,
                                         headers=HEADERS)

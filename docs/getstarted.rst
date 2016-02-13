@@ -86,6 +86,8 @@ Should you choose to store your credentials in another way and not to set the
 following settings before attempting to interact with Trakt
 
 * `trakt.core.api_key`
+  * Note: api_key is deprecated in favor of OAUTH_TOKEN and will go away with the next major release
+* `trakt.core.OAUTH_TOKEN`
 * `trakt.core.CLIENT_ID`
 * `trakt.core.CLIENT_SECRET`
 
@@ -93,7 +95,7 @@ These can be set like so
 ::
 
     >>> import trakt
-    >>> trakt.core.api_key = my_api_key
+    >>> trakt.core.OAUTH_TOKEN = my_oauth_token
     >>> trakt.core.CLIENT_ID = my_client_id
     >>> trakt.core.CLIENT_SECRET = my_client_secret
 

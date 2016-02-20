@@ -1,5 +1,11 @@
 Release History
 ^^^^^^^^^^^^^^^
+2.4.1 (2016-02-20)
+++++++++++++++++++
+
+* Fixed user list retrieval @permster (#42)
+* Fixed return from generator py 2.x bug (#45)
+
 2.4.0 (2016-02-13)
 ++++++++++++++++++
 

@@ -54,9 +54,10 @@ def unfollow(user_name):
 
 
 class UserList(namedtuple('UserList', ['name', 'description', 'privacy',
-                                       'display_numbers', 'allow_comments',
-                                       'updated_at', 'item_count', 'likes',
-                                       'trakt', 'slug', 'creator'])):
+                                        'display_numbers', 'allow_comments',
+                                        'sort_by', 'sort_how', 'created_at',
+                                        'updated_at', 'item_count', 'comment_count',
+                                        'likes', 'trakt', 'slug', 'user', 'creator'])):
     """A list created by a Trakt.tv :class:`User`"""
 
     def __init__(self, *args, **kwargs):

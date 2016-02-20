@@ -375,7 +375,7 @@ class User(object):
 
         # if a user isn't watching anything, trakt returns a 204
         if data is None:
-            return data
+            yield data
 
         media_type = data.pop('type')
         if media_type == 'movie':

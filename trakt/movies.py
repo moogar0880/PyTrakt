@@ -72,7 +72,8 @@ def updated_movies(timestamp=None):
     yield to_ret
 
 
-Release = namedtuple('Release', ['country', 'certification', 'release_date'])
+Release = namedtuple('Release', ['country', 'certification', 'release_date',
+                                 'note', 'release_type'])
 
 
 class Movie(object):
@@ -164,12 +165,14 @@ class Movie(object):
         recent comments returned first.
         """
         # TODO (jnappi) Pagination
-        from .users import User
+        from trakt.users import User
         data = yield (self.ext + '/comments')
         self._comments = []
         for com in data:
-            user = User(**com.pop('user'))
-            self._comments.append(Comment(user=user, **com))
+            user = User(**com.get('user'))
+            self._comments.append(
+                Comment(user=user, **{k: com[k] for k in com if k != 'user'})
+            )
         yield self._comments
 
     @property
@@ -182,10 +185,8 @@ class Movie(object):
         """Accessor to the trakt, imdb, and tmdb ids, as well as the trakt.tv
         slug
         """
-        return {'ids': {
-            'trakt': self.trakt_id, 'slug': self.slug, 'imdb': self.imdb_id,
-            'tmdb': self.tmdb_id
-        }}
+        return {'ids': {'trakt': self.trakt, 'slug': self.slug,
+                        'imdb': self.imdb, 'tmdb': self.tmdb}}
 
     @property
     @get
@@ -242,7 +243,7 @@ class Movie(object):
     @get
     def watching_now(self):
         """A list of all :class:`User`'s watching a movie."""
-        from .users import User
+        from trakt.users import User
         data = yield self.ext + '/watching'
         users = []
         for user in data:
@@ -279,6 +280,7 @@ class Movie(object):
             self._releases = [Release(**release) for release in data]
         yield self._releases
 
+    @get
     def get_translations(self, country_code='us'):
         """Returns all :class:`Translation`s for a movie, including language
         and translated values for title, tagline and overview.

@@ -193,7 +193,7 @@ Alias = namedtuple('Alias', ['title', 'country'])
 Genre = namedtuple('Genre', ['name', 'slug'])
 Comment = namedtuple('Comment', ['id', 'parent_id', 'created_at', 'comment',
                                  'spoiler', 'review', 'replies', 'user',
-                                 'likes'])
+                                 'user_rating'])
 Translation = namedtuple('Translation', ['title', 'overview', 'tagline',
                                          'language'])
 

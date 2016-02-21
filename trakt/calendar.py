@@ -1,4 +1,5 @@
 """Interfaces to all of the Calendar objects offered by the Trakt.tv API"""
+from pprint import pformat
 from trakt.core import get
 from trakt.movies import Movie
 from trakt.tv import TVEpisode
@@ -42,7 +43,6 @@ class Calendar(object):
 
     def __str__(self):
         """str representation of this Calendar"""
-        from pprint import pformat
         return pformat(self._calendar)
     __repr__ = __str__
 

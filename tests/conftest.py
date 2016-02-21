@@ -42,3 +42,5 @@ trakt.core.get = trakt.core.CORE.get
 trakt.core.post = trakt.core.CORE.post
 trakt.core.delete = trakt.core.CORE.delete
 trakt.core.put = trakt.core.CORE.put
+trakt.core.CLIENT_ID = 'FOO'
+trakt.core.CLIENT_SECRET = 'BAR'

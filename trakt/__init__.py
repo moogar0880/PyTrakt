@@ -1,6 +1,6 @@
 """A wrapper for the Trakt.tv REST API"""
 try:
-    from .core import *  # NOQA
+    from trakt.core import *  # NOQA
 except ImportError:
     pass
 

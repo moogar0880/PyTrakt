@@ -1,7 +1,7 @@
 .PHONY: clean
 
 init:
-	pip install -r requirements.txt
+	pip install -r testing-requirements.txt
 
 test: clean
 	py.test --verbose -p no:cacheprovider tests

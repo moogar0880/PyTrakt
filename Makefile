@@ -6,13 +6,13 @@ init:
 test: clean
 	# This runs all of the tests. To run an individual test, run py.test with
 	# the -k flag, like "py.test -k test_path_is_not_double_encoded"
-	py.test -p no:cacheprovider tests
+	py.test --verbose -p no:cacheprovider tests
 
 style:
 	flake8 trakt
 
 coverage:
-	py.test --verbose --cov-report term --cov=trakt tests
+	py.test --verbose --cov=trakt -p no:cacheprovider tests
 
 ci: init style test
 

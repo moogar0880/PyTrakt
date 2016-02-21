@@ -2,13 +2,13 @@
 """Interfaces to all of the TV objects offered by the Trakt.tv API"""
 from datetime import datetime, timedelta
 
-from .core import Airs, Alias, Comment, Genre, Translation, delete, get
-from .errors import NotFoundException
-from .sync import (Scrobbler, rate, comment, add_to_collection,
-                   add_to_watchlist, add_to_history, remove_from_collection,
-                   remove_from_watchlist, remove_from_history, search)
-from .utils import slugify, extract_ids, airs_date, unicode_safe
-from .people import Person
+from trakt.core import Airs, Alias, Comment, Genre, Translation, delete, get
+from trakt.errors import NotFoundException
+from trakt.sync import (Scrobbler, rate, comment, add_to_collection,
+                        add_to_watchlist, add_to_history, remove_from_history,
+                        remove_from_collection, remove_from_watchlist, search)
+from trakt.utils import slugify, extract_ids, airs_date, unicode_safe
+from trakt.people import Person
 
 __author__ = 'Jon Nappi'
 __all__ = ['trending_shows', 'TVShow', 'TVEpisode', 'TVSeason',

@@ -2,20 +2,20 @@
 trakt package
 """
 from __future__ import print_function
-import os
 import json
 import logging
+import os
 import requests
 import sys
-from functools import wraps
 from collections import namedtuple
+from functools import wraps
 from requests_oauthlib import OAuth2Session
-
-from . import errors
+from trakt import errors
 
 __author__ = 'Jon Nappi'
 __all__ = ['Airs', 'Alias', 'Comment', 'Genre', 'Translation', 'get', 'delete',
-           'post', 'put', 'init', 'OAUTH_TOKEN', 'AUTH_METHOD', 'PIN_AUTH', 'OAUTH_AUTH']
+           'post', 'put', 'init', 'OAUTH_TOKEN', 'AUTH_METHOD', 'PIN_AUTH',
+           'OAUTH_AUTH']
 
 #: The base url for the Trakt API. Can be modified to run against different
 #: Trakt.tv environments
@@ -108,7 +108,8 @@ def pin_auth(pin=None, client_id=None, client_secret=None, store=False):
         CLIENT_ID, CLIENT_SECRET = _get_client_info(app_id=True)
     if pin is None and APPLICATION_ID is None:
         print('You must set the APPLICATION_ID of the Trakt application you '
-              'wish to use. You can find this ID by visiting the following URL')
+              'wish to use. You can find this ID by visiting the following '
+              'URL.')
         print('https://trakt.tv/oauth/applications')
         sys.exit(1)
     if pin is None:
@@ -220,8 +221,9 @@ def _bootstrapped(f):
                 OAUTH_TOKEN = api_key
 
             HEADERS['trakt-api-key'] = CLIENT_ID
-            # HEADERS['trakt-api-key'] = OAUTH_TOKEN
-            HEADERS['Authorization'] = 'Bearer {token}'.format(token=OAUTH_TOKEN)
+
+            bearer = 'Bearer {token}'
+            HEADERS['Authorization'] = bearer.format(token=OAUTH_TOKEN)
         return f(*args, **kwargs)
     return inner
 

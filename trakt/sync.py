@@ -2,8 +2,8 @@
 """This module contains Trakt.tv sync endpoint support functions"""
 from datetime import datetime
 
-from .core import get, post
-from .utils import slugify, extract_ids, timestamp
+from trakt.core import get, post
+from trakt.utils import slugify, extract_ids, timestamp
 
 __author__ = 'Jon Nappi'
 __all__ = ['Scrobbler', 'comment', 'rate', 'add_to_history',
@@ -157,9 +157,11 @@ def search_by_id(query, id_type='imdb'):
 
     :param query: Your search string
     :param id_type: The type of object you're looking for. Must be one of
-        'trakt-movie', 'trakt-show', 'trakt-episode', 'imdb', 'tmdb', 'tvdb' or 'tvrage'
+        'trakt-movie', 'trakt-show', 'trakt-episode', 'imdb', 'tmdb', 'tvdb' or
+        'tvrage'
     """
-    valids = ('trakt-movie', 'trakt-show', 'trakt-episode', 'imdb', 'tmdb', 'tvdb', 'tvrage')
+    valids = ('trakt-movie', 'trakt-show', 'trakt-episode', 'imdb', 'tmdb',
+              'tvdb', 'tvrage')
     if id_type not in valids:
         raise ValueError('search_type must be one of {}'.format(valids))
     data = yield 'search?id={query}&id_type={id_type}'.format(

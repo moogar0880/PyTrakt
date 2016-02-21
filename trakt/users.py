@@ -1,11 +1,10 @@
 """Interfaces to all of the User objects offered by the Trakt.tv API"""
 from collections import namedtuple
-
-from .tv import TVShow, TVEpisode
-from .core import get, post, delete
-from .utils import slugify, extract_ids, unicode_safe
-from .movies import Movie
-from .people import Person
+from trakt.core import get, post, delete
+from trakt.movies import Movie
+from trakt.people import Person
+from trakt.tv import TVShow, TVEpisode
+from trakt.utils import slugify, extract_ids, unicode_safe
 
 __author__ = 'Jon Nappi'
 __all__ = ['User', 'UserList', 'Request', 'follow', 'get_all_requests',
@@ -54,10 +53,11 @@ def unfollow(user_name):
 
 
 class UserList(namedtuple('UserList', ['name', 'description', 'privacy',
-                                        'display_numbers', 'allow_comments',
-                                        'sort_by', 'sort_how', 'created_at',
-                                        'updated_at', 'item_count', 'comment_count',
-                                        'likes', 'trakt', 'slug', 'user', 'creator'])):
+                                       'display_numbers', 'allow_comments',
+                                       'sort_by', 'sort_how', 'created_at',
+                                       'updated_at', 'item_count',
+                                       'comment_count', 'likes', 'trakt',
+                                       'slug', 'user', 'creator'])):
     """A list created by a Trakt.tv :class:`User`"""
 
     def __init__(self, *args, **kwargs):
@@ -218,9 +218,9 @@ class User(object):
     @get
     def friends(self):
         """A list of this :class:`User`'s friends (a 2 way relationship where
-        each user follows the other) including the since timestamp which is when
-        the friendship began. Protected users won't return any data unless you
-        are friends. Any friends of the main user that are protected won't
+        each user follows the other) including the since timestamp which is
+        when the friendship began. Protected users won't return any data unless
+        you are friends. Any friends of the main user that are protected won't
         display data either.
         """
         if self._friends is None:

@@ -1,8 +1,8 @@
 """Interfaces to all of the Calendar objects offered by the Trakt.tv API"""
-from .core import get
-from .movies import Movie
-from .tv import TVEpisode
-from .utils import now, airs_date
+from trakt.core import get
+from trakt.movies import Movie
+from trakt.tv import TVEpisode
+from trakt.utils import now, airs_date
 
 __author__ = 'Jon Nappi'
 __all__ = ['Calendar', 'PremiereCalendar', 'MyPremiereCalendar',
@@ -20,7 +20,7 @@ class Calendar(object):
         """Create a new :class:`Calendar` object
 
         :param date: Start date of this :class:`Calendar` in the format Ymd
-            (i.e. 20110421). Defaults to today
+            (i.e. 2011-04-21). Defaults to today
         :param days: Number of days for this :class:`Calendar`. Defaults to 7
             days
         """

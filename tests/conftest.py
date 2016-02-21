@@ -7,7 +7,10 @@ MOCK_DATA_DIR = os.path.abspath('tests/mock_data')
 
 
 MOCK_DATA_FILES = [
-    os.path.join(MOCK_DATA_DIR, 'calendars.json')
+    os.path.join(MOCK_DATA_DIR, 'calendars.json'),
+    os.path.join(MOCK_DATA_DIR, 'comments.json'),
+    os.path.join(MOCK_DATA_DIR, 'genres.json'),
+    os.path.join(MOCK_DATA_DIR, 'movies.json'),
 ]
 
 
@@ -21,6 +24,8 @@ class MockCore(trakt.core.Core):
 
     def _handle_request(self, method, url, data=None):
         uri = url[len(trakt.core.BASE_URL):]
+        if uri.startswith('/'):
+            uri = uri[1:]
         method_responses = self.mock_data.get(uri, {})
         return method_responses.get(method.upper())
 

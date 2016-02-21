@@ -11,6 +11,7 @@ MOCK_DATA_FILES = [
     os.path.join(MOCK_DATA_DIR, 'comments.json'),
     os.path.join(MOCK_DATA_DIR, 'genres.json'),
     os.path.join(MOCK_DATA_DIR, 'movies.json'),
+    os.path.join(MOCK_DATA_DIR, 'people.json'),
 ]
 
 

@@ -6,11 +6,6 @@ from trakt.people import Person
 from trakt.users import User
 
 
-def _get_tron():
-    """utility function to return the tron movie"""
-    return Movie('Tron Legacy', year=2010)
-
-
 def test_trending_movies():
     trending = trending_movies()
     assert isinstance(trending, list)
@@ -26,7 +21,7 @@ def test_updated_movies():
 
 
 def test_get_movie():
-    tron = _get_tron()
+    tron = Movie('Tron Legacy', year=2010)
     assert isinstance(tron, Movie)
     assert tron.title == 'TRON: Legacy'
     assert tron.year == 2010
@@ -40,19 +35,19 @@ def test_get_movie():
 
 
 def test_get_movie_images():
-    tron = _get_tron()
+    tron = Movie('Tron Legacy 2010')
     tron_images = tron.images
     assert isinstance(tron_images, dict)
 
 
 def test_movie_aliases():
-    tron = _get_tron()
+    tron = Movie('Tron Legacy', year=2010)
     assert isinstance(tron.aliases, list)
     assert len(tron.aliases) == 15
 
 
 def test_movie_releases():
-    tron = _get_tron()
+    tron = Movie('Tron Legacy 2010')
     releases = tron.get_releases()
     assert isinstance(releases, list)
     assert len(releases) == 13
@@ -60,7 +55,7 @@ def test_movie_releases():
 
 
 def test_movie_translations():
-    tron = _get_tron()
+    tron = Movie('Tron Legacy', year=2010)
     translations = tron.get_translations(country_code='es')
     assert isinstance(translations, list)
     assert len(translations) == 3
@@ -68,14 +63,14 @@ def test_movie_translations():
 
 
 def test_movie_comments():
-    tron = _get_tron()
+    tron = Movie('Tron Legacy 2010')
     assert isinstance(tron.comments, list)
     assert len(tron.comments) == 1
     assert isinstance(tron.comments[0], Comment)
 
 
 def test_movie_people():
-    tron = _get_tron()
+    tron = Movie('Tron Legacy', year=2010)
     sub_groups = ['people', 'cast', 'crew']
     for group in sub_groups:
         persons = getattr(tron, group)
@@ -86,19 +81,19 @@ def test_movie_people():
 
 
 def test_movie_ratings():
-    tron = _get_tron()
+    tron = Movie('Tron Legacy 2010')
     assert isinstance(tron.ratings, dict)
 
 
 def test_movie_related():
-    tron = _get_tron()
+    tron = Movie('Tron Legacy', year=2010)
     assert isinstance(tron.related, list)
     assert len(tron.related) == 10
     assert isinstance(tron.related[0], Movie)
 
 
 def test_movie_watching():
-    tron = _get_tron()
+    tron = Movie('Tron Legacy 2010')
     watching_now = tron.watching_now
     assert isinstance(watching_now, list)
     assert len(watching_now) == 2
@@ -115,3 +110,14 @@ def test_get_recommended_movies():
 def test_dismiss_movie_recommendation():
     dismissed = dismiss_recommendation(922)
     assert dismissed is None
+
+
+def test_movie_to_json():
+    tron = Movie('Tron Legacy', year=2010)
+    assert tron.to_json() == {'movie': {'title': tron.title}}
+
+
+def test_movie_str():
+    tron = Movie('Tron Legacy 2010')
+    assert str(tron) == '<Movie>: {0}'.format(tron.title)
+    assert str(tron) == repr(tron)

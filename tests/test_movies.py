@@ -1,6 +1,7 @@
 """tests for the trakt.movies module"""
 from trakt.core import Comment, Translation
-from trakt.movies import trending_movies, updated_movies, Movie, Release
+from trakt.movies import (trending_movies, updated_movies, Movie, Release,
+                          dismiss_recommendation, get_recommended_movies)
 from trakt.people import Person
 from trakt.users import User
 
@@ -102,3 +103,15 @@ def test_movie_watching():
     assert isinstance(watching_now, list)
     assert len(watching_now) == 2
     assert isinstance(watching_now[0], User)
+
+
+def test_get_recommended_movies():
+    recommendations = get_recommended_movies()
+    assert isinstance(recommendations, list)
+    assert len(recommendations) == 10
+    assert all(isinstance(m, Movie) for m in recommendations)
+
+
+def test_dismiss_movie_recommendation():
+    dismissed = dismiss_recommendation(922)
+    assert dismissed is None

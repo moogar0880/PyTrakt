@@ -10,7 +10,7 @@ style:
 	flake8 trakt
 
 coverage:
-	py.test --verbose --cov=trakt -p no:cacheprovider tests
+	py.test --verbose --cov-report term-missing --cov=trakt -p no:cacheprovider tests
 
 ci: init style test
 

@@ -13,6 +13,7 @@ MOCK_DATA_FILES = [
     os.path.join(MOCK_DATA_DIR, 'movies.json'),
     os.path.join(MOCK_DATA_DIR, 'people.json'),
     os.path.join(MOCK_DATA_DIR, 'recommendations.json'),
+    os.path.join(MOCK_DATA_DIR, 'scrobble.json'),
 ]
 
 

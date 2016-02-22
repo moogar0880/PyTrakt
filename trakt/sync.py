@@ -133,21 +133,22 @@ def search(query, search_type='movie'):
     # Need to do imports here to prevent circular imports with modules that
     # need to import Scrobblers
     if search_type == 'movie':
-        from .movies import Movie
+        from trakt.movies import Movie
         yield [Movie(**d.pop('movie')) for d in data]
     elif search_type == 'show':
-        from .tv import TVShow
+        from trakt.tv import TVShow
         yield [TVShow(**d.pop('show')) for d in data]
     elif search_type == 'episode':
-        from .tv import TVEpisode
+        from trakt.tv import TVEpisode
         episodes = []
         for episode in data:
             show = episode.pop('show')
             extract_ids(episode['episode'])
-            episodes.append(TVEpisode(show['title'], **episode['episode']))
+            episodes.append(TVEpisode(show.get('title', None),
+                                      **episode['episode']))
         yield episodes
     elif search_type == 'person':
-        from .people import Person
+        from trakt.people import Person
         yield [Person(**d.pop('person')) for d in data]
 
 
@@ -173,18 +174,18 @@ def search_by_id(query, id_type='imdb'):
     results = []
     for d in data:
         if 'episode' in d:
-            from .tv import TVEpisode
+            from trakt.tv import TVEpisode
             show = d.pop('show')
             extract_ids(d['episode'])
             results.append(TVEpisode(show['title'], **d['episode']))
         elif 'movie' in d:
-            from .movies import Movie
+            from trakt.movies import Movie
             results.append(Movie(**d.pop('movie')))
         elif 'show' in d:
-            from .tv import TVShow
+            from trakt.tv import TVShow
             results.append(TVShow(**d.pop('show')))
         elif 'person' in d:
-            from .people import Person
+            from trakt.people import Person
             results.append(Person(**d.pop('person')))
     yield results
 

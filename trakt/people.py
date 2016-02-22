@@ -39,7 +39,11 @@ class Person(object):
     def _build(self, data):
         extract_ids(data)
         for key, val in data.items():
-            setattr(self, key, val)
+            try:
+                setattr(self, key, val)
+            except AttributeError as ae:
+                if not hasattr(self, '_' + key):
+                    raise ae
 
     @property
     @get

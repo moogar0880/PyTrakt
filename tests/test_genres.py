@@ -1,6 +1,6 @@
 """tests for genre retrieval functions"""
 from trakt.core import Genre
-from trakt.movie import genres as movie_genres
+from trakt.movies import genres as movie_genres
 from trakt.tv import genres as tv_genres
 
 

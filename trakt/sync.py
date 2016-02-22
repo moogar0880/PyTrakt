@@ -238,7 +238,7 @@ class Scrobbler(object):
         self.start()
 
     @post
-    def _post(self, uri, args=None):
+    def _post(self, uri):
         """Handle actually posting the scrobbling data to trakt
 
         :param uri: The uri to post to
@@ -248,8 +248,6 @@ class Scrobbler(object):
         payload = dict(progress=self.progress, app_version=self.version,
                        date=self.date)
         payload.update(self.media.to_json())
-        if args is not None:
-            payload.update(args)
         yield uri, payload
 
     def __enter__(self):

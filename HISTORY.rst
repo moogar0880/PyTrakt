@@ -1,5 +1,25 @@
 Release History
 ^^^^^^^^^^^^^^^
+2.4.1 (2016-02-20)
+++++++++++++++++++
+
+* Fixed user list retrieval @permster (#42)
+* Fixed return from generator py 2.x bug (#45)
+
+2.4.0 (2016-02-13)
+++++++++++++++++++
+
+* Cleaned up some ugliness in the auth workflows
+* User GET's now actually fetch User data from trakt
+* User.watching no longer raises an exception if a user isn't watching anything (#40)
+* HTTP 204 responses now return None for more obvious error handling
+
+2.3.0 (2016-02-12)
+++++++++++++++++++
+
+* Expose documented vars, fix watching query (#39)
+* Add easier customization for PIN Authentication url (#38)
+
 2.2.5 (2015-09-29)
 ++++++++++++++++++
 
@@ -110,4 +130,3 @@ Release History
 ++++++++++++++++++
 
 * Initial Release
-

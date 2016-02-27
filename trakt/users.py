@@ -169,6 +169,7 @@ class User(object):
         else:
             self._get()
 
+    @get
     def _get(self):
         """Get this :class:`User` from the trakt.tv API"""
         data = yield 'users/{username}'.format(username=self.username)
@@ -371,6 +372,11 @@ class User(object):
         friends.
         """
         data = yield 'users/{user}/watching'.format(user=self.username)
+
+        # if a user isn't watching anything, trakt returns a 204
+        if data is None:
+            yield data
+
         media_type = data.pop('type')
         if media_type == 'movie':
             movie_data = data.pop('movie')

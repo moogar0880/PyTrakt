@@ -19,10 +19,12 @@ You can authenticate to trakt via PIN Auth like so,
 
 ::
 
-    >>> from trakt import init
-    >>> init()
+    >>> import trakt
+    >>> trakt.APPLICATION_ID = 'MY_APPLICATION_ID'
+    >>> # to get an id for your app, visit https://trakt.tv/oauth/applications
+    >>> trakt.init()
     If you do not have a Trakt.tv PIN, please visit the following url and log in to generate one.
-    https://trakt.tv/pin/1334
+    https://trakt.tv/pin/MY_APPLICATION_ID
     Please enter your PIN:
     >>> # Once you've pasted your PIN, you'll be completely authenticated and
     >>> # ready to use PyTrakt
@@ -84,6 +86,8 @@ Should you choose to store your credentials in another way and not to set the
 following settings before attempting to interact with Trakt
 
 * `trakt.core.api_key`
+  * Note: api_key is deprecated in favor of OAUTH_TOKEN and will go away with the next major release
+* `trakt.core.OAUTH_TOKEN`
 * `trakt.core.CLIENT_ID`
 * `trakt.core.CLIENT_SECRET`
 
@@ -91,10 +95,9 @@ These can be set like so
 ::
 
     >>> import trakt
-    >>> trakt.core.api_key = my_api_key
+    >>> trakt.core.OAUTH_TOKEN = my_oauth_token
     >>> trakt.core.CLIENT_ID = my_client_id
     >>> trakt.core.CLIENT_SECRET = my_client_secret
 
 This is all of the authentication you'll need to perform to use the latest version
 of Trakt's API
-

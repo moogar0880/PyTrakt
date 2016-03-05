@@ -2,20 +2,20 @@
 trakt package
 """
 from __future__ import print_function
-import os
 import json
 import logging
+import os
 import requests
 import sys
-from functools import wraps
 from collections import namedtuple
+from functools import wraps
 from requests_oauthlib import OAuth2Session
-
-from . import errors
+from trakt import errors
 
 __author__ = 'Jon Nappi'
 __all__ = ['Airs', 'Alias', 'Comment', 'Genre', 'Translation', 'get', 'delete',
-           'post', 'put', 'init', 'OAUTH_TOKEN', 'AUTH_METHOD', 'PIN_AUTH', 'OAUTH_AUTH']
+           'post', 'put', 'init', 'OAUTH_TOKEN', 'AUTH_METHOD', 'PIN_AUTH',
+           'OAUTH_AUTH']
 
 #: The base url for the Trakt API. Can be modified to run against different
 #: Trakt.tv environments
@@ -108,7 +108,8 @@ def pin_auth(pin=None, client_id=None, client_secret=None, store=False):
         CLIENT_ID, CLIENT_SECRET = _get_client_info(app_id=True)
     if pin is None and APPLICATION_ID is None:
         print('You must set the APPLICATION_ID of the Trakt application you '
-              'wish to use. You can find this ID by visiting the following URL')
+              'wish to use. You can find this ID by visiting the following '
+              'URL.')
         print('https://trakt.tv/oauth/applications')
         sys.exit(1)
     if pin is None:
@@ -192,7 +193,7 @@ Alias = namedtuple('Alias', ['title', 'country'])
 Genre = namedtuple('Genre', ['name', 'slug'])
 Comment = namedtuple('Comment', ['id', 'parent_id', 'created_at', 'comment',
                                  'spoiler', 'review', 'replies', 'user',
-                                 'likes'])
+                                 'user_rating'])
 Translation = namedtuple('Translation', ['title', 'overview', 'tagline',
                                          'language'])
 
@@ -211,17 +212,16 @@ def _bootstrapped(f):
             with open(CONFIG_PATH) as config_file:
                 config_data = json.load(config_file)
 
-            CLIENT_ID = config_data.get('CLIENT_ID', None)
-            CLIENT_SECRET = config_data.get('CLIENT_SECRET', None)
-            OAUTH_TOKEN = config_data['OAUTH_TOKEN']
+            if CLIENT_ID is None:
+                CLIENT_ID = config_data.get('CLIENT_ID', None)
+            if CLIENT_SECRET is None:
+                CLIENT_SECRET = config_data.get('CLIENT_SECRET', None)
+            if OAUTH_TOKEN is None:
+                OAUTH_TOKEN = config_data['OAUTH_TOKEN']
 
             # For backwards compatability with trakt<=2.3.0
             if api_key is not None and OAUTH_TOKEN is None:
                 OAUTH_TOKEN = api_key
-
-            HEADERS['trakt-api-key'] = CLIENT_ID
-            # HEADERS['trakt-api-key'] = OAUTH_TOKEN
-            HEADERS['Authorization'] = 'Bearer {token}'.format(token=OAUTH_TOKEN)
         return f(*args, **kwargs)
     return inner
 
@@ -276,6 +276,7 @@ class Core(object):
         :raises TraktException: If any non-200 return code is encountered
         """
         self.logger.debug('%s: %s', method, url)
+        HEADERS['trakt-api-key'] = CLIENT_ID
         HEADERS['Authorization'] = 'Bearer {0}'.format(OAUTH_TOKEN)
         self.logger.debug('headers: %s', str(HEADERS))
         self.logger.debug('method, url :: %s, %s', method, url)

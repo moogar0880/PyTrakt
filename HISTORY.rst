@@ -1,5 +1,10 @@
 Release History
 ^^^^^^^^^^^^^^^
+2.4.2 (2016-03-05)
+++++++++++++++++++
+
+* Fix authentication issue pointed out by @BrendanBall (#48)
+
 2.4.1 (2016-02-20)
 ++++++++++++++++++
 

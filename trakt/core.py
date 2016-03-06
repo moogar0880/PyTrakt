@@ -212,18 +212,16 @@ def _bootstrapped(f):
             with open(CONFIG_PATH) as config_file:
                 config_data = json.load(config_file)
 
-            CLIENT_ID = config_data.get('CLIENT_ID', None)
-            CLIENT_SECRET = config_data.get('CLIENT_SECRET', None)
-            OAUTH_TOKEN = config_data['OAUTH_TOKEN']
+            if CLIENT_ID is None:
+                CLIENT_ID = config_data.get('CLIENT_ID', None)
+            if CLIENT_SECRET is None:
+                CLIENT_SECRET = config_data.get('CLIENT_SECRET', None)
+            if OAUTH_TOKEN is None:
+                OAUTH_TOKEN = config_data['OAUTH_TOKEN']
 
             # For backwards compatability with trakt<=2.3.0
             if api_key is not None and OAUTH_TOKEN is None:
                 OAUTH_TOKEN = api_key
-
-            HEADERS['trakt-api-key'] = CLIENT_ID
-
-            bearer = 'Bearer {token}'
-            HEADERS['Authorization'] = bearer.format(token=OAUTH_TOKEN)
         return f(*args, **kwargs)
     return inner
 
@@ -278,6 +276,7 @@ class Core(object):
         :raises TraktException: If any non-200 return code is encountered
         """
         self.logger.debug('%s: %s', method, url)
+        HEADERS['trakt-api-key'] = CLIENT_ID
         HEADERS['Authorization'] = 'Bearer {0}'.format(OAUTH_TOKEN)
         self.logger.debug('headers: %s', str(HEADERS))
         self.logger.debug('method, url :: %s, %s', method, url)

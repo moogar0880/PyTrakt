@@ -249,8 +249,7 @@ class TVShow(object):
             self._seasons = []
             for season in data:
                 extract_ids(season)
-                number = season.pop('number')
-                self._seasons.append(TVSeason(self.title, number, **season))
+                self._seasons.append(TVSeason(self.title, **season))
         yield self._seasons
 
     @property
@@ -345,9 +344,7 @@ class TVSeason(object):
         self.show = show
         self.season = season
         self.slug = slug or slugify(show)
-        self._episodes = None
-        self._comments = []
-        self._ratings = []
+        self._episodes = self._comments = self._ratings = None
         self.ext = 'shows/{id}/seasons/{season}'.format(id=self.slug,
                                                         season=season)
         if len(kwargs) > 0:
@@ -365,8 +362,13 @@ class TVSeason(object):
 
     def _build(self, data):
         """Build this :class:`TVSeason` object with the data in *data*"""
-        for key, val in data.items():
-            setattr(self, key, val)
+        # only try to build our episodes if we got a list of episodes, not a
+        # dict of season data
+        if isinstance(data, list):
+            self._episodes = [TVEpisode(show=self.show, **ep) for ep in data]
+        else:
+            for key, val in data.items():
+                setattr(self, key, val)
 
     @property
     @get
@@ -475,6 +477,9 @@ class TVSeason(object):
         title = map(str, title)
         return ' '.join(title)
 
+    def __len__(self):
+        return len(self._episodes)
+
     __repr__ = __str__
 
 
@@ -489,11 +494,8 @@ class TVEpisode(object):
         self.number = number
         self.overview = self.title = self.year = None
         self.trakt = self.tmdb = self.tvdb = self.imdb = None
-        self.tvrage = self._stats = None
-        self._images = []
-        self._comments = []
-        self._translations = []
-        self._ratings = []
+        self.tvrage = self._stats = self._images = self._comments = None
+        self._translations = self._ratings = None
         if len(kwargs) > 0:
             self._build(kwargs)
         else:

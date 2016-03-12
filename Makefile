@@ -4,7 +4,7 @@ init:
 	pip install -r testing-requirements.txt
 
 test: clean
-	py.test --verbose -p no:cacheprovider tests
+	py.test -s --verbose -p no:cacheprovider tests
 
 style:
 	flake8 trakt

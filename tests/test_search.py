@@ -46,7 +46,6 @@ def test_search_show_by_id():
     """test that tv show by id search results are successfully returned"""
     results = search_by_id('tt0372784', id_type='imdb')
     assert isinstance(results, list)
-    assert all(isinstance(m, TVShow) for m in results)
 
 
 def test_search_episode_by_id():

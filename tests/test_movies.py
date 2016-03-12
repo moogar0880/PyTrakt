@@ -1,7 +1,8 @@
 """tests for the trakt.movies module"""
-from trakt.core import Comment, Translation
+from trakt.core import Comment
 from trakt.movies import (trending_movies, updated_movies, Movie, Release,
-                          dismiss_recommendation, get_recommended_movies)
+                          dismiss_recommendation, get_recommended_movies,
+                          Translation)
 from trakt.people import Person
 from trakt.users import User
 

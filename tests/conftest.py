@@ -2,6 +2,7 @@ import json
 import os
 import pytest
 import trakt
+from copy import deepcopy
 
 MOCK_DATA_DIR = os.path.abspath('tests/mock_data')
 
@@ -15,6 +16,7 @@ MOCK_DATA_FILES = [
     os.path.join(MOCK_DATA_DIR, 'recommendations.json'),
     os.path.join(MOCK_DATA_DIR, 'scrobble.json'),
     os.path.join(MOCK_DATA_DIR, 'search.json'),
+    os.path.join(MOCK_DATA_DIR, 'shows.json'),
 ]
 
 
@@ -30,7 +32,9 @@ class MockCore(trakt.core.Core):
         uri = url[len(trakt.core.BASE_URL):]
         if uri.startswith('/'):
             uri = uri[1:]
-        method_responses = self.mock_data.get(uri, {})
+        # use a deepcopy of the mocked data to ensure clean responses on every
+        # request. this prevents rewrites to JSON responses from persisting
+        method_responses = deepcopy(self.mock_data).get(uri, {})
         return method_responses.get(method.upper())
 
 

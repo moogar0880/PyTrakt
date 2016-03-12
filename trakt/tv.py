@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """Interfaces to all of the TV objects offered by the Trakt.tv API"""
+from collections import namedtuple
 from datetime import datetime, timedelta
-
-from trakt.core import Airs, Alias, Comment, Genre, Translation, delete, get
+from trakt.core import Airs, Alias, Comment, Genre, delete, get
 from trakt.errors import NotFoundException
 from trakt.sync import (Scrobbler, rate, comment, add_to_collection,
                         add_to_watchlist, add_to_history, remove_from_history,
@@ -11,8 +11,11 @@ from trakt.utils import slugify, extract_ids, airs_date, unicode_safe
 from trakt.people import Person
 
 __author__ = 'Jon Nappi'
-__all__ = ['trending_shows', 'TVShow', 'TVEpisode', 'TVSeason',
+__all__ = ['trending_shows', 'TVShow', 'TVEpisode', 'TVSeason', 'Translation',
            'get_recommended_shows', 'dismiss_recommendation']
+
+
+Translation = namedtuple('Translation', ['title', 'overview', 'language'])
 
 
 @delete
@@ -79,10 +82,7 @@ def updated_shows(timestamp=None):
     ts = timestamp or int(y_day.strftime('%s')) * 1000
     data = yield 'shows/updates/{start_date}'.format(start_date=ts)
     to_ret = []
-    for show in data['shows']:
-        title = show.get('title')
-        to_ret.append(TVShow(title, **show))
-    yield to_ret
+    yield [TVShow(**d['show']) for d in data]
 
 
 class TVShow(object):
@@ -258,7 +258,6 @@ class TVShow(object):
     def watching_now(self):
         """A list of all :class:`User`'s watching a movie."""
         from .users import User
-
         data = yield self.ext + '/watching'
         users = []
         for user in data:

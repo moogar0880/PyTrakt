@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Objects, properties, and methods to be shared across other modules in the
 trakt package
 """
@@ -13,9 +14,8 @@ from requests_oauthlib import OAuth2Session
 from trakt import errors
 
 __author__ = 'Jon Nappi'
-__all__ = ['Airs', 'Alias', 'Comment', 'Genre', 'Translation', 'get', 'delete',
-           'post', 'put', 'init', 'OAUTH_TOKEN', 'AUTH_METHOD', 'PIN_AUTH',
-           'OAUTH_AUTH']
+__all__ = ['Airs', 'Alias', 'Comment', 'Genre', 'get', 'delete', 'post', 'put',
+           'init', 'OAUTH_TOKEN', 'AUTH_METHOD', 'PIN_AUTH', 'OAUTH_AUTH']
 
 #: The base url for the Trakt API. Can be modified to run against different
 #: Trakt.tv environments
@@ -194,8 +194,6 @@ Genre = namedtuple('Genre', ['name', 'slug'])
 Comment = namedtuple('Comment', ['id', 'parent_id', 'created_at', 'comment',
                                  'spoiler', 'review', 'replies', 'user',
                                  'user_rating'])
-Translation = namedtuple('Translation', ['title', 'overview', 'tagline',
-                                         'language'])
 
 
 def _bootstrapped(f):
@@ -326,7 +324,8 @@ class Core(object):
         """
         @wraps(f)
         def inner(*args, **kwargs):
-            uri = f(*args, **kwargs)
+            generator = f(*args, **kwargs)
+            uri = next(generator)
             url = BASE_URL + uri
             self._handle_request('delete', url)
         return inner

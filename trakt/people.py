@@ -1,5 +1,6 @@
+# -*- coding: utf-8 -*-
 """Interfaces to all of the People objects offered by the Trakt.tv API"""
-from .core import get
+from trakt.core import get
 from trakt.utils import slugify, extract_ids
 
 __author__ = 'Jon Nappi'
@@ -39,10 +40,11 @@ class Person(object):
     def _build(self, data):
         extract_ids(data)
         for key, val in data.items():
-            if hasattr(self, '_' + key):
-                setattr(self, '_' + key, val)
-            else:
+            try:
                 setattr(self, key, val)
+            except AttributeError as ae:
+                if not hasattr(self, '_' + key):
+                    raise ae
 
     @property
     @get

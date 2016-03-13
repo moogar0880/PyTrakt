@@ -1,0 +1,93 @@
+{
+    "shows/game-of-thrones/seasons": {
+        "GET": [
+            {"number":0,"ids":{"trakt":1,"tvdb":137481,"tmdb":3627,"tvrage":null}},
+            {"number":1,"ids":{"trakt":2,"tvdb":364731,"tmdb":3624,"tvrage":null}},
+            {"number":2,"ids":{"trakt":3,"tvdb":473271,"tmdb":3625,"tvrage":null}},
+            {"number":3,"ids":{"trakt":4,"tvdb":488434,"tmdb":3626,"tvrage":null}},
+            {"number":4,"ids":{"trakt":5,"tvdb":522882,"tmdb":3628,"tvrage":null}}
+        ]
+    },
+    "shows/game-of-thrones/seasons?extended=images": {
+        "GET": [
+            {"number":0,"ids":{"trakt":1,"tvdb":137481,"tmdb":3627,"tvrage":null},"images":{"poster":{"full":"https://walter.trakt.us/images/seasons/000/002/145/posters/original/41221f3712.jpg?1409351965","medium":"https://walter.trakt.us/images/seasons/000/002/145/posters/medium/41221f3712.jpg?1409351965","thumb":"https://walter.trakt.us/images/seasons/000/002/145/posters/thumb/41221f3712.jpg?1409351965"},"thumb":{"full":"https://walter.trakt.us/images/seasons/000/002/145/thumbs/original/c41b46dd09.jpg?1409351965"}}},
+            {"number":1,"ids":{"trakt":2,"tvdb":364731,"tmdb":3624,"tvrage":null},"images":{"poster":{"full":"https://walter.trakt.us/images/seasons/000/002/146/posters/original/1834978783.jpg?1409351969","medium":"https://walter.trakt.us/images/seasons/000/002/146/posters/medium/1834978783.jpg?1409351969","thumb":"https://walter.trakt.us/images/seasons/000/002/146/posters/thumb/1834978783.jpg?1409351969"},"thumb":{"full":"https://walter.trakt.us/images/seasons/000/002/146/thumbs/original/6c996deed7.jpg?1409351970"}}},
+            {"number":2,"ids":{"trakt":3,"tvdb":473271,"tmdb":3625,"tvrage":null},"images":{"poster":{"full":"https://walter.trakt.us/images/seasons/000/002/147/posters/original/718943d94f.jpg?1409351972","medium":"https://walter.trakt.us/images/seasons/000/002/147/posters/medium/718943d94f.jpg?1409351972","thumb":"https://walter.trakt.us/images/seasons/000/002/147/posters/thumb/718943d94f.jpg?1409351972"},"thumb":{"full":"https://walter.trakt.us/images/seasons/000/002/147/thumbs/original/49d143cf04.jpg?1409352072"}}},
+            {"number":3,"ids":{"trakt":4,"tvdb":488434,"tmdb":3626,"tvrage":null},"images":{"poster":{"full":"https://walter.trakt.us/images/seasons/000/002/148/posters/original/910697a6af.jpg?1409352075","medium":"https://walter.trakt.us/images/seasons/000/002/148/posters/medium/910697a6af.jpg?1409352075","thumb":"https://walter.trakt.us/images/seasons/000/002/148/posters/thumb/910697a6af.jpg?1409352075"},"thumb":{"full":"https://walter.trakt.us/images/seasons/000/002/148/thumbs/original/ba2b7136cf.jpg?1409352075"}}},
+            {"number":4,"ids":{"trakt":5,"tvdb":522882,"tmdb":3628,"tvrage":null},"images":{"poster":{"full":"https://walter.trakt.us/images/seasons/000/002/149/posters/original/46cafaec1f.jpg?1409352078","medium":"https://walter.trakt.us/images/seasons/000/002/149/posters/medium/46cafaec1f.jpg?1409352078","thumb":"https://walter.trakt.us/images/seasons/000/002/149/posters/thumb/46cafaec1f.jpg?1409352078"},"thumb":{"full":"https://walter.trakt.us/images/seasons/000/002/149/thumbs/original/0e0ca6a168.jpg?1409352079"}}},
+            {"number":5,"ids":{"trakt":6,"tvdb":null,"tmdb":62090,"tvrage":null},"images":{"poster":{"full":"https://walter.trakt.us/images/seasons/000/003/955/posters/original/8cbfffe9d4.jpg?1409352081","medium":"https://walter.trakt.us/images/seasons/000/003/955/posters/medium/8cbfffe9d4.jpg?1409352081","thumb":"https://walter.trakt.us/images/seasons/000/003/955/posters/thumb/8cbfffe9d4.jpg?1409352081"},"thumb":{"full":"https://walter.trakt.us/images/seasons/000/003/955/thumbs/original/e8240191ba.jpg?1409352082"}}}
+        ]
+    },
+    "shows/game-of-thrones/seasons?extended=full": {
+        "GET": [
+            {"number":0,"ids":{"trakt":1,"tvdb":137481,"tmdb":3627,"tvrage":null},"rating":9.0,"votes":111,"episode_count":10,"aired_episodes":10,"overview":null},
+            {"number":1,"ids":{"trakt":2,"tvdb":364731,"tmdb":3624,"tvrage":null},"rating":9.0,"votes":111,"episode_count":10,"aired_episodes":10,"overview":"Season 1 overview."},
+            {"number":2,"ids":{"trakt":3,"tvdb":473271,"tmdb":3625,"tvrage":null},"rating":9.0,"votes":111,"episode_count":10,"aired_episodes":10,"overview":"Season 2 overview."},
+            {"number":3,"ids":{"trakt":4,"tvdb":488434,"tmdb":3626,"tvrage":null},"rating":9.0,"votes":111,"episode_count":10,"aired_episodes":10,"overview":"Season 3 overview."},
+            {"number":4,"ids":{"trakt":5,"tvdb":522882,"tmdb":3628,"tvrage":null},"rating":9.0,"votes":111,"episode_count":10,"aired_episodes":10,"overview":"Season 4 overview."}
+        ]
+    },
+    "shows/game-of-thrones/seasons?extended=episodes": {
+        "GET": [
+            {"number":0,"ids":{"trakt":2145,"tvdb":137481,"tmdb":3627,"tvrage":null},
+                "episodes":[
+                    {"season":0,"number":1,"title":"Inside Game of Thrones","ids":{"trakt":36430,"tvdb":3226241,"imdb":"","tmdb":63087,"tvrage":null}},
+                    {"season":0,"number":2,"title":"15-Minute Preview","ids":{"trakt":36431,"tvdb":4045941,"imdb":"","tmdb":63086,"tvrage":null}},
+                    {"season":0,"number":3,"title":"Making Game of Thrones","ids":{"trakt":36432,"tvdb":4073401,"imdb":"","tmdb":63088,"tvrage":null}},
+                    {"season":0,"number":4,"title":"El Juego Comienza","ids":{"trakt":36433,"tvdb":4082317,"imdb":"","tmdb":63089,"tvrage":null}},
+                    {"season":0,"number":5,"title":"2011 Comic Con Panel","ids":{"trakt":36434,"tvdb":4138149,"imdb":"","tmdb":63090,"tvrage":null}},
+                    {"season":0,"number":6,"title":"You Win or You Die","ids":{"trakt":36435,"tvdb":4292422,"imdb":"","tmdb":63091,"tvrage":null}},
+                    {"season":0,"number":7,"title":"A Gathering Storm","ids":{"trakt":36436,"tvdb":4517457,"imdb":"","tmdb":63092,"tvrage":null}},
+                    {"season":0,"number":8,"title":"Politics of Marriage","ids":{"trakt":36437,"tvdb":4576208,"imdb":"","tmdb":63093,"tvrage":null}},
+                    {"season":0,"number":9,"title":"Ice and Fire: A Foreshadowing","ids":{"trakt":36438,"tvdb":4779102,"imdb":"","tmdb":974558,"tvrage":null}},
+                    {"season":0,"number":10,"title":"The Politics of Power: A Look Back at Season 3","ids":{"trakt":36439,"tvdb":4824480,"imdb":"","tmdb":974559,"tvrage":null}}
+                ]
+            },
+            {"number":1,"ids":{"trakt":2146,"tvdb":364731,"tmdb":3624,"tvrage":null},
+                "episodes":[
+                    {"season":1,"number":1,"title":"Winter Is Coming","ids":{"trakt":36440,"tvdb":3254641,"imdb":"tt1480055","tmdb":63056,"tvrage":null}},
+                    {"season":1,"number":2,"title":"The Kingsroad","ids":{"trakt":36441,"tvdb":3436411,"imdb":"tt1668746","tmdb":63057,"tvrage":null}},
+                    {"season":1,"number":3,"title":"Lord Snow","ids":{"trakt":36442,"tvdb":3436421,"imdb":"tt1829962","tmdb":63058,"tvrage":null}},
+                    {"season":1,"number":4,"title":"Cripples, Bastards, and Broken Things","ids":{"trakt":36443,"tvdb":3436431,"imdb":"tt1829963","tmdb":63059,"tvrage":null}},
+                    {"season":1,"number":5,"title":"The Wolf and the Lion","ids":{"trakt":36444,"tvdb":3436441,"imdb":"tt1829964","tmdb":63060,"tvrage":null}},
+                    {"season":1,"number":6,"title":"A Golden Crown","ids":{"trakt":36445,"tvdb":3436451,"imdb":"tt1837862","tmdb":63061,"tvrage":null}},
+                    {"season":1,"number":7,"title":"You Win or You Die","ids":{"trakt":36446,"tvdb":3436461,"imdb":"tt1837863","tmdb":63062,"tvrage":null}},
+                    {"season":1,"number":8,"title":"The Pointy End","ids":{"trakt":36447,"tvdb":3360391,"imdb":"tt1837864","tmdb":63063,"tvrage":null}},
+                    {"season":1,"number":9,"title":"Baelor","ids":{"trakt":36448,"tvdb":4063481,"imdb":"tt1851398","tmdb":63064,"tvrage":null}},
+                    {"season":1,"number":10,"title":"Fire and Blood","ids":{"trakt":36449,"tvdb":4063491,"imdb":"tt1851397","tmdb":63065,"tvrage":null}}
+                ]
+            }
+        ]
+    },
+    "shows/game-of-thrones/seasons/1": {
+        "GET": [
+            {"season":1,"number":1,"title":"Winter Is Coming","ids":{"trakt":456,"tvdb":3254641,"imdb":"tt1480055","tmdb":63056,"tvrage":null}},
+            {"season":1,"number":2,"title":"The Kingsroad","ids":{"trakt":457,"tvdb":3436411,"imdb":"tt1668746","tmdb":63057,"tvrage":null}},
+            {"season":1,"number":3,"title":"Lord Snow","ids":{"trakt":458,"tvdb":3436421,"imdb":"tt1829962","tmdb":63058,"tvrage":null}},
+            {"season":1,"number":4,"title":"Cripples, Bastards, and Broken Things","ids":{"trakt":459,"tvdb":3436431,"imdb":"tt1829963","tmdb":63059,"tvrage":null}},
+            {"season":1,"number":5,"title":"The Wolf and the Lion","ids":{"trakt":460,"tvdb":3436441,"imdb":"tt1829964","tmdb":63060,"tvrage":null}},
+            {"season":1,"number":6,"title":"A Golden Crown","ids":{"trakt":461,"tvdb":3436451,"imdb":"tt1837862","tmdb":63061,"tvrage":null}},
+            {"season":1,"number":7,"title":"You Win or You Die","ids":{"trakt":462,"tvdb":3436461,"imdb":"tt1837863","tmdb":63062,"tvrage":null}},
+            {"season":1,"number":8,"title":"The Pointy End","ids":{"trakt":463,"tvdb":3360391,"imdb":"tt1837864","tmdb":63063,"tvrage":null}},
+            {"season":1,"number":9,"title":"Baelor","ids":{"trakt":464,"tvdb":4063481,"imdb":"tt1851398","tmdb":63064,"tvrage":null}},
+            {"season":1,"number":10,"title":"Fire and Blood","ids":{"trakt":465,"tvdb":4063491,"imdb":"tt1851397","tmdb":63065,"tvrage":null}}
+        ]
+    },
+    "shows/game-of-thrones/seasons/1/comments": {
+        "GET": [
+            {"id":8,"parent_id":0,"created_at":"2011-03-25T22:35:17.000Z","comment":"Great season!","spoiler":false,"review":false,"replies":1,"user_rating":8,"user":{"username":"sean","private":false,"name":"Sean Rudford","vip":true,"vip_ep":false}}
+        ]
+    },
+    "shows/game-of-thrones/seasons/1/ratings": {
+        "GET":  {"rating":9.0,"votes":3,"distribution":{"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":1,"10":2}}
+    },
+    "shows/game-of-thrones/seasons/1/stats": {
+        "GET": {"watchers":30521,"plays":37986,"collectors":12899,"collected_episodes":87991,"comments":115,"lists":309,"votes":25655}
+    },
+    "shows/game-of-thrones/seasons/1/watching": {
+        "GET": [
+            {"username":"justin","private":false,"name":"Justin Nemeth","vip":true,"vip_ep":false},
+            {"username":"sean","private":false,"name":"Sean Rudford","vip":true,"vip_ep":false}
+        ]
+    }
+}

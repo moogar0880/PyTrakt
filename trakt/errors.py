@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """All Trakt related errors that are worth processing. Note that 412 response
 codes are ignored because the only requests that this library sends out are
 guaranteed to have the application/json MIME type set.

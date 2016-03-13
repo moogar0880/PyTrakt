@@ -3,7 +3,7 @@ python:
   - 2.7
   - 3.3
   - 3.4
-install:
-  - pip install -r requirements.txt --use-mirrors
+  - 3.5
 script:
-  - python setup.py install
+  - make travis
+after_success: coveralls

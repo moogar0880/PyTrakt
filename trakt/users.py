@@ -250,7 +250,8 @@ class User(object):
             data = yield 'users/{username}/lists'.format(
                 username=self.username
             )
-            self._lists = [UserList(creator=self.username, user=self, **extract_ids(ul)) for ul in data]
+            self._lists = [UserList(creator=self.username, user=self,
+                           **extract_ids(ul)) for ul in data]
         yield self._lists
 
     @property

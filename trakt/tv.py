@@ -81,7 +81,6 @@ def updated_shows(timestamp=None):
     y_day = datetime.now() - timedelta(1)
     ts = timestamp or int(y_day.strftime('%s')) * 1000
     data = yield 'shows/updates/{start_date}'.format(start_date=ts)
-    to_ret = []
     yield [TVShow(**d['show']) for d in data]
 
 

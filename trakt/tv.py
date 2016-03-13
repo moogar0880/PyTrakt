@@ -368,7 +368,10 @@ class TVSeason(object):
             self._episodes = [TVEpisode(show=self.show, **ep) for ep in data]
         else:
             for key, val in data.items():
-                setattr(self, key, val)
+                try:
+                    setattr(self, key, val)
+                except AttributeError:
+                    setattr(self, '_'+key, val)
 
     @property
     @get

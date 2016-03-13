@@ -21,7 +21,7 @@ def dismiss_recommendation(title):
     """Dismiss the movie matching the specified criteria from showing up in
     recommendations.
     """
-    return 'recommendations/movies/{title}'.format(title=slugify(str(title)))
+    yield 'recommendations/movies/{title}'.format(title=slugify(str(title)))
 
 
 @get

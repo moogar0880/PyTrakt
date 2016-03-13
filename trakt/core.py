@@ -323,7 +323,8 @@ class Core(object):
         """
         @wraps(f)
         def inner(*args, **kwargs):
-            uri = f(*args, **kwargs)
+            generator = f(*args, **kwargs)
+            uri = next(generator)
             url = BASE_URL + uri
             self._handle_request('delete', url)
         return inner

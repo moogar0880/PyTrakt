@@ -3,8 +3,9 @@ from trakt.sync import Scrobbler
 
 
 def test_scrobble():
+    """test the Scrobbler class's workflow"""
     guardians = Movie('Guardians of the Galaxy', year=2014, foo='bar')
-    scrobbler = Scrobbler(guardians, 0.0, '1.0.0', '2015-02-01')
+    scrobbler = Scrobbler(guardians, 1.0, '1.0.0', '2015-02-01')
     scrobbler.start()
     scrobbler.update(50.0)
     scrobbler.pause()
@@ -15,6 +16,7 @@ def test_scrobble():
 
 
 def test_scrobbler_context_manager():
+    """test the Scrobbler when used as a context manager"""
     guardians = Movie('Guardians of the Galaxy', year=2014, foo='bar')
     with Scrobbler(guardians, 0.0, '1.0.0', '2015-02-01') as scrob:
         for i in range(10):

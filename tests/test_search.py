@@ -1,10 +1,21 @@
 """trakt.sync functional tests"""
+import pytest
 from trakt.movies import Movie
 from trakt.people import Person
 from trakt.sync import search, search_by_id
 from trakt.tv import TVEpisode, TVShow
 
 __author__ = 'Reinier van der Windt'
+
+
+def test_invalid_searches():
+    """test that the proper exceptions are raised when an invalid search or id
+    type is provided to a search function
+    """
+    functions = [search, search_by_id]
+    for fn in functions:
+        with pytest.raises(ValueError):
+            fn('shouldfail', 'fake')
 
 
 def test_search_movie():

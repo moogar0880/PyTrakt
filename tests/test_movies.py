@@ -122,3 +122,36 @@ def test_movie_str():
     tron = Movie('Tron Legacy 2010')
     assert str(tron) == '<Movie>: {0}'.format(tron.title)
     assert str(tron) == repr(tron)
+
+
+def test_movie_search():
+    results = Movie.search('batman')
+    assert isinstance(results, list)
+    assert all(isinstance(m, Movie) for m in results)
+
+
+def test_utilities():
+    tron = Movie('Tron Legacy 2010')
+    functions = [tron.add_to_library, tron.add_to_collection,
+                 tron.add_to_watchlist, tron.dismiss, tron.mark_as_unseen,
+                 tron.remove_from_library, tron.remove_from_collection,
+                 tron.remove_from_watchlist, tron.mark_as_seen]
+    for fn in functions:
+        r = fn()
+        assert r is None
+
+
+def test_movie_comment():
+    tron = Movie('Tron Legacy 2010')
+    r = tron.comment('Some comment data')
+    assert r is None
+
+
+def test_rate_movie():
+    tron = Movie('Tron Legacy 2010')
+    tron.rate(10)
+
+
+def test_scrobble_movie():
+    tron = Movie('Tron Legacy 2010')
+    tron.scrobble(50.0, '1.0.0', '2015-02-01')

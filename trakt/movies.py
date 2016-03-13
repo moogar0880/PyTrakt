@@ -338,7 +338,7 @@ class Movie(object):
         :param app_date: Build date of the media center. Used to help debug
             your plugin.
         """
-        return Scrobbler(self.to_json(), progress, app_version, app_date)
+        return Scrobbler(self, progress, app_version, app_date)
 
     def to_json(self):
         return {'movie': {'title': self.title}}

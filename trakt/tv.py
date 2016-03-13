@@ -402,7 +402,7 @@ class TVSeason(object):
                 try:
                     ep = self._episode_getter(index)
                     self._episodes.append(ep)
-                except NotFoundException:
+                except (NotFoundException, TypeError):
                     break
                 index += 1
         return self._episodes
@@ -449,17 +449,6 @@ class TVSeason(object):
         add_to_collection(self)
 
     add_to_collection = add_to_library
-
-    def mark_as_seen(self, watched_at=None):
-        """Add this :class:`TVSeason`, watched outside of trakt, to your library.
-        """
-        add_to_history(self, watched_at)
-
-    def mark_as_unseen(self):
-        """Remove this :class:`TVSeason`, watched outside of trakt, from your
-        library.
-        """
-        remove_from_history(self)
 
     def remove_from_library(self):
         """Remove this :class:`TVSeason` from your library."""
@@ -595,22 +584,10 @@ class TVEpisode(object):
         yield users
 
     def get_description(self):
+        """backwards compatible function that returns this :class:`TVEpisode`'s
+        overview
+        '"""
         return str(self.overview)
-
-    def get_translations(self, country_code='us'):
-        """Returns all :class:`Translation`'s for a movie, including language
-        and translated values for title, tagline and overview.
-
-        :param country_code: The 2 character country code to search from
-        :return: a :const:`list` of :class:`Translation` objects
-        """
-        if self._translations is None:
-            data = yield self.ext + '/translations/{cc}'.format(
-                cc=country_code
-            )
-            self._translations = [Translation(**translation)
-                                  for translation in data]
-        yield self._translations
 
     def rate(self, rating):
         """Rate this :class:`TVEpisode` on trakt. Depending on the current users

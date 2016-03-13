@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """trakt.sync functional tests"""
 from datetime import datetime
 from trakt.sync import (comment, rate, add_to_history, add_to_watchlist,
@@ -8,7 +9,7 @@ from trakt.sync import (comment, rate, add_to_history, add_to_watchlist,
 class FakeMedia(object):
     """Mock media type object to use with mock sync requests"""
     media_type = 'fake'
-    
+
     def __init__(self):
         self.ids = {}
 

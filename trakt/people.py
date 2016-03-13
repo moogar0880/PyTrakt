@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Interfaces to all of the People objects offered by the Trakt.tv API"""
 from trakt.core import get
 from trakt.utils import slugify, extract_ids

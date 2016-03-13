@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """unit tests to define behavior of custom exception types"""
 from trakt.errors import (TraktException, BadRequestException, OAuthException,
                           ForbiddenException, NotFoundException,

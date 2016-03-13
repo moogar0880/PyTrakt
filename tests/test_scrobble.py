@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from trakt.movies import Movie
 from trakt.sync import Scrobbler
 

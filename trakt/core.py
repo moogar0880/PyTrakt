@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Objects, properties, and methods to be shared across other modules in the
 trakt package
 """

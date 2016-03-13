@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """tests for genre retrieval functions"""
 from trakt.core import Genre
 from trakt.movies import genres as movie_genres

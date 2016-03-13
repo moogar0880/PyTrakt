@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Interfaces to all of the Calendar objects offered by the Trakt.tv API"""
 from pprint import pformat
 from trakt.core import get

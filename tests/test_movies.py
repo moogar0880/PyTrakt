@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """tests for the trakt.movies module"""
 from trakt.core import Comment
 from trakt.movies import (trending_movies, updated_movies, Movie, Release,

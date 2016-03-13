@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """trakt.calendar functional tests"""
 from trakt.calendar import (PremiereCalendar, MyPremiereCalendar, ShowCalendar,
                             MyShowCalendar, SeasonCalendar, MySeasonCalendar,

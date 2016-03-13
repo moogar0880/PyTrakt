@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """trakt.tv functional tests"""
 from trakt.core import Comment
 from trakt.sync import Scrobbler

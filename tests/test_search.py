@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """trakt.sync functional tests"""
 import pytest
 from trakt.movies import Movie

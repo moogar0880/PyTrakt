@@ -586,7 +586,7 @@ class TVEpisode(object):
         """backwards compatible function that returns this :class:`TVEpisode`'s
         overview
         '"""
-        return unicode_safe(self.overview)
+        return self.overview
 
     def rate(self, rating):
         """Rate this :class:`TVEpisode` on trakt. Depending on the current users

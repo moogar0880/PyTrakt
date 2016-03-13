@@ -1,5 +1,12 @@
 Release History
 ^^^^^^^^^^^^^^^
+2.4.3 (2016-03-12)
+++++++++++++++++++
+
+* Python Style Fixes (per flake8)
+* Added mocked unit level tests to ensure API responses are handled properly
+* Miscellaneous bug fixes and improvements
+
 2.4.2 (2016-03-05)
 ++++++++++++++++++
 

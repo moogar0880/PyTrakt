@@ -43,18 +43,9 @@ class MockCore(trakt.core.Core):
         return method_responses.get(method.upper())
 
 
-@pytest.fixture()
-def mock_core():
-    """Override utility functions from trakt.core to use an underlying MockCore
-    instance
-    """
-    trakt.core.CORE = MockCore()
-    trakt.core.get = trakt.core.CORE.get
-    trakt.core.post = trakt.core.CORE.post
-    trakt.core.delete = trakt.core.CORE.delete
-    trakt.core.put = trakt.core.CORE.put
-    return trakt.core.Core
-
+"""Override utility functions from trakt.core to use an underlying MockCore
+instance
+"""
 trakt.core.CORE = MockCore()
 trakt.core.get = trakt.core.CORE.get
 trakt.core.post = trakt.core.CORE.post

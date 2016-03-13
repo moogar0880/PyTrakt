@@ -5,4 +5,5 @@ python:
   - 3.4
   - 3.5
 script:
-  - make ci
+  - make travis
+after_success: coveralls

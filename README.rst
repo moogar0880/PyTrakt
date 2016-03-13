@@ -4,17 +4,13 @@ PyTrakt
     :target: https://travis-ci.org/moogar0880/PyTrakt
     :alt: Travis CI Status
 
+.. image:: https://coveralls.io/repos/moogar0880/PyTrakt/badge.svg
+    :target: https://coveralls.io/r/moogar0880/PyTrakt
+    :alt: Coverage
+
 .. image:: https://pypip.in/d/trakt/badge.svg?style=flat
     :target: https://pypi.python.org/pypi/trakt/
     :alt: Downloads
-
-.. image:: https://pypip.in/v/trakt/badge.svg?style=flat
-    :target: https://pypi.python.org/pypi/trakt/
-    :alt: Latest Version
-
-.. image:: https://pypip.in/py_versions/trakt/badge.svg?style=flat
-    :target: https://pypi.python.org/pypi/trakt/
-    :alt: Supported Python versions
 
 .. image:: https://pypip.in/license/trakt/badge.svg?style=flat
     :target: https://pypi.python.org/pypi/trakt/
@@ -60,4 +56,3 @@ Once you have a copy of the source, you can embed it in your Python package,
 or install it into your site-packages easily::
 
     $ python setup.py install
-

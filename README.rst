@@ -57,6 +57,14 @@ or install it into your site-packages easily::
 
     $ python setup.py install
 
+Contributing
+------------
+Pull requests are graciously accepted. Any pull request should not break any tests
+and should pass `flake8` style checks (unless otherwise warranted). Additionally
+the user opening the Pull Request should ensure that their username and a link to
+their GitHub page appears in `CONTRIBUTORS.md <https://github.com/moogar0880/blob/master/CONTRIBUTORS.md`_.
+
+
 TODO
 ----
 The following lists define the known functionality provided by the Trakt.tv API

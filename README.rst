@@ -56,3 +56,74 @@ Once you have a copy of the source, you can embed it in your Python package,
 or install it into your site-packages easily::
 
     $ python setup.py install
+
+TODO
+----
+The following lists define the known functionality provided by the Trakt.tv API
+which this module does not yet have support for. The current plan is that
+support for the following features will be added over time. As always, if you
+would like a feature added sooner rather than later, pull requests are most
+definitely appreciated.
+
+High Level API Features
+^^^^^^^^^^^^^^^^^^^^^^^
+- Pagination
+- Device Authentication Workflow
+
+Sync
+^^^^
+- Create a comment class to facilitate
+  - returning an instance when a comment is created, instead of None
+  - add ability to update and delete comments
+- Add checkin support
+
+Movies
+^^^^^^
+- movies/popular
+- movies/played/{time_period}
+- movies/watched/{time_period}
+- movies/collected/{time_period}
+- movies/anticipated
+- movies/boxoffice
+- movies/{slug}/stats
+
+People
+^^^^^^
+- add credits support for movies and shows
+
+Shows
+^^^^^
+- Played
+- Watched
+- Collected
+- Anticipated
+- Collection Progress
+- Watched Progress
+- Stats
+
+Seasons
+^^^^^^^
+- extended
+  - images
+  - episodes
+  - full
+- stats
+
+Episodes
+^^^^^^^^
+- stats
+
+Users
+^^^^^
+- hidden everything
+- likes
+  - comments
+  - lists
+- comments
+- UserList
+  - items
+  - comments
+- history
+- watchlists
+  - seasons
+  - episodes

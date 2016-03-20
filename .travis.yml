@@ -6,4 +6,4 @@ python:
   - 3.5
 script:
   - make travis
-after_success: coveralls
+after_success: coveralls --verbose

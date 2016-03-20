@@ -93,7 +93,7 @@ def pin_auth(pin=None, client_id=None, client_secret=None, store=False):
         the security conscious
     :return: Your OAuth access token
     """
-    global OAUTH_TOKEN, HEADERS, CLIENT_ID, CLIENT_SECRET, REDIRECT_URI
+    global OAUTH_TOKEN, CLIENT_ID, CLIENT_SECRET
     CLIENT_ID, CLIENT_SECRET = client_id, client_secret
     if client_id is None and client_secret is None:
         CLIENT_ID, CLIENT_SECRET = _get_client_info(app_id=True)
@@ -136,7 +136,7 @@ def oauth_auth(username, client_id=None, client_secret=None, store=False):
         the security conscious
     :return: Your OAuth access token
     """
-    global BASE_URL, CLIENT_ID, CLIENT_SECRET, OAUTH_TOKEN
+    global CLIENT_ID, CLIENT_SECRET, OAUTH_TOKEN
     if client_id is None and client_secret is None:
         client_id, client_secret = _get_client_info()
     CLIENT_ID, CLIENT_SECRET = client_id, client_secret

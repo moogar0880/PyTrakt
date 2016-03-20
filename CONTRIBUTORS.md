@@ -9,3 +9,5 @@ PyTrakt is primarily written and maintained by [Jon Nappi](https://github.com/mo
 - [Reinier van der Windt](https://github.com/reiniervdwindt)
 - [Younggun, Kim](https://github.com/scari)
 - [AJ Reynolds](https://github.com/stampedeboss)
+- [M@][https://github.com/mampersat]
+

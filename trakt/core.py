@@ -11,6 +11,7 @@ import sys
 from collections import namedtuple
 from functools import wraps
 from requests_oauthlib import OAuth2Session
+from six.moves import input
 from trakt import errors
 
 __author__ = 'Jon Nappi'
@@ -71,24 +72,14 @@ def _get_client_info(app_id=False):
     print('If you do not have a client ID and secret. Please visit the '
           'following url to create them.')
     print('http://trakt.tv/oauth/applications')
-    if sys.version_info > (3,):
-        client_id = input('Please enter your client id: ')
-        client_secret = input('Please enter your client secret: ')
-        if app_id:
-            msg = 'Please enter your application ID ({default}): '.format(
-                default=APPLICATION_ID)
-            user_input = input(msg)
-            if user_input:
-                APPLICATION_ID = user_input
-    else:
-        client_id = raw_input('Please enter your client id: ')
-        client_secret = raw_input('Please enter your client secret: ')
-        if app_id:
-            msg = 'Please enter your application ID ({default}): '.format(
-                default=APPLICATION_ID)
-            user_input = raw_input(msg)
-            if user_input:
-                APPLICATION_ID = user_input
+    client_id = input('Please enter your client id: ')
+    client_secret = input('Please enter your client secret: ')
+    if app_id:
+        msg = 'Please enter your application ID ({default}): '.format(
+            default=APPLICATION_ID)
+        user_input = input(msg)
+        if user_input:
+            APPLICATION_ID = user_input
     return client_id, client_secret
 
 
@@ -117,10 +108,7 @@ def pin_auth(pin=None, client_id=None, client_secret=None, store=False):
               'url and log in to generate one.')
         pin_url = 'https://trakt.tv/pin/{id}'.format(id=APPLICATION_ID)
         print(pin_url)
-        if sys.version_info > (3,):
-            pin = input('Please enter your PIN: ')
-        else:
-            pin = raw_input('Please enter your PIN: ')
+        pin = input('Please enter your PIN: ')
     args = {'code': pin,
             'redirect_uri': REDIRECT_URI,
             'grant_type': 'authorization_code',
@@ -166,10 +154,7 @@ def oauth_auth(username, client_id=None, client_secret=None, store=False):
     print('Please go here and authorize,', authorization_url)
 
     # Get the authorization verifier code from the callback url
-    if sys.version_info > (3,):
-        response = input('Paste the Code returned here: ')
-    else:
-        response = raw_input("Paste the Code returned here: ")
+    response = input('Paste the Code returned here: ')
     # Fetch, assign, and return the access token
     oauth.fetch_token(token_url, client_secret=CLIENT_SECRET, code=response)
     OAUTH_TOKEN = oauth.token['access_token']

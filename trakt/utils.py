@@ -15,7 +15,7 @@ def slugify(value):
     Adapted from django.utils.text.slugify
     """
     if sys.version_info[0] == 2:
-        value = unicode(value)  # NOQA
+        value = unicode(value, 'utf-8')  # NOQA
     nfkd_form = unicodedata.normalize('NFKD', value)
     decoded = nfkd_form.encode('ascii', 'ignore').decode('utf-8')
     value = re.sub('[^\w\s-]', ' ', decoded).strip().lower()

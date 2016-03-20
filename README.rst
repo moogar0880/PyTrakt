@@ -8,11 +8,11 @@ PyTrakt
     :target: https://landscape.io/github/moogar0880/PyTrakt/master
     :alt: Code Health
 
-.. image:: https://pypip.in/d/trakt/badge.svg?style=flat
-    :target: https://pypi.python.org/pypi/trakt/
+.. image:: https://img.shields.io/pypi/dm/trakt.svg
+    :target: https://pypi.python.org/pypi/trakt
     :alt: Downloads
 
-.. image:: https://pypip.in/license/trakt/badge.svg?style=flat
+.. image:: https://img.shields.io/pypi/l/trakt.svg
     :target: https://pypi.python.org/pypi/trakt/
     :alt: License
 

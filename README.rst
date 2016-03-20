@@ -4,9 +4,9 @@ PyTrakt
     :target: https://travis-ci.org/moogar0880/PyTrakt
     :alt: Travis CI Status
 
-.. image:: https://coveralls.io/repos/moogar0880/PyTrakt/badge.svg
-    :target: https://coveralls.io/r/moogar0880/PyTrakt
-    :alt: Coverage
+.. image:: https://landscape.io/github/moogar0880/PyTrakt/master/landscape.svg?style=flat
+    :target: https://landscape.io/github/moogar0880/PyTrakt/master
+    :alt: Code Health
 
 .. image:: https://pypip.in/d/trakt/badge.svg?style=flat
     :target: https://pypi.python.org/pypi/trakt/

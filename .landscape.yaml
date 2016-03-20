@@ -1,2 +1,10 @@
 doc-warnings: yes
-strictness: veryhigh
+strictness: high
+ignore-paths:
+    - docs
+    - tests
+ignore-patterns:
+    - ^setup.py$
+python-targets:
+    - 2
+    - 3

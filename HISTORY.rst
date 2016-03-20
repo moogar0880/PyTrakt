@@ -1,5 +1,11 @@
 Release History
 ^^^^^^^^^^^^^^^
+2.4.5 (2016-03-20)
+++++++++++++++++++
+
+* Add `six` support for cleaner 2-3 compatability
+* General code cleanup and style improvements
+
 2.4.4 (2016-03-19)
 ++++++++++++++++++
 

@@ -7,6 +7,7 @@ import json
 import logging
 import os
 import requests
+import six
 import sys
 from collections import namedtuple
 from functools import wraps
@@ -71,24 +72,14 @@ def _get_client_info(app_id=False):
     print('If you do not have a client ID and secret. Please visit the '
           'following url to create them.')
     print('http://trakt.tv/oauth/applications')
-    if sys.version_info > (3,):
-        client_id = input('Please enter your client id: ')
-        client_secret = input('Please enter your client secret: ')
-        if app_id:
-            msg = 'Please enter your application ID ({default}): '.format(
-                default=APPLICATION_ID)
-            user_input = input(msg)
-            if user_input:
-                APPLICATION_ID = user_input
-    else:
-        client_id = raw_input('Please enter your client id: ')
-        client_secret = raw_input('Please enter your client secret: ')
-        if app_id:
-            msg = 'Please enter your application ID ({default}): '.format(
-                default=APPLICATION_ID)
-            user_input = raw_input(msg)
-            if user_input:
-                APPLICATION_ID = user_input
+    client_id = six.moves.input('Please enter your client id: ')
+    client_secret = six.moves.input('Please enter your client secret: ')
+    if app_id:
+        msg = 'Please enter your application ID ({default}): '.format(
+            default=APPLICATION_ID)
+        user_input = six.moves.input(msg)
+        if user_input:
+            APPLICATION_ID = user_input
     return client_id, client_secret
 
 
@@ -102,7 +93,7 @@ def pin_auth(pin=None, client_id=None, client_secret=None, store=False):
         the security conscious
     :return: Your OAuth access token
     """
-    global OAUTH_TOKEN, HEADERS, CLIENT_ID, CLIENT_SECRET, REDIRECT_URI
+    global OAUTH_TOKEN, CLIENT_ID, CLIENT_SECRET
     CLIENT_ID, CLIENT_SECRET = client_id, client_secret
     if client_id is None and client_secret is None:
         CLIENT_ID, CLIENT_SECRET = _get_client_info(app_id=True)
@@ -117,10 +108,7 @@ def pin_auth(pin=None, client_id=None, client_secret=None, store=False):
               'url and log in to generate one.')
         pin_url = 'https://trakt.tv/pin/{id}'.format(id=APPLICATION_ID)
         print(pin_url)
-        if sys.version_info > (3,):
-            pin = input('Please enter your PIN: ')
-        else:
-            pin = raw_input('Please enter your PIN: ')
+        pin = six.moves.input('Please enter your PIN: ')
     args = {'code': pin,
             'redirect_uri': REDIRECT_URI,
             'grant_type': 'authorization_code',
@@ -148,7 +136,7 @@ def oauth_auth(username, client_id=None, client_secret=None, store=False):
         the security conscious
     :return: Your OAuth access token
     """
-    global BASE_URL, CLIENT_ID, CLIENT_SECRET, OAUTH_TOKEN
+    global CLIENT_ID, CLIENT_SECRET, OAUTH_TOKEN
     if client_id is None and client_secret is None:
         client_id, client_secret = _get_client_info()
     CLIENT_ID, CLIENT_SECRET = client_id, client_secret
@@ -161,15 +149,12 @@ def oauth_auth(username, client_id=None, client_secret=None, store=False):
     oauth = OAuth2Session(CLIENT_ID, redirect_uri=REDIRECT_URI, state=None)
 
     # Redirect user to Trakt for authorization
-    authorization_url, state = oauth.authorization_url(authorization_base_url,
-                                                       username=username)
+    authorization_url, _ = oauth.authorization_url(authorization_base_url,
+                                                   username=username)
     print('Please go here and authorize,', authorization_url)
 
     # Get the authorization verifier code from the callback url
-    if sys.version_info > (3,):
-        response = input('Paste the Code returned here: ')
-    else:
-        response = raw_input("Paste the Code returned here: ")
+    response = six.moves.input('Paste the Code returned here: ')
     # Fetch, assign, and return the access token
     oauth.fetch_token(token_url, client_secret=CLIENT_SECRET, code=response)
     OAUTH_TOKEN = oauth.token['access_token']

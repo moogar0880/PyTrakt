@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import re
-import sys
+import six
 import unicodedata
 from datetime import datetime
 
@@ -14,12 +14,12 @@ def slugify(value):
 
     Adapted from django.utils.text.slugify
     """
-    if sys.version_info[0] == 2 and isinstance(value, str):
+    if six.PY2 and isinstance(value, str):
         value = unicode(value, 'utf-8')  # NOQA
     nfkd_form = unicodedata.normalize('NFKD', value)
     decoded = nfkd_form.encode('ascii', 'ignore').decode('utf-8')
-    value = re.sub('[^\w\s-]', ' ', decoded).strip().lower()
-    return re.sub('[-\s]+', '-', value)
+    value = re.sub(r'[^\w\s-]', ' ', decoded).strip().lower()
+    return re.sub(r'[-\s]+', '-', value)
 
 
 def airs_date(airs_at):
@@ -56,6 +56,6 @@ def extract_ids(id_dict):
 
 
 def unicode_safe(s):
-    if sys.version_info[0] == 3:
+    if six.PY3:
         return s
     return s.encode('ascii', 'ignore').decode('ascii')

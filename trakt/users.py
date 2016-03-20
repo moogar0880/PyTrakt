@@ -69,6 +69,7 @@ class UserList(namedtuple('UserList', ['name', 'description', 'privacy',
     """A list created by a Trakt.tv :class:`User`"""
 
     def __init__(self, *args, **kwargs):
+        super(UserList, self).__init__()
         self._items = list()
 
     def __iter__(self, *args, **kwargs):

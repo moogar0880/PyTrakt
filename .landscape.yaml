@@ -1,2 +1,5 @@
 doc-warnings: yes
 strictness: veryhigh
+ignore-paths:
+    - docs
+    - tests

@@ -1,5 +1,10 @@
 Release History
 ^^^^^^^^^^^^^^^
+2.4.4 (2016-03-19)
+++++++++++++++++++
+
+* Update `slugify` function to better match trakt slugs (#51)
+
 2.4.3 (2016-03-12)
 ++++++++++++++++++
 

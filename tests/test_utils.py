@@ -11,6 +11,8 @@ def test_slugify():
         ('IM AN ALL CAPS STRING', 'im-an-all-caps-string'),
         ('IM A BAD A$$ STRING!@', 'im-a-bad-a-string'),
         (' LOOK AT MY WHITESPACE   ', 'look-at-my-whitespace'),
+        ("Marvel's Agents of S.H.I.E.L.D.", 'marvel-s-agents-of-s-h-i-e-l-d'),
+        ('Naruto Shippūden', 'naruto-shippuden'),
     ]
 
     for inp, expected in test_data:

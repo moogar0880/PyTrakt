@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import re
 import six
-import sys
 import unicodedata
 from datetime import datetime
 

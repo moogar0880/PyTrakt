@@ -14,9 +14,6 @@ coverage:
 
 ci: init style test
 
-coveralls:
-	pip install coveralls
-
 publish:
 	python setup.py register
 	python setup.py sdist upload

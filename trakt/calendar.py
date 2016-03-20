@@ -73,62 +73,41 @@ class Calendar(object):
 
 class PremiereCalendar(Calendar):
     """All shows premiering during the time period specified."""
-
-    def __init__(self, date=None, days=7):
-        self.url = 'calendars/all/shows/new'
-        super(PremiereCalendar, self).__init__(date=date, days=days)
+    url = 'calendars/all/shows/new'
 
 
 class MyPremiereCalendar(Calendar):
     """Personalized calendar of all shows premiering during the time period
     specified.
     """
-
-    def __init__(self, date=None, days=7):
-        self.url = 'calendars/my/shows/new'
-        super(MyPremiereCalendar, self).__init__(date=date, days=days)
+    url = 'calendars/my/shows/new'
 
 
 class ShowCalendar(Calendar):
     """TraktTV ShowCalendar"""
-
-    def __init__(self, date=None, days=7):
-        self.url = 'calendars/all/shows'
-        super(ShowCalendar, self).__init__(date=date, days=days)
+    url = 'calendars/all/shows'
 
 
 class MyShowCalendar(Calendar):
     """Personalized TraktTV ShowCalendar"""
-
-    def __init__(self, date=None, days=7):
-        self.url = 'calendars/my/shows'
-        super(MyShowCalendar, self).__init__(date=date, days=days)
+    url = 'calendars/my/shows'
 
 
 class SeasonCalendar(Calendar):
     """TraktTV TV Show Season Premiere"""
-
-    def __init__(self, date=None, days=7):
-        self.url = 'calendars/all/shows/premieres'
-        super(SeasonCalendar, self).__init__(date=date, days=days)
+    url = 'calendars/all/shows/premieres'
 
 
 class MySeasonCalendar(Calendar):
     """Personalized TraktTV TV Show Season Premiere"""
-
-    def __init__(self, date=None, days=7):
-        self.url = 'calendars/my/shows/premieres'
-        super(MySeasonCalendar, self).__init__(date=date, days=days)
+    url = 'calendars/my/shows/premieres'
 
 
 class MovieCalendar(Calendar):
     """TraktTV Movie Calendar. Returns all movies with a release date during
     the time period specified.
     """
-
-    def __init__(self, date=None, days=7):
-        self.url = 'calendars/all/movies'
-        super(MovieCalendar, self).__init__(date=date, days=days)
+    url = 'calendars/all/movies'
 
     def _build(self, data):
         """Build the calendar of Movies"""
@@ -143,7 +122,4 @@ class MovieCalendar(Calendar):
 
 class MyMovieCalendar(MovieCalendar):
     """Personalized TraktTV Movie Calendar."""
-
-    def __init__(self, date=None, days=7):
-        self.url = 'calendars/my/movies'
-        super(MyMovieCalendar, self).__init__(date=date, days=days)
+    url = 'calendars/my/movies'

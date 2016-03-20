@@ -26,6 +26,7 @@ clean:
 	rm -rf trakt/*.pyc
 	rm -rf trakt/__pycache__
 	rm -rf tests/__pycache__
+	rm -rf trakt.egg-info
 
 docs:
 	cd docs && make html

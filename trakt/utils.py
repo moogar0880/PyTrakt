@@ -57,6 +57,6 @@ def extract_ids(id_dict):
 
 
 def unicode_safe(s):
-    if sys.version_info[0] == 3:
+    if six.PY3:
         return s
     return s.encode('ascii', 'ignore').decode('ascii')

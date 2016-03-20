@@ -4,6 +4,8 @@ python:
   - 3.3
   - 3.4
   - 3.5
+install:
+    - make coveralls
 script:
-  - make travis
+  - make ci
 after_success: coveralls --verbose

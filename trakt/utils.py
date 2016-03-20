@@ -17,8 +17,8 @@ def slugify(value):
     if sys.version_info[0] == 2:
         value = unicode(value)  # NOQA
     nfkd_form = unicodedata.normalize('NFKD', value)
-    only_ascii = nfkd_form.encode('ascii', 'ignore').decode('utf-8')
-    value = re.sub('[^\w\s-]', ' ', only_ascii).strip().lower()
+    decoded = nfkd_form.encode('ascii', 'ignore').decode('utf-8')
+    value = re.sub('[^\w\s-]', ' ', decoded).strip().lower()
     return re.sub('[-\s]+', '-', value)
 
 

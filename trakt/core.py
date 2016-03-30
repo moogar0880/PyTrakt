@@ -1,21 +1,22 @@
+# -*- coding: utf-8 -*-
 """Objects, properties, and methods to be shared across other modules in the
 trakt package
 """
 from __future__ import print_function
-import os
 import json
 import logging
+import os
 import requests
+import six
 import sys
-from functools import wraps
 from collections import namedtuple
+from functools import wraps
 from requests_oauthlib import OAuth2Session
-
-from . import errors
+from trakt import errors
 
 __author__ = 'Jon Nappi'
-__all__ = ['Airs', 'Alias', 'Comment', 'Genre', 'Translation', 'get', 'delete',
-           'post', 'put', 'init', 'OAUTH_TOKEN', 'AUTH_METHOD', 'PIN_AUTH', 'OAUTH_AUTH']
+__all__ = ['Airs', 'Alias', 'Comment', 'Genre', 'get', 'delete', 'post', 'put',
+           'init', 'OAUTH_TOKEN', 'AUTH_METHOD', 'PIN_AUTH', 'OAUTH_AUTH']
 
 #: The base url for the Trakt API. Can be modified to run against different
 #: Trakt.tv environments
@@ -71,24 +72,14 @@ def _get_client_info(app_id=False):
     print('If you do not have a client ID and secret. Please visit the '
           'following url to create them.')
     print('http://trakt.tv/oauth/applications')
-    if sys.version_info > (3,):
-        client_id = input('Please enter your client id: ')
-        client_secret = input('Please enter your client secret: ')
-        if app_id:
-            msg = 'Please enter your application ID ({default}): '.format(
-                default=APPLICATION_ID)
-            user_input = input(msg)
-            if user_input:
-                APPLICATION_ID = user_input
-    else:
-        client_id = raw_input('Please enter your client id: ')
-        client_secret = raw_input('Please enter your client secret: ')
-        if app_id:
-            msg = 'Please enter your application ID ({default}): '.format(
-                default=APPLICATION_ID)
-            user_input = raw_input(msg)
-            if user_input:
-                APPLICATION_ID = user_input
+    client_id = six.moves.input('Please enter your client id: ')
+    client_secret = six.moves.input('Please enter your client secret: ')
+    if app_id:
+        msg = 'Please enter your application ID ({default}): '.format(
+            default=APPLICATION_ID)
+        user_input = six.moves.input(msg)
+        if user_input:
+            APPLICATION_ID = user_input
     return client_id, client_secret
 
 
@@ -102,13 +93,14 @@ def pin_auth(pin=None, client_id=None, client_secret=None, store=False):
         the security conscious
     :return: Your OAuth access token
     """
-    global OAUTH_TOKEN, HEADERS, CLIENT_ID, CLIENT_SECRET, REDIRECT_URI
+    global OAUTH_TOKEN, CLIENT_ID, CLIENT_SECRET
     CLIENT_ID, CLIENT_SECRET = client_id, client_secret
     if client_id is None and client_secret is None:
         CLIENT_ID, CLIENT_SECRET = _get_client_info(app_id=True)
     if pin is None and APPLICATION_ID is None:
         print('You must set the APPLICATION_ID of the Trakt application you '
-              'wish to use. You can find this ID by visiting the following URL')
+              'wish to use. You can find this ID by visiting the following '
+              'URL.')
         print('https://trakt.tv/oauth/applications')
         sys.exit(1)
     if pin is None:
@@ -116,10 +108,7 @@ def pin_auth(pin=None, client_id=None, client_secret=None, store=False):
               'url and log in to generate one.')
         pin_url = 'https://trakt.tv/pin/{id}'.format(id=APPLICATION_ID)
         print(pin_url)
-        if sys.version_info > (3,):
-            pin = input('Please enter your PIN: ')
-        else:
-            pin = raw_input('Please enter your PIN: ')
+        pin = six.moves.input('Please enter your PIN: ')
     args = {'code': pin,
             'redirect_uri': REDIRECT_URI,
             'grant_type': 'authorization_code',
@@ -147,7 +136,7 @@ def oauth_auth(username, client_id=None, client_secret=None, store=False):
         the security conscious
     :return: Your OAuth access token
     """
-    global BASE_URL, CLIENT_ID, CLIENT_SECRET, OAUTH_TOKEN
+    global CLIENT_ID, CLIENT_SECRET, OAUTH_TOKEN
     if client_id is None and client_secret is None:
         client_id, client_secret = _get_client_info()
     CLIENT_ID, CLIENT_SECRET = client_id, client_secret
@@ -160,15 +149,12 @@ def oauth_auth(username, client_id=None, client_secret=None, store=False):
     oauth = OAuth2Session(CLIENT_ID, redirect_uri=REDIRECT_URI, state=None)
 
     # Redirect user to Trakt for authorization
-    authorization_url, state = oauth.authorization_url(authorization_base_url,
-                                                       username=username)
+    authorization_url, _ = oauth.authorization_url(authorization_base_url,
+                                                   username=username)
     print('Please go here and authorize,', authorization_url)
 
     # Get the authorization verifier code from the callback url
-    if sys.version_info > (3,):
-        response = input('Paste the Code returned here: ')
-    else:
-        response = raw_input("Paste the Code returned here: ")
+    response = six.moves.input('Paste the Code returned here: ')
     # Fetch, assign, and return the access token
     oauth.fetch_token(token_url, client_secret=CLIENT_SECRET, code=response)
     OAUTH_TOKEN = oauth.token['access_token']
@@ -192,9 +178,7 @@ Alias = namedtuple('Alias', ['title', 'country'])
 Genre = namedtuple('Genre', ['name', 'slug'])
 Comment = namedtuple('Comment', ['id', 'parent_id', 'created_at', 'comment',
                                  'spoiler', 'review', 'replies', 'user',
-                                 'likes'])
-Translation = namedtuple('Translation', ['title', 'overview', 'tagline',
-                                         'language'])
+                                 'user_rating'])
 
 
 def _bootstrapped(f):
@@ -211,17 +195,16 @@ def _bootstrapped(f):
             with open(CONFIG_PATH) as config_file:
                 config_data = json.load(config_file)
 
-            CLIENT_ID = config_data.get('CLIENT_ID', None)
-            CLIENT_SECRET = config_data.get('CLIENT_SECRET', None)
-            OAUTH_TOKEN = config_data['OAUTH_TOKEN']
+            if CLIENT_ID is None:
+                CLIENT_ID = config_data.get('CLIENT_ID', None)
+            if CLIENT_SECRET is None:
+                CLIENT_SECRET = config_data.get('CLIENT_SECRET', None)
+            if OAUTH_TOKEN is None:
+                OAUTH_TOKEN = config_data['OAUTH_TOKEN']
 
             # For backwards compatability with trakt<=2.3.0
             if api_key is not None and OAUTH_TOKEN is None:
                 OAUTH_TOKEN = api_key
-
-            HEADERS['trakt-api-key'] = CLIENT_ID
-            # HEADERS['trakt-api-key'] = OAUTH_TOKEN
-            HEADERS['Authorization'] = 'Bearer {token}'.format(token=OAUTH_TOKEN)
         return f(*args, **kwargs)
     return inner
 
@@ -276,6 +259,7 @@ class Core(object):
         :raises TraktException: If any non-200 return code is encountered
         """
         self.logger.debug('%s: %s', method, url)
+        HEADERS['trakt-api-key'] = CLIENT_ID
         HEADERS['Authorization'] = 'Bearer {0}'.format(OAUTH_TOKEN)
         self.logger.debug('headers: %s', str(HEADERS))
         self.logger.debug('method, url :: %s, %s', method, url)
@@ -325,7 +309,8 @@ class Core(object):
         """
         @wraps(f)
         def inner(*args, **kwargs):
-            uri = f(*args, **kwargs)
+            generator = f(*args, **kwargs)
+            uri = next(generator)
             url = BASE_URL + uri
             self._handle_request('delete', url)
         return inner

@@ -1,5 +1,28 @@
 Release History
 ^^^^^^^^^^^^^^^
+2.4.5 (2016-03-20)
+++++++++++++++++++
+
+* Add `six` support for cleaner 2-3 compatability
+* General code cleanup and style improvements
+
+2.4.4 (2016-03-19)
+++++++++++++++++++
+
+* Update `slugify` function to better match trakt slugs (#51)
+
+2.4.3 (2016-03-12)
+++++++++++++++++++
+
+* Python Style Fixes (per flake8)
+* Added mocked unit level tests to ensure API responses are handled properly
+* Miscellaneous bug fixes and improvements
+
+2.4.2 (2016-03-05)
+++++++++++++++++++
+
+* Fix authentication issue pointed out by @BrendanBall (#48)
+
 2.4.1 (2016-02-20)
 ++++++++++++++++++
 

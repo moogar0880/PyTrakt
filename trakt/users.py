@@ -1,15 +1,15 @@
+# -*- coding: utf-8 -*-
 """Interfaces to all of the User objects offered by the Trakt.tv API"""
 from collections import namedtuple
-
-from .tv import TVShow, TVEpisode
-from .core import get, post, delete
-from .utils import slugify, extract_ids, unicode_safe
-from .movies import Movie
-from .people import Person
+from trakt.core import get, post, delete
+from trakt.movies import Movie
+from trakt.people import Person
+from trakt.tv import TVShow, TVSeason, TVEpisode
+from trakt.utils import slugify, extract_ids, unicode_safe
 
 __author__ = 'Jon Nappi'
 __all__ = ['User', 'UserList', 'Request', 'follow', 'get_all_requests',
-           'unfollow']
+           'get_user_settings', 'unfollow']
 
 
 class Request(namedtuple('Request', ['id', 'requested_at', 'user'])):
@@ -46,6 +46,13 @@ def get_all_requests():
     yield request_list
 
 
+@get
+def get_user_settings():
+    """The currently authenticated user's settings"""
+    data = yield 'users/settings'
+    yield data
+
+
 @delete
 def unfollow(user_name):
     """Unfollow a user you're currently following with a username of *user_name*
@@ -54,14 +61,15 @@ def unfollow(user_name):
 
 
 class UserList(namedtuple('UserList', ['name', 'description', 'privacy',
-                                        'display_numbers', 'allow_comments',
-                                        'sort_by', 'sort_how', 'created_at',
-                                        'updated_at', 'item_count', 'comment_count',
-                                        'likes', 'trakt', 'slug', 'user', 'creator'])):
+                                       'display_numbers', 'allow_comments',
+                                       'sort_by', 'sort_how', 'created_at',
+                                       'updated_at', 'item_count',
+                                       'comment_count', 'likes', 'trakt',
+                                       'slug', 'user', 'creator'])):
     """A list created by a Trakt.tv :class:`User`"""
 
     def __init__(self, *args, **kwargs):
-        super(UserList, self).__init__(*args, **kwargs)
+        super(UserList, self).__init__()
         self._items = list()
 
     def __iter__(self, *args, **kwargs):
@@ -88,7 +96,7 @@ class UserList(namedtuple('UserList', ['name', 'description', 'privacy',
             args['description'] = description
         data = yield 'users/{user}/lists'.format(user=creator), args
         extract_ids(data)
-        yield UserList(creator=creator, **data)
+        yield UserList(creator=creator, user=creator, **data)
 
     @classmethod
     @get
@@ -128,7 +136,7 @@ class UserList(namedtuple('UserList', ['name', 'description', 'privacy',
         uri = 'users/{user}/lists/{id}/like'
         yield uri.format(user=self.creator, id=self.trakt), None
 
-    @delete
+    @post
     def remove_items(self, *items):
         """Remove *items* to this :class:`UserList`, where items is an iterable
         """
@@ -137,15 +145,15 @@ class UserList(namedtuple('UserList', ['name', 'description', 'privacy',
         people = [p.ids for p in items if isinstance(p, Person)]
         self._items = items
         args = {'movies': movies, 'shows': shows, 'people': people}
-        uri = 'users/{user}/lists/{id}/items'.format(user=self.creator,
-                                                     id=self.trakt)
+        uri = 'users/{user}/lists/{id}/items/remove'.format(user=self.creator,
+                                                            id=self.trakt)
         yield uri, args
 
     @delete
     def unlike(self):
         """Remove a like on this :class:`UserList`."""
         uri = 'users/{username}/lists/{id}/like'
-        yield uri.format(username=self.creator, id=self.trakt), None
+        yield uri.format(username=self.creator, id=self.trakt)
 
 
 class User(object):
@@ -218,12 +226,13 @@ class User(object):
     @get
     def friends(self):
         """A list of this :class:`User`'s friends (a 2 way relationship where
-        each user follows the other) including the since timestamp which is when
-        the friendship began. Protected users won't return any data unless you
-        are friends. Any friends of the main user that are protected won't
+        each user follows the other) including the since timestamp which is
+        when the friendship began. Protected users won't return any data unless
+        you are friends. Any friends of the main user that are protected won't
         display data either.
         """
         if self._friends is None:
+            self._friends = []
             data = yield 'users/{user}/friends'.format(user=self.username)
             for user in data:
                 user_data = user.pop('user')
@@ -242,8 +251,8 @@ class User(object):
             data = yield 'users/{username}/lists'.format(
                 username=self.username
             )
-            self._lists = [UserList(creator=self.username, **extract_ids(ul))
-                           for ul in data]
+            self._lists = [UserList(creator=self.username, user=self,
+                           **extract_ids(ul)) for ul in data]
         yield self._lists
 
     @property
@@ -295,24 +304,13 @@ class User(object):
             for movie in data:
                 mov = movie.pop('movie')
                 extract_ids(mov)
-                movie['movie'] = mov
-                self._movie_collection.append(Movie(**movie))
+                self._movie_collection.append(Movie(**mov))
         yield self._movie_collection
 
     @property
     @get
-    def settings(self):
-        """This :class:`User`'s settings"""
-        if self._settings is None:
-            data = yield 'users/settings'
-            data.pop('user')
-            self._settings = data
-        yield self._settings
-
-    @property
-    @get
     def show_collection(self):
-        """All :class:`Movie`'s in this :class:`User`'s library collection.
+        """All :class:`TVShow`'s in this :class:`User`'s library collection.
         Collection items might include blu-rays, dvds, and digital downloads.
         Protected users won't return any data unless you are friends.
         """
@@ -320,11 +318,13 @@ class User(object):
             ext = 'users/{username}/collection/shows?extended=metadata'
             data = yield ext.format(username=self.username)
             self._show_collection = []
-            for movie in data:
-                mov = movie.pop('movie')
-                extract_ids(mov)
-                movie['movie'] = mov
-                self._show_collection.append(Movie(**movie))
+            for show in data:
+                s = show.pop('show')
+                extract_ids(s)
+                sh = TVShow(**s)
+                sh._seasons = [TVSeason(show=sh.title, **sea)
+                               for sea in show.pop('seasons')]
+                self._show_collection.append(sh)
         yield self._show_collection
 
     @property
@@ -374,8 +374,8 @@ class User(object):
         data = yield 'users/{user}/watching'.format(user=self.username)
 
         # if a user isn't watching anything, trakt returns a 204
-        if data is None:
-            yield data
+        if data is None or data == '':
+            yield None
 
         media_type = data.pop('type')
         if media_type == 'movie':
@@ -405,7 +405,7 @@ class User(object):
         return UserList.get(title, self.username)
 
     @get
-    def get_ratings(self, media_type='movie', rating=None):
+    def get_ratings(self, media_type='movies', rating=None):
         """Get a user's ratings filtered by type. You can optionally filter for
         a specific rating between 1 and 10.
 
@@ -418,6 +418,7 @@ class User(object):
         if rating is not None:
             uri += '/{rating}'.format(rating=rating)
         data = yield uri
+        # TODO (moogar0880) - return as objects
         yield data
 
     @get

@@ -1,0 +1,35 @@
+{
+    "recommendations/movies": {
+        "GET": [
+            {"title":"Blackfish","year":2013,"ids":{"trakt":58,"slug":"blackfish-2013","imdb":"tt2545118","tmdb":158999}},
+            {"title":"Waiting for Superman","year":2010,"ids":{"trakt":289,"slug":"waiting-for-superman-2010","imdb":"tt1566648","tmdb":39440}},
+            {"title":"Inside Job","year":2010,"ids":{"trakt":329,"slug":"inside-job-2010","imdb":"tt1645089","tmdb":44639}},
+            {"title":"School of Rock","year":2003,"ids":{"trakt":503,"slug":"school-of-rock-2003","imdb":"tt0332379","tmdb":1584}},
+            {"title":"The Lincoln Lawyer","year":2011,"ids":{"trakt":513,"slug":"the-lincoln-lawyer-2011","imdb":"tt1189340","tmdb":50348}},
+            {"title":"The Change-Up","year":2011,"ids":{"trakt":822,"slug":"the-change-up-2011","imdb":"tt1488555","tmdb":49520}},
+            {"title":"50/50","year":2011,"ids":{"trakt":907,"slug":"50-50-2011","imdb":"tt1306980","tmdb":40807}},
+            {"title":"Moneyball","year":2011,"ids":{"trakt":945,"slug":"moneyball-2011","imdb":"tt1210166","tmdb":60308}},
+            {"title":"Killer at Large","year":2008,"ids":{"trakt":3549,"slug":"killer-at-large-2008","imdb":"tt0903660","tmdb":37312}},
+            {"title":"Green Day: Bullet in a Bible","year":2005,"ids":{"trakt":3770,"slug":"green-day-bullet-in-a-bible-2005","imdb":"tt0485773","tmdb":26627}}
+        ]
+    },
+    "recommendations/movies/922": {
+        "DELETE": ""
+    },
+    "recommendations/shows": {
+        "GET": [
+            {"title":"The Biggest Loser","year":2004,"ids":{"trakt":9,"slug":"the-biggest-loser","tvdb":75166,"imdb":"tt0429318","tmdb":579,"tvrage":null}},
+            {"title":"Shark Tank","year":2009,"ids":{"trakt":36,"slug":"shark-tank","tvdb":100981,"imdb":"tt1442550","tmdb":30703,"tvrage":22610}},
+            {"title":"Hell's Kitchen","year":2005,"ids":{"trakt":40,"slug":"hell-s-kitchen","tvdb":74897,"imdb":"tt0437005","tmdb":2370,"tvrage":null}},
+            {"title":"The Big C","year":2010,"ids":{"trakt":51,"slug":"the-big-c","tvdb":161501,"imdb":"tt1515193","tmdb":32406,"tvrage":null}},
+            {"title":"United States of Tara","year":2009,"ids":{"trakt":69,"slug":"united-states-of-tara","tvdb":83463,"imdb":"tt1001482","tmdb":7097,"tvrage":20601}},
+            {"title":"Hung","year":2009,"ids":{"trakt":168,"slug":"hung","tvdb":82091,"imdb":"tt1229413","tmdb":18614,"tvrage":21942}},
+            {"title":"Big Love","year":2006,"ids":{"trakt":272,"slug":"big-love","tvdb":74156,"imdb":"tt0421030","tmdb":4392,"tvrage":2797}},
+            {"title":"Brooklyn Nine-Nine","year":2013,"ids":{"trakt":599,"slug":"brooklyn-nine-nine","tvdb":269586,"imdb":"tt2467372","tmdb":48891,"tvrage":35774}},
+            {"title":"FlashForward","year":2009,"ids":{"trakt":677,"slug":"flashforward","tvdb":84024,"imdb":"tt1441135","tmdb":19092,"tvrage":null}},
+            {"title":"Roswell","year":1999,"ids":{"trakt":717,"slug":"roswell","tvdb":73965,"imdb":"tt0201391","tmdb":4624,"tvrage":null}}]
+    },
+    "recommendations/shows/922": {
+        "DELETE": ""
+    }
+}

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import re
-import sys
+import six
 import unicodedata
 from datetime import datetime
 
@@ -14,17 +14,16 @@ def slugify(value):
 
     Adapted from django.utils.text.slugify
     """
-    if sys.version_info[0] == 2:
-        value = unicode(value)
-    value = unicodedata.normalize('NFKD',
-                                  value).encode('ascii',
-                                                'ignore').decode('ascii')
-    value = re.sub('[^\w\s-]', '', value).strip().lower()
-    return re.sub('[-\s]+', '-', value)
+    if six.PY2 and isinstance(value, str):
+        value = unicode(value, 'utf-8')  # NOQA
+    nfkd_form = unicodedata.normalize('NFKD', value)
+    decoded = nfkd_form.encode('ascii', 'ignore').decode('utf-8')
+    value = re.sub(r'[^\w\s-]', ' ', decoded).strip().lower()
+    return re.sub(r'[-\s]+', '-', value)
 
 
 def airs_date(airs_at):
-    """convert a timestamp of the form '2015-02-01T05:30:00.000-08:00' to a
+    """convert a timestamp of the form '2015-02-01T05:30:00.000-08:00Z' to a
     python datetime object (with time zone information removed)
     """
     parsed = airs_at.split('-')[:-1]
@@ -57,12 +56,6 @@ def extract_ids(id_dict):
 
 
 def unicode_safe(s):
-    if sys.version_info[0] == 3:
+    if six.PY3:
         return s
     return s.encode('ascii', 'ignore').decode('ascii')
-
-
-class Paginator(list):
-    def __init__(self, iterable, page_size=10):
-        super(Paginator, self).__init__(iterable)
-        self.page, self.page_size = 1, page_size

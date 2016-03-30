@@ -1,0 +1,32 @@
+{
+    "people/bryan-cranston": {
+        "GET": {"name":"Bryan Cranston","ids":{"trakt":142,"slug":"bryan-cranston","imdb":"nm0186505","tmdb":17419,"tvrage":1797}}
+    },
+    "people/bryan-cranston?extended=images": {
+        "GET": {"name":"Bryan Cranston","ids":{"trakt":1,"slug":"bryan-cranston","imdb":"nm0186505","tmdb":17419,"tvrage":1797},"images":{"headshot":{"full":"https://walter.trakt.us/images/people/000/000/001/headshots/original/47aebaace9.jpg?1413409177","medium":"https://walter.trakt.us/images/people/000/000/001/headshots/medium/47aebaace9.jpg?1413409177","thumb":"https://walter.trakt.us/images/people/000/000/001/headshots/thumb/47aebaace9.jpg?1413409177"},"fanart":{"full":"https://walter.trakt.us/images/people/000/000/001/fanart/original/47aebaace9.jpg?1413409177","medium":"https://walter.trakt.us/images/people/000/000/001/fanart/medium/47aebaace9.jpg?1413409177","thumb":"https://walter.trakt.us/images/people/000/000/001/fanart/thumb/47aebaace9.jpg?1413409177"}}}
+    },
+    "people/bryan-cranston?extended=full": {
+        "GET": {"name":"Bryan Cranston","ids":{"trakt":1,"slug":"bryan-cranston","imdb":"nm0186505","tmdb":17419,"tvrage":1797},"biography":"Bryan Lee Cranston (born March 7, 1956) is an American actor, voice actor, writer and director.He is perhaps best known for his roles as Hal, the father in the Fox situation comedy \"Malcolm in the Middle\", and as Walter White in the AMC drama series Breaking Bad, for which he has won three consecutive Outstanding Lead Actor in a Drama Series Emmy Awards. Other notable roles include Dr. Tim Whatley on Seinfeld, Doug Heffernan's neighbor in The King of Queens, Astronaut Buzz Aldrin in From the Earth to the Moon, and Ted Mosby's boss on How I Met Your Mother.  Description above from the Wikipedia article Bryan Cranston, licensed under CC-BY-SA, full list of contributors on Wikipedia.","birthday":"1956-03-07","death":null,"birthplace":"San Fernando Valley, California, USA","homepage":"http://www.bryancranston.com/"}
+    },
+    "people/bryan-cranston/movies": {
+        "GET": {
+            "cast":[
+                {"character":"Joe Brody","movie":{"title":"Godzilla","year":2014,"ids":{"trakt":24,"slug":"godzilla-2014","imdb":"tt0831387","tmdb":124905}}}
+            ],
+            "crew":{
+                "directing":[
+                    {"job":"Director","movie":{"title":"Godzilla","year":2014,"ids":{"trakt":24,"slug":"godzilla-2014","imdb":"tt0831387","tmdb":124905}}}
+                ],
+                "writing":[
+                    {"job":"Screenplay","movie":{"title":"Godzilla","year":2014,"ids":{"trakt":24,"slug":"godzilla-2014","imdb":"tt0831387","tmdb":124905}}}
+                ],
+                "producing":[
+                    {"job":"Producer","movie":{"title":"Godzilla","year":2014,"ids":{"trakt":24,"slug":"godzilla-2014","imdb":"tt0831387","tmdb":124905}}}
+                ]
+            }
+        }
+    },
+    "people/bryan-cranston/shows": {
+        "GET": {"cast":[{"character":"Walter White","show":{"title":"Breaking Bad","year":2008,"ids":{"trakt":1,"slug":"breaking-bad","tvdb":81189,"imdb":"tt0903747","tmdb":1396,"tvrage":18164}}}],"crew":{"production":[{"job":"Producer","show":{"title":"Breaking Bad","year":2008,"ids":{"trakt":1,"slug":"breaking-bad","tvdb":81189,"imdb":"tt0903747","tmdb":1396,"tvrage":18164}}}]}}
+    }
+}

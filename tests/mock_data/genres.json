@@ -1,0 +1,266 @@
+{
+    "genres/movies": {
+        "GET": [
+          {
+            "name": "action",
+            "slug": "action"
+          },
+          {
+            "name": "adventure",
+            "slug": "adventure"
+          },
+          {
+            "name": "animation",
+            "slug": "animation"
+          },
+          {
+            "name": "comedy",
+            "slug": "comedy"
+          },
+          {
+            "name": "crime",
+            "slug": "crime"
+          },
+          {
+            "name": "disaster",
+            "slug": "disaster"
+          },
+          {
+            "name": "documentary",
+            "slug": "documentary"
+          },
+          {
+            "name": "drama",
+            "slug": "drama"
+          },
+          {
+            "name": "eastern",
+            "slug": "eastern"
+          },
+          {
+            "name": "family",
+            "slug": "family"
+          },
+          {
+            "name": "fan film",
+            "slug": "fan-film"
+          },
+          {
+            "name": "fantasy",
+            "slug": "fantasy"
+          },
+          {
+            "name": "film noir",
+            "slug": "film-noir"
+          },
+          {
+            "name": "history",
+            "slug": "history"
+          },
+          {
+            "name": "holiday",
+            "slug": "holiday"
+          },
+          {
+            "name": "horror",
+            "slug": "horror"
+          },
+          {
+            "name": "indie",
+            "slug": "indie"
+          },
+          {
+            "name": "music",
+            "slug": "music"
+          },
+          {
+            "name": "musical",
+            "slug": "musical"
+          },
+          {
+            "name": "mystery",
+            "slug": "mystery"
+          },
+          {
+            "name": "none",
+            "slug": "none"
+          },
+          {
+            "name": "road",
+            "slug": "road"
+          },
+          {
+            "name": "romance",
+            "slug": "romance"
+          },
+          {
+            "name": "science fiction",
+            "slug": "science-fiction"
+          },
+          {
+            "name": "short",
+            "slug": "short"
+          },
+          {
+            "name": "sports",
+            "slug": "sports"
+          },
+          {
+            "name": "sporting event",
+            "slug": "sporting-event"
+          },
+          {
+            "name": "suspense",
+            "slug": "suspense"
+          },
+          {
+            "name": "thriller",
+            "slug": "thriller"
+          },
+          {
+            "name": "tv movie",
+            "slug": "tv-movie"
+          },
+          {
+            "name": "war",
+            "slug": "war"
+          },
+          {
+            "name": "western",
+            "slug": "western"
+          }
+        ]
+    },
+    "genres/shows": {
+        "GET": [
+          {
+            "name": "action",
+            "slug": "action"
+          },
+          {
+            "name": "adventure",
+            "slug": "adventure"
+          },
+          {
+            "name": "animation",
+            "slug": "animation"
+          },
+          {
+            "name": "comedy",
+            "slug": "comedy"
+          },
+          {
+            "name": "crime",
+            "slug": "crime"
+          },
+          {
+            "name": "disaster",
+            "slug": "disaster"
+          },
+          {
+            "name": "documentary",
+            "slug": "documentary"
+          },
+          {
+            "name": "drama",
+            "slug": "drama"
+          },
+          {
+            "name": "eastern",
+            "slug": "eastern"
+          },
+          {
+            "name": "family",
+            "slug": "family"
+          },
+          {
+            "name": "fan film",
+            "slug": "fan-film"
+          },
+          {
+            "name": "fantasy",
+            "slug": "fantasy"
+          },
+          {
+            "name": "film noir",
+            "slug": "film-noir"
+          },
+          {
+            "name": "history",
+            "slug": "history"
+          },
+          {
+            "name": "holiday",
+            "slug": "holiday"
+          },
+          {
+            "name": "horror",
+            "slug": "horror"
+          },
+          {
+            "name": "indie",
+            "slug": "indie"
+          },
+          {
+            "name": "music",
+            "slug": "music"
+          },
+          {
+            "name": "musical",
+            "slug": "musical"
+          },
+          {
+            "name": "mystery",
+            "slug": "mystery"
+          },
+          {
+            "name": "none",
+            "slug": "none"
+          },
+          {
+            "name": "road",
+            "slug": "road"
+          },
+          {
+            "name": "romance",
+            "slug": "romance"
+          },
+          {
+            "name": "science fiction",
+            "slug": "science-fiction"
+          },
+          {
+            "name": "short",
+            "slug": "short"
+          },
+          {
+            "name": "sports",
+            "slug": "sports"
+          },
+          {
+            "name": "sporting event",
+            "slug": "sporting-event"
+          },
+          {
+            "name": "suspense",
+            "slug": "suspense"
+          },
+          {
+            "name": "thriller",
+            "slug": "thriller"
+          },
+          {
+            "name": "tv movie",
+            "slug": "tv-movie"
+          },
+          {
+            "name": "war",
+            "slug": "war"
+          },
+          {
+            "name": "western",
+            "slug": "western"
+          }
+        ]
+    }
+}

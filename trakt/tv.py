@@ -1,18 +1,21 @@
 # -*- coding: utf-8 -*-
 """Interfaces to all of the TV objects offered by the Trakt.tv API"""
+from collections import namedtuple
 from datetime import datetime, timedelta
-
-from .core import Airs, Alias, Comment, Genre, Translation, delete, get
-from .errors import NotFoundException
-from .sync import (Scrobbler, rate, comment, add_to_collection,
-                   add_to_watchlist, add_to_history, remove_from_collection,
-                   remove_from_watchlist, remove_from_history, search)
-from .utils import slugify, extract_ids, airs_date, unicode_safe
-from .people import Person
+from trakt.core import Airs, Alias, Comment, Genre, delete, get
+from trakt.errors import NotFoundException
+from trakt.sync import (Scrobbler, rate, comment, add_to_collection,
+                        add_to_watchlist, add_to_history, remove_from_history,
+                        remove_from_collection, remove_from_watchlist, search)
+from trakt.utils import slugify, extract_ids, airs_date, unicode_safe
+from trakt.people import Person
 
 __author__ = 'Jon Nappi'
-__all__ = ['trending_shows', 'TVShow', 'TVEpisode', 'TVSeason',
+__all__ = ['trending_shows', 'TVShow', 'TVEpisode', 'TVSeason', 'Translation',
            'get_recommended_shows', 'dismiss_recommendation']
+
+
+Translation = namedtuple('Translation', ['title', 'overview', 'language'])
 
 
 @delete
@@ -78,11 +81,7 @@ def updated_shows(timestamp=None):
     y_day = datetime.now() - timedelta(1)
     ts = timestamp or int(y_day.strftime('%s')) * 1000
     data = yield 'shows/updates/{start_date}'.format(start_date=ts)
-    to_ret = []
-    for show in data['shows']:
-        title = show.get('title')
-        to_ret.append(TVShow(title, **show))
-    yield to_ret
+    yield [TVShow(**d['show']) for d in data]
 
 
 class TVShow(object):
@@ -249,8 +248,7 @@ class TVShow(object):
             self._seasons = []
             for season in data:
                 extract_ids(season)
-                number = season.pop('number')
-                self._seasons.append(TVSeason(self.title, number, **season))
+                self._seasons.append(TVSeason(self.title, **season))
         yield self._seasons
 
     @property
@@ -258,7 +256,6 @@ class TVShow(object):
     def watching_now(self):
         """A list of all :class:`User`'s watching a movie."""
         from .users import User
-
         data = yield self.ext + '/watching'
         users = []
         for user in data:
@@ -346,9 +343,7 @@ class TVSeason(object):
         self.show = show
         self.season = season
         self.slug = slug or slugify(show)
-        self._episodes = None
-        self._comments = []
-        self._ratings = []
+        self._episodes = self._comments = self._ratings = None
         self.ext = 'shows/{id}/seasons/{season}'.format(id=self.slug,
                                                         season=season)
         if len(kwargs) > 0:
@@ -366,8 +361,16 @@ class TVSeason(object):
 
     def _build(self, data):
         """Build this :class:`TVSeason` object with the data in *data*"""
-        for key, val in data.items():
-            setattr(self, key, val)
+        # only try to build our episodes if we got a list of episodes, not a
+        # dict of season data
+        if isinstance(data, list):
+            self._episodes = [TVEpisode(show=self.show, **ep) for ep in data]
+        else:
+            for key, val in data.items():
+                try:
+                    setattr(self, key, val)
+                except AttributeError:
+                    setattr(self, '_'+key, val)
 
     @property
     @get
@@ -398,7 +401,7 @@ class TVSeason(object):
                 try:
                     ep = self._episode_getter(index)
                     self._episodes.append(ep)
-                except NotFoundException:
+                except (NotFoundException, TypeError):
                     break
                 index += 1
         return self._episodes
@@ -446,17 +449,6 @@ class TVSeason(object):
 
     add_to_collection = add_to_library
 
-    def mark_as_seen(self, watched_at=None):
-        """Add this :class:`TVSeason`, watched outside of trakt, to your library.
-        """
-        add_to_history(self, watched_at)
-
-    def mark_as_unseen(self):
-        """Remove this :class:`TVSeason`, watched outside of trakt, from your
-        library.
-        """
-        remove_from_history(self)
-
     def remove_from_library(self):
         """Remove this :class:`TVSeason` from your library."""
         remove_from_collection(self)
@@ -476,6 +468,9 @@ class TVSeason(object):
         title = map(str, title)
         return ' '.join(title)
 
+    def __len__(self):
+        return len(self._episodes)
+
     __repr__ = __str__
 
 
@@ -490,11 +485,8 @@ class TVEpisode(object):
         self.number = number
         self.overview = self.title = self.year = None
         self.trakt = self.tmdb = self.tvdb = self.imdb = None
-        self.tvrage = self._stats = None
-        self._images = []
-        self._comments = []
-        self._translations = []
-        self._ratings = []
+        self.tvrage = self._stats = self._images = self._comments = None
+        self._translations = self._ratings = None
         if len(kwargs) > 0:
             self._build(kwargs)
         else:
@@ -591,22 +583,10 @@ class TVEpisode(object):
         yield users
 
     def get_description(self):
-        return str(self.overview)
-
-    def get_translations(self, country_code='us'):
-        """Returns all :class:`Translation`'s for a movie, including language
-        and translated values for title, tagline and overview.
-
-        :param country_code: The 2 character country code to search from
-        :return: a :const:`list` of :class:`Translation` objects
-        """
-        if self._translations is None:
-            data = yield self.ext + '/translations/{cc}'.format(
-                cc=country_code
-            )
-            self._translations = [Translation(**translation)
-                                  for translation in data]
-        yield self._translations
+        """backwards compatible function that returns this :class:`TVEpisode`'s
+        overview
+        '"""
+        return self.overview
 
     def rate(self, rating):
         """Rate this :class:`TVEpisode` on trakt. Depending on the current users

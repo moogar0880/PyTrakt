@@ -2,8 +2,8 @@
 """This module contains Trakt.tv sync endpoint support functions"""
 from datetime import datetime
 
-from .core import get, post
-from .utils import slugify, extract_ids, timestamp
+from trakt.core import get, post
+from trakt.utils import slugify, extract_ids, timestamp
 
 __author__ = 'Jon Nappi'
 __all__ = ['Scrobbler', 'comment', 'rate', 'add_to_history',
@@ -133,21 +133,22 @@ def search(query, search_type='movie'):
     # Need to do imports here to prevent circular imports with modules that
     # need to import Scrobblers
     if search_type == 'movie':
-        from .movies import Movie
+        from trakt.movies import Movie
         yield [Movie(**d.pop('movie')) for d in data]
     elif search_type == 'show':
-        from .tv import TVShow
+        from trakt.tv import TVShow
         yield [TVShow(**d.pop('show')) for d in data]
     elif search_type == 'episode':
-        from .tv import TVEpisode
+        from trakt.tv import TVEpisode
         episodes = []
         for episode in data:
             show = episode.pop('show')
             extract_ids(episode['episode'])
-            episodes.append(TVEpisode(show['title'], **episode['episode']))
+            episodes.append(TVEpisode(show.get('title', None),
+                                      **episode['episode']))
         yield episodes
     elif search_type == 'person':
-        from .people import Person
+        from trakt.people import Person
         yield [Person(**d.pop('person')) for d in data]
 
 
@@ -157,9 +158,11 @@ def search_by_id(query, id_type='imdb'):
 
     :param query: Your search string
     :param id_type: The type of object you're looking for. Must be one of
-        'trakt-movie', 'trakt-show', 'trakt-episode', 'imdb', 'tmdb', 'tvdb' or 'tvrage'
+        'trakt-movie', 'trakt-show', 'trakt-episode', 'imdb', 'tmdb', 'tvdb' or
+        'tvrage'
     """
-    valids = ('trakt-movie', 'trakt-show', 'trakt-episode', 'imdb', 'tmdb', 'tvdb', 'tvrage')
+    valids = ('trakt-movie', 'trakt-show', 'trakt-episode', 'imdb', 'tmdb',
+              'tvdb', 'tvrage')
     if id_type not in valids:
         raise ValueError('search_type must be one of {}'.format(valids))
     data = yield 'search?id={query}&id_type={id_type}'.format(
@@ -171,18 +174,18 @@ def search_by_id(query, id_type='imdb'):
     results = []
     for d in data:
         if 'episode' in d:
-            from .tv import TVEpisode
+            from trakt.tv import TVEpisode
             show = d.pop('show')
             extract_ids(d['episode'])
             results.append(TVEpisode(show['title'], **d['episode']))
         elif 'movie' in d:
-            from .movies import Movie
+            from trakt.movies import Movie
             results.append(Movie(**d.pop('movie')))
         elif 'show' in d:
-            from .tv import TVShow
+            from trakt.tv import TVShow
             results.append(TVShow(**d.pop('show')))
         elif 'person' in d:
-            from .people import Person
+            from trakt.people import Person
             results.append(Person(**d.pop('person')))
     yield results
 
@@ -236,7 +239,7 @@ class Scrobbler(object):
         self.start()
 
     @post
-    def _post(self, uri, args=None):
+    def _post(self, uri):
         """Handle actually posting the scrobbling data to trakt
 
         :param uri: The uri to post to
@@ -246,8 +249,6 @@ class Scrobbler(object):
         payload = dict(progress=self.progress, app_version=self.version,
                        date=self.date)
         payload.update(self.media.to_json())
-        if args is not None:
-            payload.update(args)
         yield uri, payload
 
     def __enter__(self):

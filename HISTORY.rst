@@ -1,9 +1,14 @@
 Release History
 ^^^^^^^^^^^^^^^
+2.4.6 (2016-05-01)
+++++++++++++++++++
+
+* Fix adding to watchlists (#59)
+
 2.4.5 (2016-03-20)
 ++++++++++++++++++
 
-* Add `six` support for cleaner 2-3 compatability
+* Add `six` support for cleaner 2-3 compatibility
 * General code cleanup and style improvements
 
 2.4.4 (2016-03-19)

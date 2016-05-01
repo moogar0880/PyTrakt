@@ -324,9 +324,9 @@ class TVShow(object):
         remove_from_watchlist(self)
 
     def to_json(self):
-        return {'show': {
+        return {'shows': [{
             'title': self.title, 'year': self.year, 'ids': self.ids
-        }}
+        }]}
 
     def __str__(self):
         """Return a string representation of a :class:`TVShow`"""
@@ -646,11 +646,11 @@ class TVEpisode(object):
         """Return this :class:`TVEpisode` as a trakt recognizable JSON object
         """
         return {
-            'episode': {
+            'episodes': [{
                 'ids': {
                     'trakt': self.trakt
                 }
-            }
+            }]
         }
 
     def __str__(self):

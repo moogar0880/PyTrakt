@@ -116,7 +116,13 @@ def test_dismiss_movie_recommendation():
 
 def test_movie_to_json():
     tron = Movie('Tron Legacy', year=2010)
-    assert tron.to_json() == {'movie': {'title': tron.title}}
+    expected = {'movies': [{'title': tron.title,
+                            'year': 2010,
+                            'ids': {'imdb': 'tt1104001',
+                                    'slug': 'tron-legacy-2010',
+                                    'tmdb': 20526,
+                                    'trakt': 343}}]}
+    assert tron.to_json() == expected
 
 
 def test_movie_str():

@@ -256,6 +256,7 @@ class Movie(object):
     def add_to_library(self):
         """Add this :class:`Movie` to your library."""
         add_to_collection(self)
+    add_to_collection = add_to_library
 
     def add_to_watchlist(self):
         """Add this :class:`Movie` to your watchlist"""

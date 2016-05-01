@@ -256,7 +256,6 @@ class Movie(object):
     def add_to_library(self):
         """Add this :class:`Movie` to your library."""
         add_to_collection(self)
-    add_to_collection = add_to_library
 
     def add_to_watchlist(self):
         """Add this :class:`Movie` to your watchlist"""
@@ -342,7 +341,9 @@ class Movie(object):
         return Scrobbler(self, progress, app_version, app_date)
 
     def to_json(self):
-        return {'movie': {'title': self.title}}
+        return {'movies': [dict(title=self.title,
+                                year=self.year,
+                                **self.ids)]}
 
     def __str__(self):
         """String representation of a :class:`Movie`"""

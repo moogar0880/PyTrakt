@@ -131,21 +131,26 @@ class UserList(namedtuple('UserList', ['name', 'description', 'privacy',
             item_data = item.pop(item_type)
             extract_ids(item_data)
             if item_type == 'movie':
-                self._items.append(Movie(item_data['title'], item_data['year'], item_data['slug']))
+                self._items.append(Movie(item_data['title'], item_data['year'],
+                                         item_data['slug']))
             elif item_type == 'show':
-                self._items.append(TVShow(item_data['title'], item_data['slug']))
+                self._items.append(TVShow(item_data['title'],
+                                          item_data['slug']))
             elif item_type == 'season':
                 show_data = item.pop('show')
                 extract_ids(show_data)
-                season = TVSeason(show_data['title'], item_data['number'], show_data['slug'])
+                season = TVSeason(show_data['title'], item_data['number'],
+                                  show_data['slug'])
                 self._items.append(season)
             elif item_type == 'episode':
                 show_data = item.pop('show')
                 extract_ids(show_data)
-                episode = TVEpisode(show_data['title'], item_data['season'], item_data['number'])
+                episode = TVEpisode(show_data['title'], item_data['season'],
+                                    item_data['number'])
                 self._items.append(episode)
             elif item_type == 'person':
-                self._items.append(Person(item_data['name'], item_data['slug']))
+                self._items.append(Person(item_data['name'],
+                                          item_data['slug']))
 
         yield self._items
 

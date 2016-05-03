@@ -81,15 +81,15 @@ Release = namedtuple('Release', ['country', 'certification', 'release_date',
 
 class Movie(object):
     """A Class representing a Movie object"""
-    def __init__(self, title, year=None, **kwargs):
+    def __init__(self, title, year=None, slug=None, **kwargs):
         super(Movie, self).__init__()
         self.media_type = 'movies'
         self.title = title
         self.year = int(year) if year is not None else year
-        if self.year is not None:
+        if self.year is not None and slug is None:
             self.slug = slugify('-'.join([self.title, str(self.year)]))
         else:
-            self.slug = slugify(self.title)
+            self.slug = slug or slugify(self.title)
 
         self.released = self.tmdb_id = self.imdb_id = self.duration = None
         self.trakt_id = self.tagline = self.overview = self.runtime = None

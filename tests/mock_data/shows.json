@@ -132,5 +132,8 @@
             {"username":"justin","private":false,"name":"Justin Nemeth","vip":true,"vip_ep":false},
             {"username":"sean","private":false,"name":"Sean Rudford","vip":true,"vip_ep":false}
         ]
+    },
+    "shows/the-walking-dead?extended=full": {
+        "GET": {"title":"The Walking Dead","year":2010,"ids":{"trakt":1393,"slug":"the-walking-dead","tvdb":153021,"imdb":"tt1520211","tmdb":1402,"tvrage":25056},"overview":"The world we knew is gone. An epidemic of apocalyptic proportions has swept the globe causing the dead to rise and feed on the living. In a matter of months society has crumbled. In a world ruled by the dead, we are forced to finally start living. Based on a comic book series of the same name by Robert Kirkman, this AMC project focuses on the world after a zombie apocalypse. The series follows a police officer, Rick Grimes, who wakes up from a coma to find the world ravaged with zombies. Looking for his family, he and a group of survivors attempt to battle against the zombies in order to stay alive.\n","first_aired":"2010-10-31T07:00:00.000Z","airs":{"day":"Sunday","time":"21:00","timezone":"America/New_York"},"runtime":60,"certification":"TV-MA","network":"AMC","country":"us","trailer":"http://youtube.com/watch?v=R1v0uFms68U","homepage":"http://www.amctv.com/shows/the-walking-dead/","status":"returning series","rating":8.62829,"votes":34161,"updated_at":"2016-04-24T10:50:26.000Z","language":"en","available_translations":["en","de","sv","it","pt","tr","ru","zh","fr","es","nl","pl","bg","el","hu","ja","he","da","cs","ko","cn","bs","hr","fa","lt","lv","ro","sr","vi","et","uk","fi","th","id","ms"],"genres":["drama","action","horror","suspense"],"aired_episodes":83}
     }
 }

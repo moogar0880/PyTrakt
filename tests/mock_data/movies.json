@@ -180,5 +180,8 @@
             {"username":"justin","private":false,"name":"Justin Nemeth","vip":true,"vip_ep":false},
             {"username":"sean","private":false,"name":"Sean Rudford","vip":true,"vip_ep":false}
         ]
+    },
+    "movies/star-wars-episode-iv-a-new-hope-1977?extended=full": {
+        "GET": {"title":"Star Wars","year":1977,"ids":{"trakt":7,"slug":"star-wars-1977","imdb":"tt0076759","tmdb":11},"tagline":"A long time ago in a galaxy far, far away...","overview":"Princess Leia is captured and held hostage by the evil Imperial forces in their effort to take over the galactic Empire. Venturesome Luke Skywalker and dashing captain Han Solo team together with the loveable robot duo R2-D2 and C-3PO to rescue the beautiful princess and restore peace and justice in the Empire.","released":"1977-05-25","runtime":121,"trailer":"http://youtube.com/watch?v=vZ734NWnAHA","homepage":"http://www.starwars.com","rating":8.65072,"votes":14776,"updated_at":"2016-04-07T20:13:52.000Z","language":"en","available_translations":["en","de","fr","it","sk","fi","el","ru","zh","es","tr","pt","cs","ko","hu","nl","pl","ja","da","sv","no","nb","he","bg","sr","ca","ro"],"genres":["action","adventure","science-fiction"],"certification":"PG"}
     }
 }

@@ -9,11 +9,12 @@ __all__ = ['Person']
 
 class Person(object):
     """A Class representing a trakt.tv Person such as an Actor or Director"""
-    def __init__(self, name, **kwargs):
+    def __init__(self, name, slug=None, **kwargs):
         super(Person, self).__init__()
         self.name = name
         self.biography = self.birthplace = self.tmdb_id = self.birthday = None
         self.job = self.character = self._images = None
+        self.slug = slug or slugify(self.name)
 
         if len(kwargs) > 0:
             self._build(kwargs)
@@ -22,7 +23,7 @@ class Person(object):
 
     @property
     def ext(self):
-        return 'people/{id}'.format(id=slugify(self.name))
+        return 'people/{id}'.format(id=self.slug)
 
     @property
     def ext_full(self):

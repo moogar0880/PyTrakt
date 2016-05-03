@@ -28,5 +28,11 @@
     },
     "people/bryan-cranston/shows": {
         "GET": {"cast":[{"character":"Walter White","show":{"title":"Breaking Bad","year":2008,"ids":{"trakt":1,"slug":"breaking-bad","tvdb":81189,"imdb":"tt0903747","tmdb":1396,"tvrage":18164}}}],"crew":{"production":[{"job":"Producer","show":{"title":"Breaking Bad","year":2008,"ids":{"trakt":1,"slug":"breaking-bad","tvdb":81189,"imdb":"tt0903747","tmdb":1396,"tvrage":18164}}}]}}
+    },
+    "people/garrett-hedlund": {
+        "GET": {"name":"Garrett Hedlund","ids":{"trakt":414026,"slug":"garrett-hedlund","imdb":"nm1330560","tmdb":9828,"tvrage":null}}
+    },
+    "people/garrett-hedlund?extended=full": {
+        "GET": {"name":"Garrett Hedlund","ids":{"trakt":414026,"slug":"garrett-hedlund","imdb":"nm1330560","tmdb":9828,"tvrage":null},"biography":"Born in Roseau, Minnesota, Garrett spent his early years growing up on a farm in a small town. When he was in the ninth grade his family moved to Scottsdale Arizona, where he began taking private acting lessons. After graduating high school, he immediately moved to Los Angeles to pursue an acting career.\n\nOne month later, he'd landed the role of Achilles' cousin Patroclus in the major motion picture Troy (2004) opposite Brad Pitt. His next feature was Friday night lights (2004) starring Billy Bob Thornton, in which Garrett played a high school football player.\n\nHe then landed a starring role opposite Mark Wahlberg in Four Brothers (2005), playing one of four brothers whose mother is murdered.","birthday":"1984-09-03","death":null,"birthplace":"Roseau, Minnesota, USA ","homepage":""}
     }
 }

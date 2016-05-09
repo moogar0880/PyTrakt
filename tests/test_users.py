@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 from trakt.movies import Movie
-from trakt.tv import TVShow, TVEpisode
+from trakt.tv import TVShow, TVEpisode, TVSeason
 from trakt.users import (User, UserList, Request, follow, get_all_requests,
                          get_user_settings, unfollow)
+from trakt.people import Person
 
 
 def test_user_settings():
@@ -54,6 +55,10 @@ def test_user_list():
     l = sean.get_list(data['name'])
     for k, v in data.items():
         assert getattr(l, k) == v
+
+    # enumerate list items
+    instancetypes = (Movie, TVShow, TVSeason, TVEpisode, Person)
+    assert all([isinstance(k, instancetypes) for k in l])
 
     # PUT to add and remove items from list
     l.add_items()

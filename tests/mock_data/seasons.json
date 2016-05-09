@@ -89,5 +89,153 @@
             {"username":"justin","private":false,"name":"Justin Nemeth","vip":true,"vip_ep":false},
             {"username":"sean","private":false,"name":"Sean Rudford","vip":true,"vip_ep":false}
         ]
+    },
+    "shows/breaking-bad/seasons/1": {
+        "GET": [
+            {"season":1,"number":1,"title":"Pilot","ids":{"trakt":73482,"tvdb":349232,"imdb":"tt0959621","tmdb":62085,"tvrage":637041}},
+            {"season":1,"number":2,"title":"Cat's in the Bag...","ids":{"trakt":73483,"tvdb":349233,"imdb":"tt1054724","tmdb":62086,"tvrage":637494}},
+            {"season":1,"number":3,"title":"...And the Bag's in the River","ids":{"trakt":73484,"tvdb":349235,"imdb":"tt1054725","tmdb":62087,"tvrage":637644}},
+            {"season":1,"number":4,"title":"Cancer Man","ids":{"trakt":73485,"tvdb":349236,"imdb":"tt1054726","tmdb":62088,"tvrage":637645}},
+            {"season":1,"number":5,"title":"Gray Matter","ids":{"trakt":73486,"tvdb":349238,"imdb":"tt1054727","tmdb":62089,"tvrage":637646}},
+            {"season":1,"number":6,"title":"Crazy Handful of Nothin'","ids":{"trakt":73487,"tvdb":355100,"imdb":"tt1054728","tmdb":62090,"tvrage":637647}},
+            {"season":1,"number":7,"title":"A No-Rough-Stuff-Type Deal","ids":{"trakt":73488,"tvdb":352534,"imdb":"tt1054729","tmdb":62091,"tvrage":640422}}
+        ]
+    },
+    "shows/breaking-bad/seasons/1?extended=full": {
+        "GET": [
+            {
+                "season": 1,
+                "number": 1,
+                "title": "Pilot",
+                "ids": {
+                    "trakt": 73482,
+                    "tvdb": 349232,
+                    "imdb": "tt0959621",
+                    "tmdb": 62085,
+                    "tvrage": 637041
+                },
+                "number_abs": null,
+                "overview": "When an unassuming high school chemistry teacher discovers he has a rare form of lung cancer, he decides to team up with a former student and create a top of the line crystal meth in a used RV, to provide for his family once he is gone.",
+                "rating": 8.5882,
+                "votes": 3424,
+                "first_aired": "2008-01-21T02:00:00.000Z",
+                "updated_at": "2016-04-24T19:23:12.000Z",
+                "available_translations": []
+            },
+            {
+                "season": 1,
+                "number": 2,
+                "title": "Cat's in the Bag...",
+                "ids": {
+                    "trakt": 73483,
+                    "tvdb": 349233,
+                    "imdb": "tt1054724",
+                    "tmdb": 62086,
+                    "tvrage": 637494
+                },
+                "number_abs": null,
+                "overview": "Walt and Jesse attempt to tie up loose ends. The desperate situation gets more complicated with the flip of a coin. Walt's wife, Skyler, becomes suspicious of Walt's strange behavior.",
+                "rating": 8.36563,
+                "votes": 2601,
+                "first_aired": "2008-01-28T02:00:00.000Z",
+                "updated_at": "2016-04-24T19:39:27.000Z",
+                "available_translations": []
+            },
+            {
+                "season": 1,
+                "number": 3,
+                "title": "...And the Bag's in the River",
+                "ids": {
+                    "trakt": 73484,
+                    "tvdb": 349235,
+                    "imdb": "tt1054725",
+                    "tmdb": 62087,
+                    "tvrage": 637644
+                },
+                "number_abs": null,
+                "overview": "Walter fights with Jesse over his drug use, causing him to leave Walter alone with their captive, Krazy-8. Meanwhile, Hank has a scared straight moment with Walter Jr. after his aunt discovers he has been smoking pot. Also, Skylar is upset when Walter stays away from home.",
+                "rating": 8.24642,
+                "votes": 2374,
+                "first_aired": "2008-02-11T02:00:00.000Z",
+                "updated_at": "2016-04-24T14:15:49.000Z",
+                "available_translations": []
+            },
+            {
+                "season": 1,
+                "number": 4,
+                "title": "Cancer Man",
+                "ids": {
+                    "trakt": 73485,
+                    "tvdb": 349236,
+                    "imdb": "tt1054726",
+                    "tmdb": 62088,
+                    "tvrage": 637645
+                },
+                "number_abs": null,
+                "overview": "Walter finally tells his family that he has been stricken with cancer. Meanwhile, the DEA believes Albuquerque has a new, big time player to worry about. Meanwhile, a worthy recipient is the target of a depressed Walter's anger, and Jesse makes a surprise visit to his parents home.",
+                "rating": 8.22554,
+                "votes": 2279,
+                "first_aired": "2008-02-18T02:00:00.000Z",
+                "updated_at": "2016-04-24T02:25:50.000Z",
+                "available_translations": []
+            },
+            {
+                "season": 1,
+                "number": 5,
+                "title": "Gray Matter",
+                "ids": {
+                    "trakt": 73486,
+                    "tvdb": 349238,
+                    "imdb": "tt1054727",
+                    "tmdb": 62089,
+                    "tvrage": 637646
+                },
+                "number_abs": null,
+                "overview": "Walter and Skyler attend a former colleague's party. Jesse tries to free himself from the drugs, while Skyler organizes an intervention.",
+                "rating": 8.18722,
+                "votes": 2238,
+                "first_aired": "2008-02-25T02:00:00.000Z",
+                "updated_at": "2016-04-24T16:16:21.000Z",
+                "available_translations": []
+            },
+            {
+                "season": 1,
+                "number": 6,
+                "title": "Crazy Handful of Nothin'",
+                "ids": {
+                    "trakt": 73487,
+                    "tvdb": 355100,
+                    "imdb": "tt1054728",
+                    "tmdb": 62090,
+                    "tvrage": 637647
+                },
+                "number_abs": null,
+                "overview": "The side effects of chemo begin to plague Walt. Meanwhile, the DEA rounds up suspected dealers.",
+                "rating": 8.77982,
+                "votes": 2339,
+                "first_aired": "2008-03-03T02:00:00.000Z",
+                "updated_at": "2016-04-24T17:49:38.000Z",
+                "available_translations": []
+            },
+            {
+                "season": 1,
+                "number": 7,
+                "title": "A No-Rough-Stuff-Type Deal",
+                "ids": {
+                    "trakt": 73488,
+                    "tvdb": 352534,
+                    "imdb": "tt1054729",
+                    "tmdb": 62091,
+                    "tvrage": 640422
+                },
+                "number_abs": null,
+                "overview": "Walter accepts his new identity as a drug dealer after a PTA meeting. Elsewhere, Jesse decides to put his aunt's house on the market and Skyler is the recipient of a baby shower.",
+                "rating": 8.60488,
+                "votes": 2255,
+                "first_aired": "2008-03-10T01:00:00.000Z",
+                "updated_at": "2016-04-24T19:35:50.000Z",
+                "available_translations": []
+            }
+        ]
     }
 }

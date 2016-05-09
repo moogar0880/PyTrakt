@@ -100,7 +100,7 @@ class UserList(namedtuple('UserList', ['name', 'description', 'privacy',
 
     @classmethod
     @get
-    def get(cls, title, creator):
+    def _get(cls, title, creator):
         """Returns a single custom :class:`UserList`
 
         :param title: Name of the list.
@@ -108,7 +108,51 @@ class UserList(namedtuple('UserList', ['name', 'description', 'privacy',
         data = yield 'users/{user}/lists/{id}'.format(user=creator,
                                                       id=slugify(title))
         extract_ids(data)
-        yield UserList(creator=creator, **data)
+        ulist = UserList(creator=creator, **data)
+        ulist.get_items()
+
+        yield ulist
+
+    @get
+    def get_items(self):
+        """A list of the list items using class instances
+        instance types: movie, show, season, episode, person
+
+        """
+
+        data = yield 'users/{user}/lists/{id}/items'.format(user=self.creator,
+                                                            id=self.slug)
+
+        for item in data:
+            # match list item type
+            if 'type' not in item:
+                continue
+            item_type = item['type']
+            item_data = item.pop(item_type)
+            extract_ids(item_data)
+            if item_type == 'movie':
+                self._items.append(Movie(item_data['title'], item_data['year'],
+                                         item_data['slug']))
+            elif item_type == 'show':
+                self._items.append(TVShow(item_data['title'],
+                                          item_data['slug']))
+            elif item_type == 'season':
+                show_data = item.pop('show')
+                extract_ids(show_data)
+                season = TVSeason(show_data['title'], item_data['number'],
+                                  show_data['slug'])
+                self._items.append(season)
+            elif item_type == 'episode':
+                show_data = item.pop('show')
+                extract_ids(show_data)
+                episode = TVEpisode(show_data['title'], item_data['season'],
+                                    item_data['number'])
+                self._items.append(episode)
+            elif item_type == 'person':
+                self._items.append(Person(item_data['name'],
+                                          item_data['slug']))
+
+        yield self._items
 
     @post
     def add_items(self, *items):
@@ -441,3 +485,7 @@ class User(object):
         """String representation of a :class:`User`"""
         return '<User>: {}'.format(unicode_safe(self.username))
     __repr__ = __str__
+
+
+# get decorator issue workaround - "It's a little hacky"
+UserList.get = UserList._get

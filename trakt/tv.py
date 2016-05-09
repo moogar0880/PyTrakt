@@ -87,7 +87,7 @@ def updated_shows(timestamp=None):
 class TVShow(object):
     """A Class representing a TV Show object"""
 
-    def __init__(self, title='', **kwargs):
+    def __init__(self, title='', slug=None, **kwargs):
         super(TVShow, self).__init__()
         self.media_type = 'shows'
         self.top_watchers = self.top_episodes = self.year = self.tvdb_id = None
@@ -96,7 +96,7 @@ class TVShow(object):
         self._images = self._people = self._ratings = self._translations = None
         self._seasons = None
         self.title = title
-        self.slug = slugify(self.title)
+        self.slug = slug or slugify(self.title)
         if len(kwargs) > 0:
             self._build(kwargs)
         else:

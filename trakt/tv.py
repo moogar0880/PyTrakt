@@ -90,9 +90,9 @@ class TVShow(object):
     def __init__(self, title='', slug=None, **kwargs):
         super(TVShow, self).__init__()
         self.media_type = 'shows'
-        self.top_watchers = self.top_episodes = self.year = self.tvdb_id = None
-        self.imdb_id = self.genres = self.certification = self.network = None
-        self.trakt_id = self.tmdb_id = self._aliases = self._comments = None
+        self.top_watchers = self.top_episodes = self.year = self.tvdb = None
+        self.imdb = self.genres = self.certification = self.network = None
+        self.trakt = self.tmdb = self._aliases = self._comments = None
         self._images = self._people = self._ratings = self._translations = None
         self._seasons = None
         self.title = title
@@ -182,8 +182,8 @@ class TVShow(object):
         slug
         """
         return {'ids': {
-            'trakt': self.trakt_id, 'slug': self.slug, 'imdb': self.imdb_id,
-            'tmdb': self.tmdb_id, 'tvdb': self.tvdb_id
+            'trakt': self.trakt, 'slug': self.slug, 'imdb': self.imdb,
+            'tmdb': self.tmdb, 'tvdb': self.tvdb
         }}
 
     @property

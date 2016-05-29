@@ -1,5 +1,10 @@
 Release History
 ^^^^^^^^^^^^^^^
+2.5.2 (2016-05-29)
+++++++++++++++++++
+
+* Fix logic in _bootstrapped function @permster (#65)
+
 2.5.1 (2016-05-15)
 ++++++++++++++++++
 

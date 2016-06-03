@@ -1,5 +1,10 @@
 Release History
 ^^^^^^^^^^^^^^^
+2.5.3 (2016-06-02)
+++++++++++++++++++
+
+* Fix missing episode ids returned from calendar @anongit (#66)
+
 2.5.2 (2016-05-29)
 ++++++++++++++++++
 

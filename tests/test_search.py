@@ -23,6 +23,13 @@ def test_search_movie():
     """test that movie search results are successfully returned"""
     batman_results = search('batman')
     assert isinstance(batman_results, list)
+    assert len(batman_results) == 2
+    assert all(isinstance(m, Movie) for m in batman_results)
+
+def test_search_movie_with_year():
+    batman_results = search('batman', year='1966')
+    assert isinstance(batman_results, list)
+    assert len(batman_results) == 1
     assert all(isinstance(m, Movie) for m in batman_results)
 
 

@@ -186,9 +186,7 @@ class Credits(object):
 
 
 class MovieCredits(Credits):
-    """A collection of cast and crew credits for a :class:`Person`'s
-    contributions to a Movie
-    """
+    """A collection of cast and crew credits for a Movie"""
     MEDIA_KEY = 'movie'
 
     def _extract_media(self, media):
@@ -198,9 +196,7 @@ class MovieCredits(Credits):
 
 
 class TVCredits(Credits):
-    """A collection of cast and crew credits for a :class:`Person`'s
-    contributions to a TV Show
-    """
+    """A collection of cast and crew credits for a TV Show"""
     MEDIA_KEY = 'show'
 
     def _extract_media(self, media):

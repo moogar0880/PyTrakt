@@ -106,9 +106,10 @@ class Movie(object):
 
     @classmethod
     def search(cls, title, year=None):
-        """Perform a search for the specified *title*
+        """Perform a search for a movie with a title matching *title*
 
         :param title: The title to search for
+        :param year: Optional year to limit results to
         """
         return search(title, search_type='movie', year=year)
 

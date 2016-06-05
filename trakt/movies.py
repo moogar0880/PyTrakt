@@ -105,12 +105,12 @@ class Movie(object):
             self._get()
 
     @classmethod
-    def search(cls, title):
+    def search(cls, title, year=None):
         """Perform a search for the specified *title*
 
         :param title: The title to search for
         """
-        return search(title, search_type='movie')
+        return search(title, search_type='movie', year=year)
 
     @get
     def _get(self):

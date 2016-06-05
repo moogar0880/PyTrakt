@@ -114,7 +114,7 @@ def remove_from_collection(media):
 
 
 @get
-def search(query, search_type='movie'):
+def search(query, search_type='movie', year=None):
     """Perform a search query against all of trakt's media types
 
     :param query: Your search string
@@ -124,8 +124,13 @@ def search(query, search_type='movie'):
     valids = ('movie', 'show', 'episode', 'person')
     if search_type not in valids:
         raise ValueError('search_type must be one of {}'.format(valids))
-    data = yield 'search?query={query}&type={type}'.format(
+    uri = 'search?query={query}&type={type}'.format(
         query=slugify(query), type=search_type)
+
+    if year is not None:
+        uri += '&year={}'.format(year)
+
+    data = yield uri
 
     for media_item in data:
         extract_ids(media_item)

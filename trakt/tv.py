@@ -103,12 +103,12 @@ class TVShow(object):
             self._get()
 
     @classmethod
-    def search(cls, title):
+    def search(cls, title, year=None):
         """Perform a search for the specified *title*
 
         :param title: The title to search for
         """
-        return search(title, search_type='show')
+        return search(title, search_type='show', year=year)
 
     @get
     def _get(self):
@@ -541,8 +541,14 @@ class TVEpisode(object):
         """Uri to retrieve additional image information"""
         return self.ext + '?extended=images'
 
-    def search(self, show, season, episode_num):
-        pass
+    @classmethod
+    def search(cls, title, year=None):
+        """Perform a search for an episode with a title matching *title*
+
+        :param title: The title to search for
+        :param year: Optional year to limit results to
+        """
+        return search(title, search_type='episode', year=year)
 
     @property
     def ids(self):

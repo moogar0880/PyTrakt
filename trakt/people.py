@@ -161,8 +161,6 @@ class Credits(object):
     def _build_cast(self, *cast):
         """From the provided JSON array of roles a :class:`Person` has
         portrayed, build a detailed list of Acting Credits.
-
-        To be implemented by subclasses.
         """
         for role in cast:
             character = role.get('character')
@@ -172,7 +170,9 @@ class Credits(object):
             )
 
     def _build_crew(self, **crew):
-        """to be implemented by subclasses"""
+        """From the provided JSON dict of departments and crew credits, build
+        a dict of Crew Credits
+        """
         for department, jobs in crew.items():
             self.crew[department] = [
                 CrewCredit(job=j.get('job'),
@@ -186,6 +186,9 @@ class Credits(object):
 
 
 class MovieCredits(Credits):
+    """A collection of cast and crew credits for a :class:`Person`'s
+    contributions to a Movie
+    """
     MEDIA_KEY = 'movie'
 
     def _extract_media(self, media):
@@ -195,6 +198,9 @@ class MovieCredits(Credits):
 
 
 class TVCredits(Credits):
+    """A collection of cast and crew credits for a :class:`Person`'s
+    contributions to a TV Show
+    """
     MEDIA_KEY = 'show'
 
     def _extract_media(self, media):

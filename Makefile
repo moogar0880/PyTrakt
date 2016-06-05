@@ -1,3 +1,5 @@
+PACKAGE=trakt
+
 .PHONY: clean
 
 init:
@@ -10,23 +12,23 @@ style:
 	flake8 trakt
 
 coverage:
-	py.test --verbose --cov=trakt -p no:cacheprovider tests
+	py.test --verbose --cov-report term-missing --cov=$(PACKAGE) -p no:cacheprovider tests
 
 ci: init style test
 
 publish:
 	python setup.py register
 	python setup.py sdist upload
-	rm -fr build dist .egg trakt.egg-info
+	rm -fr build dist .egg $(PACKAGE).egg-info
 
 docs-init:
 	pip install -r docs/requirements.txt
 
 clean:
-	rm -rf trakt/*.pyc
-	rm -rf trakt/__pycache__
-	rm -rf tests/__pycache__
-	rm -rf trakt.egg-info
+	rm -rf $(PACKAGE)/*.pyc
+	rm -rf $(PACKAGE)/__pycache__
+	rm -rf $(PACKAGE)/__pycache__
+	rm -rf $(PACKAGE).egg-info
 
 docs:
 	cd docs && make html

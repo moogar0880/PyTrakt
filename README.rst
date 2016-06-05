@@ -17,10 +17,10 @@ PyTrakt
     :alt: License
 
 This module is designed to be a Pythonic interface to the `Trakt.tv <http://trakt.tv>`_.
-REST API. The official documentation for which can be found `here <http://trakt.tv/api-docs/>`_.
+REST API. The official documentation for which can be found `here <http://docs.trakt.apiary.io/#>`_.
 trakt contains interfaces to all of the Trakt.tv functionality in an, ideally, easily
 scriptable fashion. For more information on this module's contents and example usages
-please see the `PyTrakt docs <http://pytrakt.readthedocs.org/en/latest/>`_.
+please see the `PyTrakt docs <http://pytrakt.readthedocs.io/en/latest/>`_.
 
 More information about getting started and accessing the information you thirst for
 can be found throughout the documentation below.
@@ -95,10 +95,6 @@ Movies
 - movies/boxoffice
 - movies/{slug}/stats
 
-People
-^^^^^^
-- add credits support for movies and shows
-
 Shows
 ^^^^^
 - Played
@@ -126,10 +122,8 @@ Users
 - hidden everything
 - likes
   - comments
-  - lists
 - comments
 - UserList
-  - items
   - comments
 - history
 - watchlists

@@ -1,5 +1,10 @@
 Release History
 ^^^^^^^^^^^^^^^
+2.7.0 (2016-06-05)
+++++++++++++++++++
+
+* Add Movie and TV credit accessors to the Person class
+
 2.6.0 (2016-06-04)
 ++++++++++++++++++
 

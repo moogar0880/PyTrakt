@@ -20,14 +20,23 @@
                 "writing":[
                     {"job":"Screenplay","movie":{"title":"Godzilla","year":2014,"ids":{"trakt":24,"slug":"godzilla-2014","imdb":"tt0831387","tmdb":124905}}}
                 ],
-                "producing":[
+                "production":[
                     {"job":"Producer","movie":{"title":"Godzilla","year":2014,"ids":{"trakt":24,"slug":"godzilla-2014","imdb":"tt0831387","tmdb":124905}}}
                 ]
             }
         }
     },
     "people/bryan-cranston/shows": {
-        "GET": {"cast":[{"character":"Walter White","show":{"title":"Breaking Bad","year":2008,"ids":{"trakt":1,"slug":"breaking-bad","tvdb":81189,"imdb":"tt0903747","tmdb":1396,"tvrage":18164}}}],"crew":{"production":[{"job":"Producer","show":{"title":"Breaking Bad","year":2008,"ids":{"trakt":1,"slug":"breaking-bad","tvdb":81189,"imdb":"tt0903747","tmdb":1396,"tvrage":18164}}}]}}
+        "GET": {
+          "cast":[
+            {"character":"Walter White","show":{"title":"Breaking Bad","year":2008,"ids":{"trakt":1,"slug":"breaking-bad","tvdb":81189,"imdb":"tt0903747","tmdb":1396,"tvrage":18164}}}
+          ],
+          "crew":{
+            "production":[
+              {"job":"Producer","show":{"title":"Breaking Bad","year":2008,"ids":{"trakt":1,"slug":"breaking-bad","tvdb":81189,"imdb":"tt0903747","tmdb":1396,"tvrage":18164}}}
+            ]
+          }
+      }
     },
     "people/garrett-hedlund": {
         "GET": {"name":"Garrett Hedlund","ids":{"trakt":414026,"slug":"garrett-hedlund","imdb":"nm1330560","tmdb":9828,"tvrage":null}}

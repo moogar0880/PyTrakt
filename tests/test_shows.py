@@ -88,6 +88,13 @@ def test_show_search():
     assert all(isinstance(m, TVShow) for m in results)
 
 
+def test_show_search_with_year():
+    results = TVShow.search('batman', year=1999)
+    assert isinstance(results, list)
+    assert len(results) == 1
+    assert all(isinstance(m, TVShow) for m in results)
+
+
 def test_show_ids():
     got = TVShow('Game of Thrones')
     assert isinstance(got.ids, dict)

@@ -11,6 +11,19 @@ def test_get_episodes():
     assert all([isinstance(e, TVEpisode) for e in s1.episodes])
 
 
+def test_episode_search():
+    results = TVEpisode.search('batman')
+    assert isinstance(results, list)
+    assert all(isinstance(m, TVEpisode) for m in results)
+
+
+def test_episode_search_with_year():
+    results = TVEpisode.search('batman', year=1987)
+    assert isinstance(results, list)
+    assert len(results) == 1
+    assert all(isinstance(m, TVEpisode) for m in results)
+
+
 def test_get_episode():
     e1 = TVEpisode('Game of Thrones', season=1, number=1)
     assert e1.season == 1

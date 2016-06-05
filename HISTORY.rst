@@ -1,5 +1,12 @@
 Release History
 ^^^^^^^^^^^^^^^
+2.6.0 (2016-06-04)
+++++++++++++++++++
+
+* Add optional year to movie search parameters @justlaputa (#67)
+* Add optional year to show, and episode searches
+* Add convenience Person.search class method
+
 2.5.3 (2016-06-02)
 ++++++++++++++++++
 

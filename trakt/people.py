@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Interfaces to all of the People objects offered by the Trakt.tv API"""
 from trakt.core import get
+from trakt.sync import search
 from trakt.utils import slugify, extract_ids
 
 __author__ = 'Jon Nappi'
@@ -20,6 +21,15 @@ class Person(object):
             self._build(kwargs)
         else:
             self._get()
+
+    @classmethod
+    def search(cls, name, year=None):
+        """Perform a search for an episode with a title matching *title*
+
+        :param name: The name of the person to search for
+        :param year: Optional year to limit results to
+        """
+        return search(name, search_type='person', year=year)
 
     @property
     def ext(self):

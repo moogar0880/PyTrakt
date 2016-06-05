@@ -5,6 +5,6 @@ try:
 except ImportError:
     pass
 
-version_info = (2, 5, 3)
+version_info = (2, 6, 0)
 __author__ = 'Jon Nappi'
 __version__ = '.'.join([str(i) for i in version_info])

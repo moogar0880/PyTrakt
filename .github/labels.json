@@ -1,0 +1,21 @@
+{
+  "owner": "moogar0880",
+  "repo": "PyTrakt",
+  "labels": [
+    {"name": "Type: Bug", "color": "c50000"},
+    {"name": "Type: Enhancement", "color": "8ccde3"},
+    {"name": "Type: Maintenance", "color": "fbaf2d"},
+    {"name": "Type: Question", "color": "d100ff"},
+    {"name": "Priority: Critical", "color": "c50000"},
+    {"name": "Priority: Medium", "color": "ffb265"},
+    {"name": "Priority: Low", "color": "1e832a"},
+    {"name": "Status: Abandoned", "color": "000000"},
+    {"name": "Status: Accepted", "color": "1e832a"},
+    {"name": "Status: Blocked", "color": "c50000"},
+    {"name": "Status: Completed", "color": "22375a"},
+    {"name": "Status: In Progress", "color": "b7b8b0"},
+    {"name": "Status: Pending", "color": "fcc76c"},
+    {"name": "Status: Needs Review", "color": "fbaf2d"},
+    {"name": "trakt-functionality", "color": "cc0000"}
+  ]
+}

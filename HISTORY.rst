@@ -1,5 +1,10 @@
 Release History
 ^^^^^^^^^^^^^^^
+2.7.1 (2016-07-09)
+++++++++++++++++++
+
+* Added `datetime` representation of episode first_aired date
+
 2.7.0 (2016-06-05)
 ++++++++++++++++++
 

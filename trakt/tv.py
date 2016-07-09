@@ -483,7 +483,8 @@ class TVEpisode(object):
         self.show = show
         self.season = season
         self.number = number
-        self.overview = self.title = self.year = None
+        self.overview = self.title = self.year = self.number_abs = None
+        self.first_aired = self.last_updated = None
         self.trakt = self.tmdb = self.tvdb = self.imdb = None
         self.tvrage = self._stats = self._images = self._comments = None
         self._translations = self._ratings = None
@@ -567,6 +568,13 @@ class TVEpisode(object):
             data = yield self.images_ext
             self._images = data.get('images', {})
         yield self._images
+
+    @property
+    def first_aired_date(self):
+        """Python datetime object representation of the first_aired date of
+        this :class:`TVEpisode`
+        """
+        return airs_date(self.first_aired)
 
     @property
     @get

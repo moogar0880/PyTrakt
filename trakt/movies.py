@@ -10,8 +10,9 @@ from trakt.people import Person
 from trakt.utils import slugify, now, extract_ids, unicode_safe
 
 __author__ = 'Jon Nappi'
-__all__ = ['Movie', 'updated_movies', 'dismiss_recommendation', 'genres',
-           'get_recommended_movies', 'trending_movies', 'Translation']
+__all__ = ['dismiss_recommendation', 'get_recommended_movies', 'genres',
+           'trending_movies', 'updated_movies', 'Release', 'Movie',
+           'Translation']
 
 Translation = namedtuple('Translation', ['title', 'overview', 'tagline',
                                          'language'])

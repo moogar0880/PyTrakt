@@ -5,9 +5,10 @@ guaranteed to have the application/json MIME type set.
 """
 
 __author__ = 'Jon Nappi'
-__all__ = ['TraktException', 'OAuthException', 'ForbiddenException',
-           'NotFoundException', 'ConflictException', 'ProcessException',
-           'RateLimitException', 'TraktInternalException', 'TraktUnavailable']
+__all__ = ['TraktException', 'BadRequestException', 'OAuthException',
+           'ForbiddenException', 'NotFoundException', 'ConflictException',
+           'ProcessException', 'RateLimitException', 'TraktInternalException',
+           'TraktUnavailable']
 
 
 class TraktException(BaseException):

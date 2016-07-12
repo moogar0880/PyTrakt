@@ -8,7 +8,8 @@ from trakt.utils import slugify, extract_ids, timestamp
 __author__ = 'Jon Nappi'
 __all__ = ['Scrobbler', 'comment', 'rate', 'add_to_history',
            'add_to_watchlist', 'remove_from_history', 'remove_from_watchlist',
-           'add_to_collection', 'remove_from_collection', 'search']
+           'add_to_collection', 'remove_from_collection', 'search',
+           'search_by_id']
 
 
 @post

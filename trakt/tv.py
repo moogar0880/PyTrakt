@@ -11,8 +11,9 @@ from trakt.utils import slugify, extract_ids, airs_date, unicode_safe
 from trakt.people import Person
 
 __author__ = 'Jon Nappi'
-__all__ = ['trending_shows', 'TVShow', 'TVEpisode', 'TVSeason', 'Translation',
-           'get_recommended_shows', 'dismiss_recommendation']
+__all__ = ['dismiss_recommendation', 'get_recommended_shows', 'genres',
+           'popular_shows', 'trending_shows', 'updated_shows', 'TVShow',
+           'TVEpisode', 'TVSeason', 'Translation']
 
 
 Translation = namedtuple('Translation', ['title', 'overview', 'language'])

@@ -5,7 +5,8 @@ from trakt.sync import search
 from trakt.utils import slugify, extract_ids
 
 __author__ = 'Jon Nappi'
-__all__ = ['Person']
+__all__ = ['Person', 'ActingCredit', 'CrewCredit', 'Credits', 'MovieCredits',
+           'TVCredits']
 
 
 class Person(object):

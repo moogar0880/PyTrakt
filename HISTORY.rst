@@ -1,5 +1,10 @@
 Release History
 ^^^^^^^^^^^^^^^
+2.7.2 (2016-07-11)
+++++++++++++++++++
+
+* Properly export module contents across `trakt` module (#70)
+
 2.7.1 (2016-07-09)
 ++++++++++++++++++
 

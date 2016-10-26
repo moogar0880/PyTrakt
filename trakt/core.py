@@ -180,6 +180,7 @@ Alias = namedtuple('Alias', ['title', 'country'])
 Genre = namedtuple('Genre', ['name', 'slug'])
 Comment = namedtuple('Comment', ['id', 'parent_id', 'created_at', 'comment',
                                  'spoiler', 'review', 'replies', 'user',
+                                 'updated_at','likes',
                                  'user_rating'])
 
 

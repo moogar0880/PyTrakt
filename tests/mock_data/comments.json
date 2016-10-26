@@ -30,6 +30,8 @@
           "id": 1,
           "parent_id": 0,
           "created_at": "2010-11-03T06:30:13.000Z",
+          "updated_at": "2014-08-04T06:46:01.996Z",
+          "likes":[],
           "comment": "Agreed, this show is awesome. AMC in general has awesome shows.",
           "spoiler": false,
           "review": false,

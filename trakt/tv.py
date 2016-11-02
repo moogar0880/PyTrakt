@@ -386,7 +386,8 @@ class TVSeason(object):
         self._comments = []
         for com in data:
             user = User(**com.pop('user'))
-            self._comments.append(Comment(user=user, **com))
+            comment = Comment(user=user, **com)
+            self._comments.append(comment)
         yield self._comments
 
     @property

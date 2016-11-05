@@ -45,7 +45,8 @@ You can also initialize using OAuth authentication like so,
 ::
 
     >>> from trakt import init
-    >>> trakt.AUTH_METHOD = trakt.OAUTH_AUTH  # Set the auth method to OAuth
+    >>> import trakt.core
+    >>> trakt.core.AUTH_METHOD = trakt.core.OAUTH_AUTH  # Set the auth method to OAuth
     >>> init('myusername')
     If you do not have a client ID and secret. Please visit the following url to create them.
     http://trakt.tv/oauth/applications

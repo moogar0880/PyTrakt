@@ -1,5 +1,10 @@
 Release History
 ^^^^^^^^^^^^^^^
+2.7.3 (2016-11-5)
++++++++++++++++++
+
+* Fix a bug with comment instance creation (#73)
+
 2.7.2 (2016-07-11)
 ++++++++++++++++++
 

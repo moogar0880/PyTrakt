@@ -348,7 +348,6 @@ class Movie(object):
                                 year=self.year,
                                 **self.ids)]}
 
-    def __str__(self):
-        """String representation of a :class:`Movie`"""
+    def __repr__(self):
+        """Representation of a :class:`Movie`"""
         return '<Movie>: {}'.format(unicode_safe(self.title))
-    __repr__ = __str__

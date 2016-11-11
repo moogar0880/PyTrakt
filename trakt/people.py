@@ -98,10 +98,9 @@ class Person(object):
             self._tv_credits = TVCredits(**data)
         yield self._tv_credits
 
-    def __str__(self):
-        """String representation of a :class:`Person`"""
+    def __repr__(self):
+        """Representation of a :class:`Person`"""
         return '<Person>: {0}'.format(self.name)
-    __repr__ = __str__
 
 
 class ActingCredit(object):
@@ -112,14 +111,13 @@ class ActingCredit(object):
         self.character = character
         self.media = media
 
-    def __str__(self):
+    def __repr__(self):
+        """Representation of a :class:`ActingCredit`"""
         return '<{cls}> {character} - {title}'.format(
             cls=self.__class__.__name__,
             character=self.character,
             title=self.media.title
         )
-
-    __repr__ = __str__
 
 
 class CrewCredit(object):
@@ -130,14 +128,13 @@ class CrewCredit(object):
         self.job = job
         self.media = media
 
-    def __str__(self):
+    def __repr__(self):
+        """Representation of a :class:`CrewCredit`"""
         return '<{cls}> {job} - {title}'.format(
             cls=self.__class__.__name__,
             job=self.job,
             title=self.media.title
         )
-
-    __repr__ = __str__
 
 
 class Credits(object):

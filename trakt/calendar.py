@@ -42,10 +42,9 @@ class Calendar(object):
         """Returns the length of the episodes list in this calendar"""
         return len(self._calendar)
 
-    def __str__(self):
-        """str representation of this Calendar"""
+    def __repr__(self):
+        """Representation of a :class:`Calendar`"""
         return pformat(self._calendar)
-    __repr__ = __str__
 
     @property
     def ext(self):

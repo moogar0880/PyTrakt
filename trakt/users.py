@@ -481,10 +481,9 @@ class User(object):
         """Unfollow this :class:`User`, if you already follow them"""
         unfollow(self.username)
 
-    def __str__(self):
-        """String representation of a :class:`User`"""
+    def __repr__(self):
+        """Representation of a :class:`User`"""
         return '<User>: {}'.format(unicode_safe(self.username))
-    __repr__ = __str__
 
 
 # get decorator issue workaround - "It's a little hacky"

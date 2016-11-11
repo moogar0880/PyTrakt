@@ -329,11 +329,9 @@ class TVShow(object):
             'title': self.title, 'year': self.year, 'ids': self.ids
         }]}
 
-    def __str__(self):
-        """Return a string representation of a :class:`TVShow`"""
+    def __repr__(self):
+        """Representation of a :class:`TVShow`"""
         return '<TVShow> {}'.format(unicode_safe(self.title))
-
-    __repr__ = __str__
 
 
 class TVSeason(object):
@@ -465,15 +463,14 @@ class TVSeason(object):
         show_obj.update({'seasons': [{'number': self.season}]})
         return {'shows': [show_obj]}
 
-    def __str__(self):
+    def __repr__(self):
+        """Representation of a :class:`TVSeason`"""
         title = ['<TVSeason>:', self.show, 'Season', self.season]
         title = map(str, title)
         return ' '.join(title)
 
     def __len__(self):
         return len(self._episodes)
-
-    __repr__ = __str__
 
 
 class TVEpisode(object):
@@ -669,8 +666,8 @@ class TVEpisode(object):
             }]
         }
 
-    def __str__(self):
+    def __repr__(self):
+        """Representation of a :class:`TVEpisode`"""
         return '<TVEpisode>: {} S{}E{} {}'.format(self.show, self.season,
                                                   self.number,
                                                   unicode_safe(self.title))
-    __repr__ = __str__

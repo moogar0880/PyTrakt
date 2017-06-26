@@ -16,9 +16,7 @@ from trakt import errors
 
 __author__ = 'Jon Nappi'
 __all__ = ['Airs', 'Alias', 'Comment', 'Genre', 'get', 'delete', 'post', 'put',
-           'init', 'BASE_URL', 'CLIENT_ID', 'CLIENT_SECRET', 'REDIRECT_URI',
-           'HEADERS', 'CONFIG_PATH', 'OAUTH_TOKEN', 'PIN_AUTH', 'OAUTH_AUTH',
-           'AUTH_METHOD', 'APPLICATION_ID']
+           'init', 'OAUTH_TOKEN', 'AUTH_METHOD', 'PIN_AUTH', 'OAUTH_AUTH']
 
 #: The base url for the Trakt API. Can be modified to run against different
 #: Trakt.tv environments
@@ -178,9 +176,9 @@ def init(*args, **kwargs):
 Airs = namedtuple('Airs', ['day', 'time', 'timezone'])
 Alias = namedtuple('Alias', ['title', 'country'])
 Genre = namedtuple('Genre', ['name', 'slug'])
-Comment = namedtuple('Comment', ['id', 'parent_id', 'created_at', 'comment',
-                                 'spoiler', 'review', 'replies', 'user',
-                                 'updated_at', 'likes', 'user_rating'])
+Comment = namedtuple('Comment', ['id', 'parent_id', 'created_at', 'comment', 
+                                 'spoiler', 'review', 'replies', 'user','likes',
+                                'user_rating', 'updated_at'])
 
 
 def _bootstrapped(f):
@@ -191,7 +189,7 @@ def _bootstrapped(f):
     @wraps(f)
     def inner(*args, **kwargs):
         global CLIENT_ID, CLIENT_SECRET, OAUTH_TOKEN
-        if (CLIENT_ID is None or CLIENT_SECRET is None) and \
+        if CLIENT_ID is None or CLIENT_SECRET is None and \
                 os.path.exists(CONFIG_PATH):
             # Load in trakt API auth data fron CONFIG_PATH
             with open(CONFIG_PATH) as config_file:

@@ -211,10 +211,10 @@ def get_device_token(device_code, client_id=None, client_secret=None, store=Fals
     Trakt docs: https://trakt.docs.apiary.io/#reference/authentication-devices/get-token
     Response:
     {
-      "access_token": "f22532274aa34ff6dee543d1e48619dc48f487908ed67195649936e5d3b41708",
+      "access_token": "",
       "token_type": "bearer",
       "expires_in": 7776000,
-      "refresh_token": "ace5848a4a2e22a656632accfb728ee4d6f595131ea5bf5554fef771b870c3da",
+      "refresh_token": "",
       "scope": "public",
       "created_at": 1519329051
     }

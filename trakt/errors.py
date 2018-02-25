@@ -20,7 +20,7 @@ class TraktException(BaseException):
 
 
 class BadRequestException(TraktException):
-    """TraktException type to be raised when a 401 return code is recieved"""
+    """TraktException type to be raised when a 400 return code is recieved"""
     http_code = 400
     message = "Bad Request - request couldn't be parsed"
 

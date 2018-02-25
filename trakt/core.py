@@ -245,11 +245,11 @@ def get_device_token(device_code, client_id=None, client_secret=None,
 
     response = None
     try:
-        response = requests.post('https://api.trakt.tv/oauth/device/token',
+        response = requests.post(urljoin(BASE_URL, '/oauth/device/token'),
                                  json=data, headers=headers)
         response.raise_for_status()
     except HTTPError as error:
-        if response and getattr(response, 'status_code ') == 400:
+        if response and response.status_code == 400:
             raise errors.BadRequestException(error.message)
 
     response = response.json()

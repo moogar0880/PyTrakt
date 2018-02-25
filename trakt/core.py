@@ -216,10 +216,10 @@ def get_device_token(device_code, client_id=None, client_secret=None, store=Fals
     authentication-devices/get-token
     Response:
     {
-      "access_token": "access_token...",
+      "access_token": "",
       "token_type": "bearer",
       "expires_in": 7776000,
-      "refresh_token": "refresh_token...",
+      "refresh_token": "",
       "scope": "public",
       "created_at": 1519329051
     }

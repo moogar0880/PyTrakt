@@ -210,7 +210,8 @@ def get_device_code(client_id=None, client_secret=None):
     return device_response
 
 
-def get_device_token(device_code, client_id=None, client_secret=None, store=False):
+def get_device_token(device_code, client_id=None, client_secret=None,
+                     store=False):
     """
     Trakt docs: https://trakt.docs.apiary.io/#reference/
     authentication-devices/get-token
@@ -283,7 +284,8 @@ def device_auth(client_id=None, client_secret=None, store=False):
     :param store: Boolean flag used to determine if your trakt api auth data
         should be stored locally on the system. Default is :const:`False` for
         the security conscious
-    :return: A dict with the authentication result. Or False of authentication failed.
+    :return: A dict with the authentication result.
+    Or False of authentication failed.
     """
     device_response = get_device_code(client_id=client_id,
                                       client_secret=client_secret)
@@ -291,8 +293,10 @@ def device_auth(client_id=None, client_secret=None, store=False):
     authenticated = False
     result = None
     try:
-        result = get_device_token(device_response['device_code'], client_id=client_id,
-                                  client_secret=client_secret, store=store)
+        result = get_device_token(
+            device_response['device_code'], client_id=client_id,
+            client_secret=client_secret, store=store
+        )
     except errors.BadRequestException:
         authenticated = False
 

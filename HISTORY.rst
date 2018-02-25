@@ -1,5 +1,10 @@
 Release History
 ^^^^^^^^^^^^^^^
+2.8.0 (2018-02-25)
+++++++++++++++++++
+
+* Add support for device authentication (#81)
+
 2.7.3 (2016-11-5)
 +++++++++++++++++
 

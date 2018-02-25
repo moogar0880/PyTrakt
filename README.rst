@@ -76,7 +76,6 @@ definitely appreciated.
 High Level API Features
 ^^^^^^^^^^^^^^^^^^^^^^^
 - Pagination
-- Device Authentication Workflow
 
 Sync
 ^^^^

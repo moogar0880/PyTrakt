@@ -20,8 +20,8 @@ from trakt import errors
 __author__ = 'Jon Nappi'
 __all__ = ['Airs', 'Alias', 'Comment', 'Genre', 'get', 'delete', 'post', 'put',
            'init', 'BASE_URL', 'CLIENT_ID', 'CLIENT_SECRET', 'REDIRECT_URI',
-           'HEADERS', 'CONFIG_PATH', 'OAUTH_TOKEN', 'OAUTH_REFRESH', 'PIN_AUTH', 'OAUTH_AUTH',
-           'AUTH_METHOD', 'APPLICATION_ID']
+           'HEADERS', 'CONFIG_PATH', 'OAUTH_TOKEN', 'OAUTH_REFRESH',
+           'PIN_AUTH', 'OAUTH_AUTH', 'AUTH_METHOD', 'APPLICATION_ID']
 
 #: The base url for the Trakt API. Can be modified to run against different
 #: Trakt.tv environments
@@ -179,7 +179,8 @@ def oauth_auth(username, client_id=None, client_secret=None, store=False):
 def get_device_code(client_id=None, client_secret=None):
     """Generate a device code, used for device oauth authentication.
 
-    Trakt docs: https://trakt.docs.apiary.io/#reference/authentication-devices/device-code
+    Trakt docs: https://trakt.docs.apiary.io/#reference/
+    authentication-devices/device-code
     :param client_id: Your Trakt OAuth Application's Client ID
     :param client_secret: Your Trakt OAuth Application's Client Secret
     :param store: Boolean flag used to determine if your trakt api auth data
@@ -197,10 +198,13 @@ def get_device_code(client_id=None, client_secret=None):
     headers = {'Content-Type': 'application/json'}
     data = {"client_id": CLIENT_ID}
 
-    device_response = requests.post(device_code_url, json=data, headers=headers).json()
-    print('Your user code is: {user_code}, please navigate to {verification_url} to authenticate'.format(
-        user_code=device_response.get('user_code'), verification_url=device_response.get('verification_url')
-    ))
+    device_response = requests.post(device_code_url, json=data,
+                                    headers=headers).json()
+    print('Your user code is: {user_code}, please navigate to '
+          '{verification_url} to authenticate'.format(
+            user_code=device_response.get('user_code'),
+            verification_url=device_response.get('verification_url')
+          ))
 
     device_response['requested'] = time.time()
     return device_response
@@ -208,13 +212,14 @@ def get_device_code(client_id=None, client_secret=None):
 
 def get_device_token(device_code, client_id=None, client_secret=None, store=False):
     """
-    Trakt docs: https://trakt.docs.apiary.io/#reference/authentication-devices/get-token
+    Trakt docs: https://trakt.docs.apiary.io/#reference/
+    authentication-devices/get-token
     Response:
     {
-      "access_token": "f22532274aa34ff6dee543d1e48619dc48f487908ed67195649936e5d3b41708",
+      "access_token": "access_token...",
       "token_type": "bearer",
       "expires_in": 7776000,
-      "refresh_token": "ace5848a4a2e22a656632accfb728ee4d6f595131ea5bf5554fef771b870c3da",
+      "refresh_token": "refresh_token...",
       "scope": "public",
       "created_at": 1519329051
     }
@@ -239,7 +244,8 @@ def get_device_token(device_code, client_id=None, client_secret=None, store=Fals
 
     response = None
     try:
-        response = requests.post('https://api.trakt.tv/oauth/device/token', json=data, headers=headers)
+        response = requests.post('https://api.trakt.tv/oauth/device/token',
+                                 json=data, headers=headers)
         response.raise_for_status()
     except HTTPError as error:
         if response and getattr(response, 'status_code ') == 400:
@@ -251,7 +257,8 @@ def get_device_token(device_code, client_id=None, client_secret=None, store=Fals
 
     if store:
         _store(
-            CLIENT_ID=CLIENT_ID, CLIENT_SECRET=CLIENT_SECRET, OAUTH_TOKEN=OAUTH_TOKEN, OAUTH_REFRESH=OAUTH_REFRESH
+            CLIENT_ID=CLIENT_ID, CLIENT_SECRET=CLIENT_SECRET,
+            OAUTH_TOKEN=OAUTH_TOKEN, OAUTH_REFRESH=OAUTH_REFRESH
         )
 
     return response
@@ -260,12 +267,16 @@ def get_device_token(device_code, client_id=None, client_secret=None, store=Fals
 def device_auth(client_id=None, client_secret=None, store=False):
     """Process for authenticating using device authentication.
 
-    The function will attempt getting the device_id, and provide the user with a url and code. After getting the device
-    id, a timer is started to poll periodic for a successfull authentication. This is a blocking action, meaning you
+    The function will attempt getting the device_id, and provide
+    the user with a url and code. After getting the device
+    id, a timer is started to poll periodic for a successful authentication.
+    This is a blocking action, meaning you
     will not be able to run any other code, while waiting for an access token.
 
-    If you want more control over the authentication flow, use the functions get_device_code and get_device_token.
-    Where poll_for_device_token will check if the "offline" authentication was successful.
+    If you want more control over the authentication flow, use the functions
+    get_device_code and get_device_token.
+    Where poll_for_device_token will check if the "offline"
+    authentication was successful.
 
     :param client_id: Your Trakt OAuth Application's Client ID
     :param client_secret: Your Trakt OAuth Application's Client Secret
@@ -274,7 +285,8 @@ def device_auth(client_id=None, client_secret=None, store=False):
         the security conscious
     :return: A dict with the authentication result. Or False of authentication failed.
     """
-    device_response = get_device_code(client_id=client_id, client_secret=client_secret)
+    device_response = get_device_code(client_id=client_id,
+                                      client_secret=client_secret)
 
     authenticated = False
     result = None
@@ -284,11 +296,15 @@ def device_auth(client_id=None, client_secret=None, store=False):
     except errors.BadRequestException:
         authenticated = False
 
-    while not authenticated and device_response.get('requested') and device_response['requested'] + device_response['expires_in'] > time.time():
+    while all([authenticated, device_response.get('requested'),
+               device_response['requested'] + device_response['expires_in']
+               > time.time()]):
         time.sleep(device_response['interval'])
         try:
-            result = get_device_token(device_response['device_code'], client_id=client_id,
-                                      client_secret=client_secret, store=store)
+            result = get_device_token(
+                device_response['device_code'], client_id=client_id,
+                client_secret=client_secret, store=store
+            )
         except errors.BadRequestException:
             authenticated = False
         else:
@@ -296,15 +312,18 @@ def device_auth(client_id=None, client_secret=None, store=False):
                 authenticated = True
 
     if authenticated:
-        print('Youve been succesfully authenticated. With access_token {access_token} '
-              'and refresh_token {refresh_token}'.format(
-                access_token=result['access_token'], refresh_token=result['refresh_token']
+        print('Youve been succesfully authenticated. With access_token '
+              '{access_token} and refresh_token {refresh_token}'.format(
+                access_token=result['access_token'],
+                refresh_token=result['refresh_token']
               ))
 
     return result
 
 
-auth_method = {PIN_AUTH: pin_auth, OAUTH_AUTH: oauth_auth, DEVICE_AUTH: device_auth}
+auth_method = {
+    PIN_AUTH: pin_auth, OAUTH_AUTH: oauth_auth, DEVICE_AUTH: device_auth
+}
 
 
 def init(*args, **kwargs):
@@ -497,6 +516,7 @@ class Core(object):
             except StopIteration:
                 return None
         return inner
+
 
 # Here we can simplify the code in each module by exporting these instance
 # method decorators as if they were simple functions.

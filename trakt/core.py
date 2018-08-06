@@ -350,7 +350,8 @@ def _bootstrapped(f):
     """
     @wraps(f)
     def inner(*args, **kwargs):
-        global CLIENT_ID, CLIENT_SECRET, OAUTH_TOKEN, OAUTH_REFRESH, APPLICATION_ID
+        global CLIENT_ID, CLIENT_SECRET, OAUTH_TOKEN, OAUTH_REFRESH
+        global APPLICATION_ID
         if (CLIENT_ID is None or CLIENT_SECRET is None) and \
                 os.path.exists(CONFIG_PATH):
             # Load in trakt API auth data fron CONFIG_PATH

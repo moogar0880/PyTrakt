@@ -4,6 +4,7 @@ Release History
 ++++++++++++++++++
 
 * Fix bug loading stored credentials for PIN auth (#84)
+* Fix an issue with the formatting of now() timestamps on the 10th of the month
 
 2.8.0 (2018-02-25)
 ++++++++++++++++++

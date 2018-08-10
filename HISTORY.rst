@@ -1,5 +1,10 @@
 Release History
 ^^^^^^^^^^^^^^^
+2.8.1 (2018-08-09)
+++++++++++++++++++
+
+* Fix bug loading stored credentials for PIN auth (#84)
+
 2.8.0 (2018-02-25)
 ++++++++++++++++++
 

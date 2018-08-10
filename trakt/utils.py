@@ -38,8 +38,8 @@ def now():
     """Get the current day in the format expected by each :class:`Calendar`"""
     meow = datetime.now()
     year = meow.year
-    month = meow.month if meow.month > 10 else '0{}'.format(meow.month)
-    day = meow.day if meow.day > 10 else '0{}'.format(meow.day)
+    month = meow.month if meow.month >= 10 else '0{}'.format(meow.month)
+    day = meow.day if meow.day >= 10 else '0{}'.format(meow.day)
     return '{}-{}-{}'.format(year, month, day)
 
 

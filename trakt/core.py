@@ -351,6 +351,7 @@ def _bootstrapped(f):
     @wraps(f)
     def inner(*args, **kwargs):
         global CLIENT_ID, CLIENT_SECRET, OAUTH_TOKEN, OAUTH_REFRESH
+        global APPLICATION_ID
         if (CLIENT_ID is None or CLIENT_SECRET is None) and \
                 os.path.exists(CONFIG_PATH):
             # Load in trakt API auth data fron CONFIG_PATH
@@ -362,9 +363,11 @@ def _bootstrapped(f):
             if CLIENT_SECRET is None:
                 CLIENT_SECRET = config_data.get('CLIENT_SECRET', None)
             if OAUTH_TOKEN is None:
-                OAUTH_TOKEN = config_data['OAUTH_TOKEN']
+                OAUTH_TOKEN = config_data.get('OAUTH_TOKEN', None)
             if OAUTH_REFRESH is None:
-                OAUTH_REFRESH = config_data['OAUTH_REFRESH']
+                OAUTH_REFRESH = config_data.get('OAUTH_REFRESH', None)
+            if APPLICATION_ID is None:
+                APPLICATION_ID = config_data.get('APPLICATION_ID', None)
 
             # For backwards compatability with trakt<=2.3.0
             if api_key is not None and OAUTH_TOKEN is None:

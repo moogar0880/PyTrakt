@@ -1,5 +1,10 @@
 Release History
 ^^^^^^^^^^^^^^^
+2.8.2 (2018-08-14)
+++++++++++++++++++
+
+* Fix error code handling in the device auth flow @anongit (#83)
+
 2.8.1 (2018-08-09)
 ++++++++++++++++++
 

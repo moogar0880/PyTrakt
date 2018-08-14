@@ -13,7 +13,6 @@ import time
 from collections import namedtuple
 from functools import wraps
 from requests.compat import urljoin
-from requests.exceptions import HTTPError
 from requests_oauthlib import OAuth2Session
 from trakt import errors
 
@@ -239,7 +238,8 @@ def get_device_token(device_code, client_id=None, client_secret=None,
         "client_secret": CLIENT_SECRET
     }
 
-    response = requests.post(urljoin(BASE_URL, '/oauth/device/token'), json=data)
+    response = requests.post(urljoin(BASE_URL, '/oauth/device/token'),
+                             json=data)
 
     # We only get json on success.
     if response.status_code == 200:
@@ -290,22 +290,24 @@ def device_auth(client_id=None, client_secret=None, store=False):
         "With access_token {access_token} and refresh_token {refresh_token}"
     )
 
-    response = get_device_code(client_id=client_id, client_secret=client_secret)
+    response = get_device_code(client_id=client_id,
+                               client_secret=client_secret)
     device_code = response['device_code']
     interval = response['interval']
 
     # No need to check for expiration, the API will notify us.
     while True:
-        response = get_device_token(device_code, client_id, client_secret, store)
+        response = get_device_token(device_code, client_id, client_secret,
+                                    store)
 
         if response.status_code == 200:
             print(success_message.format_map(response.json()))
             break
 
-        elif response.status_code == 429: # slow down
+        elif response.status_code == 429:  # slow down
             interval *= 2
 
-        elif response.status_code != 400: # not pending
+        elif response.status_code != 400:  # not pending
             print(error_messages.get(response.status_code, response.reason))
             break
 

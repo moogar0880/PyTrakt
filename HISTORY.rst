@@ -1,5 +1,10 @@
 Release History
 ^^^^^^^^^^^^^^^
+2.8.3 (2018-08-27)
+++++++++++++++++++
+
+* Fix the case in which first_aired property of tv show is null @alexpayne482 (#88)
+
 2.8.2 (2018-08-14)
 ++++++++++++++++++
 

@@ -50,7 +50,8 @@ class Calendar(object):
     @property
     def ext_full(self):
         """construct the fully formatted url for this Calendar"""
-        return '/'.join([self.url, str(self.date), str(self.days), '?extended=full'])
+        return '/'.join([self.url, str(self.date), str(self.days), 
+                         '?extended=full'])
 
     @get
     def _get(self):

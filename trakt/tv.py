@@ -571,7 +571,6 @@ class TVEpisode(object):
             self._images = data.get('images', {})
         yield self._images
 
-    @property
     def first_aired_date(self):
         """Python datetime object representation of the first_aired date of
         this :class:`TVEpisode`

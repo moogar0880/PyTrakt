@@ -51,7 +51,7 @@ class Calendar(object):
     def ext_full(self):
         """construct the fully formatted url for this Calendar"""
         return '/'.join([self.url, str(self.date), str(self.days),
-                         '?extended=full'])
+                        '?extended=full'])
 
     @get
     def _get(self):

@@ -134,7 +134,22 @@ def pin_auth(pin=None, client_id=None, client_secret=None, store=False):
     return OAUTH_TOKEN
 
 
-def oauth_auth(username, client_id=None, client_secret=None, store=False):
+def _terminal_oauth_pin(authorization_url):
+    """Default OAuth callback used for terminal applications.
+
+    :param authorization_url: Predefined url by function `oauth_auth`. URL will
+        be prompted to you in the terminal
+    :return: OAuth PIN
+    """
+    print('Please go here and authorize,', authorization_url)
+
+    # Get the authorization verifier code from the callback url
+    response = six.moves.input('Paste the Code returned here: ')
+    return response
+
+
+def oauth_auth(username, client_id=None, client_secret=None, store=False,
+               oauth_cb=_terminal_oauth_pin):
     """Generate an access_token to allow your application to authenticate via
     OAuth
 
@@ -144,6 +159,8 @@ def oauth_auth(username, client_id=None, client_secret=None, store=False):
     :param store: Boolean flag used to determine if your trakt api auth data
         should be stored locally on the system. Default is :const:`False` for
         the security conscious
+    :param oauth_cb: Callback function to handle the retrieving of the OAuth
+        PIN. Default function `_terminal_oauth_pin` for terminal auth
     :return: Your OAuth access token
     """
     global CLIENT_ID, CLIENT_SECRET, OAUTH_TOKEN
@@ -158,21 +175,21 @@ def oauth_auth(username, client_id=None, client_secret=None, store=False):
     # OAuth endpoints given in the API documentation
     oauth = OAuth2Session(CLIENT_ID, redirect_uri=REDIRECT_URI, state=None)
 
-    # Redirect user to Trakt for authorization
+    # Authorization URL to redirect user to Trakt for authorization
     authorization_url, _ = oauth.authorization_url(authorization_base_url,
                                                    username=username)
-    print('Please go here and authorize,', authorization_url)
 
-    # Get the authorization verifier code from the callback url
-    response = six.moves.input('Paste the Code returned here: ')
+    # Calling callback function to get the OAuth PIN
+    oauth_pin = oauth_cb(authorization_url)
+
     # Fetch, assign, and return the access token
-    oauth.fetch_token(token_url, client_secret=CLIENT_SECRET, code=response)
+    oauth.fetch_token(token_url, client_secret=CLIENT_SECRET, code=oauth_pin)
     OAUTH_TOKEN = oauth.token['access_token']
 
     if store:
         _store(CLIENT_ID=CLIENT_ID, CLIENT_SECRET=CLIENT_SECRET,
                OAUTH_TOKEN=OAUTH_TOKEN)
-    return oauth.token['access_token']
+    return OAUTH_TOKEN
 
 
 def get_device_code(client_id=None, client_secret=None):

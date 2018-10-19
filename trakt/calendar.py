@@ -48,13 +48,13 @@ class Calendar(object):
     __repr__ = __str__
 
     @property
-    def ext(self):
+    def ext_full(self):
         """construct the fully formatted url for this Calendar"""
-        return '/'.join([self.url, str(self.date), str(self.days)])
+        return '/'.join([self.url, str(self.date), str(self.days), '?extended=full'])
 
     @get
     def _get(self):
-        data = yield self.ext
+        data = yield self.ext_full
         self._build(data)
 
     def _build(self, data):
@@ -64,7 +64,9 @@ class Calendar(object):
             show = episode.get('show', {}).get('title')
             season = episode.get('episode', {}).get('season')
             ep = episode.get('episode', {}).get('number')
+            real_first_aired = episode.get('episode', {}).get('first_aired')
             e_data = {'airs_at': airs_date(episode.get('first_aired')),
+                      'first_aired_date': airs_date(real_first_aired),
                       'ids': episode.get('episode').get('ids'),
                       'title': episode.get('episode', {}).get('title')}
             self._calendar.append(TVEpisode(show, season, ep, **e_data))

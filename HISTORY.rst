@@ -1,5 +1,10 @@
 Release History
 ^^^^^^^^^^^^^^^
+2.9.0 (2018-10-21)
+++++++++++++++++++
+
+* Add the ability to customize oauth authentication flow @Forcide (#95)
+
 2.8.3 (2018-08-27)
 ++++++++++++++++++
 

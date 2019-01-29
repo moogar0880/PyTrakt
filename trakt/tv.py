@@ -249,7 +249,8 @@ class TVShow(object):
             self._seasons = []
             for season in data:
                 extract_ids(season)
-                self._seasons.append(TVSeason(self.title, season.number, **season))
+                self._seasons.append(TVSeason(self.title, season.number,
+                                              **season))
         yield self._seasons
 
     @property

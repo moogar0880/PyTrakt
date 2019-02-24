@@ -1,5 +1,10 @@
 Release History
 ^^^^^^^^^^^^^^^
+2.9.1 (2019-02-24)
+++++++++++++++++++
+
+* Fix season number naming issue @StoneMonarch (#104)
+
 2.9.0 (2018-10-21)
 ++++++++++++++++++
 

@@ -88,8 +88,9 @@ def updated_shows(timestamp=None):
 class TVShow(object):
     """A Class representing a TV Show object"""
 
-    def __init__(self, title='', slug=None, **kwargs):
+    def __init__(self, score, title='', slug=None, **kwargs):
         super(TVShow, self).__init__()
+        self.score = score
         self.media_type = 'shows'
         self.top_watchers = self.top_episodes = self.year = self.tvdb = None
         self.imdb = self.genres = self.certification = self.network = None

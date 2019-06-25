@@ -82,8 +82,9 @@ Release = namedtuple('Release', ['country', 'certification', 'release_date',
 
 class Movie(object):
     """A Class representing a Movie object"""
-    def __init__(self, title, year=None, slug=None, **kwargs):
+    def __init__(self, score, title, year=None, slug=None, **kwargs):
         super(Movie, self).__init__()
+        self.score = score
         self.media_type = 'movies'
         self.title = title
         self.year = int(year) if year is not None else year

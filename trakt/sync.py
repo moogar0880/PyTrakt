@@ -120,9 +120,9 @@ def search(query, search_type='movie', year=None):
 
     :param query: Your search string
     :param search_type: The type of object you're looking for. Must be one of
-        'movie', 'show', 'episode', or 'person'
+        'movie', 'show', 'movie,show', 'episode', or 'person'
     """
-    valids = ('movie', 'show', 'episode', 'person')
+    valids = ('movie', 'show', 'episode', 'person', 'movie,show')
     if search_type not in valids:
         raise ValueError('search_type must be one of {}'.format(valids))
     uri = 'search?query={query}&type={type}'.format(
@@ -140,10 +140,15 @@ def search(query, search_type='movie', year=None):
     # need to import Scrobblers
     if search_type == 'movie':
         from trakt.movies import Movie
-        yield [Movie(**d.pop('movie')) for d in data]
+        yield [Movie(d['score'], **d.pop('movie')) for d in data]
     elif search_type == 'show':
         from trakt.tv import TVShow
-        yield [TVShow(**d.pop('show')) for d in data]
+        yield [TVShow(d['score'], **d.pop('show')) for d in data]
+    elif search_type == 'movie,show':
+        from trakt.movies import Movie
+        from trakt.tv import TVShow
+        yield [Movie(d['score'], **d.pop('movie')) if d['type'] == 'movie'
+               else TVShow(d['score'], **d.pop('show')) for d in data]
     elif search_type == 'episode':
         from trakt.tv import TVEpisode
         episodes = []

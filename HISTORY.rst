@@ -1,5 +1,10 @@
 Release History
 ^^^^^^^^^^^^^^^
+2.10.0 (2019-06-25)
++++++++++++++++++++
+
+* Add the ability to return a list of search results instead of their underlying media types (#106)
+
 2.9.1 (2019-02-24)
 ++++++++++++++++++
 

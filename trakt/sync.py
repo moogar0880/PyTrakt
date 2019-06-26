@@ -137,8 +137,9 @@ def get_search_results(query, search_type=None):
     """Perform a search query against all of trakt's media types
 
     :param query: Your search string
-    :param search_type: The type of object you're looking for. Must be one of
-        'movie', 'show', 'episode', or 'person'
+    :param search_type: The types of objects you're looking for. Must be 
+        specified as a list of strings containing any of 'movie', 'show', 
+        'episode', or 'person'.
     """
     # if no search type was specified, then search everything
     if search_type is None:

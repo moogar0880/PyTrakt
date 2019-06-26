@@ -20,7 +20,7 @@ def test_episode_search():
 def test_episode_search_with_year():
     results = TVEpisode.search('batman', year=1987)
     assert isinstance(results, list)
-    assert len(results) == 1
+    assert len(results) == 10
     assert all(isinstance(m, TVEpisode) for m in results)
 
 

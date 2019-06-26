@@ -121,11 +121,11 @@ def search(query, search_type='movie', year=None):
     :param search_type: The type of object you're looking for. Must be one of
         'movie', 'show', 'episode', or 'person'
     :param year: This parameter is ignored as it is no longer a part of the
-        official API. It is left here as a valid arg for backwards 
+        official API. It is left here as a valid arg for backwards
         compatability.
     """
-    # the new get_search_results expects a list of types, so handle this conversion
-    # to maintain backwards compatability
+    # the new get_search_results expects a list of types, so handle this
+    # conversion to maintain backwards compatability
     if isinstance(search_type, str):
         search_type = [search_type]
     results = get_search_results(query, search_type)
@@ -137,8 +137,8 @@ def get_search_results(query, search_type=None):
     """Perform a search query against all of trakt's media types
 
     :param query: Your search string
-    :param search_type: The types of objects you're looking for. Must be 
-        specified as a list of strings containing any of 'movie', 'show', 
+    :param search_type: The types of objects you're looking for. Must be
+        specified as a list of strings containing any of 'movie', 'show',
         'episode', or 'person'.
     """
     # if no search type was specified, then search everything
@@ -154,7 +154,7 @@ def get_search_results(query, search_type=None):
     results = []
     for media_item in data:
         extract_ids(media_item)
-        result = SearchResult(type=media_item['type'], score=media_item['score'])
+        result = SearchResult(media_item['type'], media_item['score'])
         if media_item['type'] == 'movie':
             from trakt.movies import Movie
             result.media = Movie(**media_item.pop('movie'))
@@ -164,7 +164,8 @@ def get_search_results(query, search_type=None):
         elif media_item['type'] == 'episode':
             from trakt.tv import TVEpisode
             show = media_item.pop('show')
-            result.media = TVEpisode(show.get('title', None), **media_item.pop('episode'))
+            result.media = TVEpisode(show.get('title', None),
+                                     **media_item.pop('episode'))
         elif media_item['type'] == 'person':
             from trakt.people import Person
             result.media = Person(**media_item.pop('person'))

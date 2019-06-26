@@ -114,48 +114,64 @@ def remove_from_collection(media):
     yield 'sync/collection/remove', media.to_json()
 
 
-@get
 def search(query, search_type='movie', year=None):
     """Perform a search query against all of trakt's media types
 
     :param query: Your search string
     :param search_type: The type of object you're looking for. Must be one of
         'movie', 'show', 'episode', or 'person'
+    :param year: This parameter is ignored as it is no longer a part of the
+        official API. It is left here as a valid arg for backwards
+        compatability.
     """
-    valids = ('movie', 'show', 'episode', 'person')
-    if search_type not in valids:
-        raise ValueError('search_type must be one of {}'.format(valids))
-    uri = 'search?query={query}&type={type}'.format(
-        query=slugify(query), type=search_type)
+    # the new get_search_results expects a list of types, so handle this
+    # conversion to maintain backwards compatability
+    if isinstance(search_type, str):
+        search_type = [search_type]
+    results = get_search_results(query, search_type)
+    return [result.media for result in results]
 
-    if year is not None:
-        uri += '&year={}'.format(year)
+
+@get
+def get_search_results(query, search_type=None):
+    """Perform a search query against all of trakt's media types
+
+    :param query: Your search string
+    :param search_type: The types of objects you're looking for. Must be
+        specified as a list of strings containing any of 'movie', 'show',
+        'episode', or 'person'.
+    """
+    # if no search type was specified, then search everything
+    if search_type is None:
+        search_type = ['movie', 'show', 'episode', 'person']
+    uri = 'search/{type}?query={query}'.format(
+        query=slugify(query), type=','.join(search_type))
 
     data = yield uri
 
-    for media_item in data:
-        extract_ids(media_item)
-
     # Need to do imports here to prevent circular imports with modules that
     # need to import Scrobblers
-    if search_type == 'movie':
-        from trakt.movies import Movie
-        yield [Movie(**d.pop('movie')) for d in data]
-    elif search_type == 'show':
-        from trakt.tv import TVShow
-        yield [TVShow(**d.pop('show')) for d in data]
-    elif search_type == 'episode':
-        from trakt.tv import TVEpisode
-        episodes = []
-        for episode in data:
-            show = episode.pop('show')
-            extract_ids(episode['episode'])
-            episodes.append(TVEpisode(show.get('title', None),
-                                      **episode['episode']))
-        yield episodes
-    elif search_type == 'person':
-        from trakt.people import Person
-        yield [Person(**d.pop('person')) for d in data]
+    results = []
+    for media_item in data:
+        extract_ids(media_item)
+        result = SearchResult(media_item['type'], media_item['score'])
+        if media_item['type'] == 'movie':
+            from trakt.movies import Movie
+            result.media = Movie(**media_item.pop('movie'))
+        elif media_item['type'] == 'show':
+            from trakt.tv import TVShow
+            result.media = TVShow(**media_item.pop('show'))
+        elif media_item['type'] == 'episode':
+            from trakt.tv import TVEpisode
+            show = media_item.pop('show')
+            result.media = TVEpisode(show.get('title', None),
+                                     **media_item.pop('episode'))
+        elif media_item['type'] == 'person':
+            from trakt.people import Person
+            result.media = Person(**media_item.pop('person'))
+        results.append(result)
+
+    yield results
 
 
 @get
@@ -269,3 +285,20 @@ class Scrobbler(object):
         scrobbling the :class:`Scrobller`'s *media* object
         """
         self.finish()
+
+
+class SearchResult(object):
+    """A SearchResult is an individual result item from the trakt.tv search
+    API. It wraps a single media entity whose type is indicated by the type
+    field.
+    """
+    def __init__(self, type, score, media=None):
+        """Create a new :class:`SearchResult` instance
+
+        :param type: The type of media object contained in this result.
+        :param score: The search result relevancy score of this item.
+        :param media: The wrapped media item returned by a search.
+        """
+        self.type = type
+        self.score = score
+        self.media = media

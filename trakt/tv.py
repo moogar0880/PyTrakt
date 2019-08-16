@@ -680,6 +680,17 @@ class TVEpisode(object):
         checkin_media(self, app_version, app_date, message, sharing, venue_id,
                       venue_name)
 
+    def to_json_singular(self):
+        """Return this :class:`TVEpisode` as a trakt recognizable JSON object
+        """
+        return {
+            'episode': {
+                'ids': {
+                    'trakt': self.trakt
+                }
+            }
+        }
+
     def to_json(self):
         """Return this :class:`TVEpisode` as a trakt recognizable JSON object
         """

@@ -326,6 +326,11 @@ class TVShow(object):
     def remove_from_watchlist(self):
         remove_from_watchlist(self)
 
+    def to_json_singular(self):
+        return {'show': {
+            'title': self.title, 'year': self.year, 'ids': self.ids
+        }}
+
     def to_json(self):
         return {'shows': [{
             'title': self.title, 'year': self.year, 'ids': self.ids

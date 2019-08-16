@@ -45,7 +45,7 @@ def test_now():
 
 
 def test_timestamp():
-    """verify that the trakt timestamp converer works as expected"""
+    """verify that the trakt timestamp converter works as expected"""
     meow = datetime.now()
     result = timestamp(meow)
     assert result.startswith(str(meow.year))

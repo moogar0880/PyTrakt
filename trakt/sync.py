@@ -90,7 +90,7 @@ def remove_from_history(media):
 def remove_from_watchlist(media):
     """Remove a :class:`TVShow` from your watchlist
 
-    :param media: The :clas:`TVShow` to remove from your watchlist
+    :param media: The :class:`TVShow` to remove from your watchlist
     """
     yield 'sync/watchlist/remove', media.to_json()
 
@@ -265,7 +265,7 @@ class Scrobbler(object):
         """Handle actually posting the scrobbling data to trakt
 
         :param uri: The uri to post to
-        :param args: Any additional data to post to trakt alond with the
+        :param args: Any additional data to post to trakt along with the
             generic scrobbling data
         """
         payload = dict(progress=self.progress, app_version=self.version,
@@ -275,14 +275,14 @@ class Scrobbler(object):
 
     def __enter__(self):
         """Context manager support for `with Scrobbler` syntax. Begins
-        scrobbling the :class:`Scrobller`'s *media* object
+        scrobbling the :class:`Scrobbler`'s *media* object
         """
         self.start()
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         """Context manager support for `with Scrobbler` syntax. Completes
-        scrobbling the :class:`Scrobller`'s *media* object
+        scrobbling the :class:`Scrobbler`'s *media* object
         """
         self.finish()
 

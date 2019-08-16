@@ -303,7 +303,7 @@ def device_auth(client_id=None, client_secret=None, store=False):
     }
 
     success_message = (
-        "You've been succesfully authenticated. "
+        "You've been successfully authenticated. "
         "With access_token {access_token} and refresh_token {refresh_token}"
     )
 
@@ -362,7 +362,7 @@ def _bootstrapped(f):
         global APPLICATION_ID
         if (CLIENT_ID is None or CLIENT_SECRET is None) and \
                 os.path.exists(CONFIG_PATH):
-            # Load in trakt API auth data fron CONFIG_PATH
+            # Load in trakt API auth data from CONFIG_PATH
             with open(CONFIG_PATH) as config_file:
                 config_data = json.load(config_file)
 
@@ -413,7 +413,7 @@ class Core(object):
         generator = f(*args, **kwargs)
         uri = next(generator)
         if not isinstance(uri, (str, tuple)):
-            # Allow properties to safetly yield arbitrary data
+            # Allow properties to safely yield arbitrary data
             return uri
         if isinstance(uri, tuple):
             uri, data = uri

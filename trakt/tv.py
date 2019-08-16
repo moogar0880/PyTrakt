@@ -412,7 +412,7 @@ class TVSeason(object):
     @get
     def _episode_getter(self, episode):
         """Recursive episode getter generator. Will attempt to get the
-        speicifed episode for this season, and if the requested episode wasn't
+        specified episode for this season, and if the requested episode wasn't
         found, then we return :const:`None` to indicate to the `episodes`
         property that we've already yielded all valid episodes for this season.
 

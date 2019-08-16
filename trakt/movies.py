@@ -364,10 +364,15 @@ class Movie(object):
         checkin_media(self, app_version, app_date, message, sharing, venue_id,
                       venue_name)
 
-    def to_json(self):
+    def to_json_singular(self):
         return {'movie': dict(title=self.title,
                               year=self.year,
                               **self.ids)}
+
+    def to_json(self):
+        return {'movies': [dict(title=self.title,
+                                year=self.year,
+                                **self.ids)]}
 
     def __str__(self):
         """String representation of a :class:`Movie`"""

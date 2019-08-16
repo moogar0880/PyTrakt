@@ -2,7 +2,7 @@
 """This module contains Trakt.tv sync endpoint support functions"""
 from datetime import datetime
 
-from trakt.core import get, post
+from trakt.core import get, post, delete
 from trakt.utils import slugify, extract_ids, timestamp
 
 __author__ = 'Jon Nappi'
@@ -210,6 +210,23 @@ def search_by_id(query, id_type='imdb'):
             from trakt.people import Person
             results.append(Person(**d.pop('person')))
     yield results
+
+
+@post
+def checkin_media(media, app_version, app_date, message="", sharing={},
+                  venue_id="", venue_name=""):
+    """Checkin a media item
+    """
+    payload = dict(app_version=app_version, app_date=app_date, sharing=sharing,
+                   message=message, venue_id=venue_id, venue_name=venue_name)
+    payload.update(media.to_json())
+    print(payload)
+    yield "checkin", payload
+
+
+@delete
+def delete_checkin():
+    yield "checkin"
 
 
 class Scrobbler(object):

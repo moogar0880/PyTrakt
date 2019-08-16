@@ -29,7 +29,7 @@ def comment(media, comment_body, spoiler=False, review=False):
     if not review and len(comment_body) > 200:
         review = True
     data = dict(comment=comment_body, spoiler=spoiler, review=review)
-    data.update(media.to_json())
+    data.update(media.to_json_singular())
     yield 'comments', data
 
 

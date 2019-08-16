@@ -365,9 +365,9 @@ class Movie(object):
                       venue_name)
 
     def to_json(self):
-        return {'movies': [dict(title=self.title,
-                                year=self.year,
-                                **self.ids)]}
+        return {'movie': dict(title=self.title,
+                              year=self.year,
+                              **self.ids)}
 
     def __str__(self):
         """String representation of a :class:`Movie`"""

@@ -219,7 +219,7 @@ def checkin_media(media, app_version, app_date, message="", sharing={},
     """
     payload = dict(app_version=app_version, app_date=app_date, sharing=sharing,
                    message=message, venue_id=venue_id, venue_name=venue_name)
-    payload.update(media.to_json())
+    payload.update(media.to_json_singular())
     print(payload)
     yield "checkin", payload
 
@@ -287,7 +287,7 @@ class Scrobbler(object):
         """
         payload = dict(progress=self.progress, app_version=self.version,
                        date=self.date)
-        payload.update(self.media.to_json())
+        payload.update(self.media.to_json_singular())
         yield uri, payload
 
     def __enter__(self):

@@ -5,7 +5,8 @@ from trakt.core import Alias, Comment, Genre, get, delete
 from trakt.sync import (Scrobbler, comment, rate, add_to_history,
                         remove_from_history, add_to_watchlist,
                         remove_from_watchlist, add_to_collection,
-                        remove_from_collection, search)
+                        remove_from_collection, search, checkin_media,
+                        delete_checkin)
 from trakt.people import Person
 from trakt.utils import slugify, now, extract_ids, unicode_safe
 
@@ -342,6 +343,26 @@ class Movie(object):
             your plugin.
         """
         return Scrobbler(self, progress, app_version, app_date)
+
+    def checkin(self, app_version, app_date, message="", sharing={},
+                venue_id="", venue_name="", delete=False):
+        """Checkin this :class:`Movie` via the TraktTV API.
+
+        :param app_version:Version number of the media center, be as specific
+            as you can including nightly build number, etc. Used to help debug
+            your plugin.
+        :param app_date: Build date of the media center. Used to help debug
+            your plugin.
+        :param message: Message used for sharing. If not sent, it will use the
+            watching string in the user settings.
+        :param sharing: Control sharing to any connected social networks.
+        :param venue_id: Foursquare venue ID.
+        :param venue_name: Foursquare venue name.
+        """
+        if delete:
+            delete_checkin()
+        checkin_media(self, app_version, app_date, message, sharing, venue_id,
+                      venue_name)
 
     def to_json(self):
         return {'movies': [dict(title=self.title,

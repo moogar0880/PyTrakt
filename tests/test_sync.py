@@ -13,6 +13,9 @@ class FakeMedia(object):
     def __init__(self):
         self.ids = {}
 
+    def to_json_singular(self):
+        return {}
+
     def to_json(self):
         return {}
 

@@ -665,7 +665,7 @@ class TVEpisode(object):
         """
         return Scrobbler(self, progress, app_version, app_date)
 
-    def checkin(self, app_version, app_date, message="", sharing={},
+    def checkin(self, app_version, app_date, message="", sharing=None,
                 venue_id="", venue_name="", delete=False):
         """Checkin this :class:`TVEpisode` via the TraktTV API
 

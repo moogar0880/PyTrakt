@@ -213,14 +213,13 @@ def search_by_id(query, id_type='imdb'):
 
 
 @post
-def checkin_media(media, app_version, app_date, message="", sharing={},
+def checkin_media(media, app_version, app_date, message="", sharing=None,
                   venue_id="", venue_name=""):
     """Checkin a media item
     """
     payload = dict(app_version=app_version, app_date=app_date, sharing=sharing,
                    message=message, venue_id=venue_id, venue_name=venue_name)
     payload.update(media.to_json_singular())
-    print(payload)
     yield "checkin", payload
 
 

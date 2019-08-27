@@ -1,5 +1,10 @@
 Release History
 ^^^^^^^^^^^^^^^
+2.11.0 (2019-08-26)
++++++++++++++++++++
+
+* Implemented Checkin, fixed Scrobble & Comment @omjadas (#109)
+
 2.10.0 (2019-06-25)
 +++++++++++++++++++
 

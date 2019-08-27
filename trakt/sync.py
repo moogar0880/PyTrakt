@@ -2,7 +2,7 @@
 """This module contains Trakt.tv sync endpoint support functions"""
 from datetime import datetime
 
-from trakt.core import get, post
+from trakt.core import get, post, delete
 from trakt.utils import slugify, extract_ids, timestamp
 
 __author__ = 'Jon Nappi'
@@ -29,7 +29,7 @@ def comment(media, comment_body, spoiler=False, review=False):
     if not review and len(comment_body) > 200:
         review = True
     data = dict(comment=comment_body, spoiler=spoiler, review=review)
-    data.update(media.to_json())
+    data.update(media.to_json_singular())
     yield 'comments', data
 
 
@@ -90,7 +90,7 @@ def remove_from_history(media):
 def remove_from_watchlist(media):
     """Remove a :class:`TVShow` from your watchlist
 
-    :param media: The :clas:`TVShow` to remove from your watchlist
+    :param media: The :class:`TVShow` to remove from your watchlist
     """
     yield 'sync/watchlist/remove', media.to_json()
 
@@ -212,6 +212,22 @@ def search_by_id(query, id_type='imdb'):
     yield results
 
 
+@post
+def checkin_media(media, app_version, app_date, message="", sharing=None,
+                  venue_id="", venue_name=""):
+    """Checkin a media item
+    """
+    payload = dict(app_version=app_version, app_date=app_date, sharing=sharing,
+                   message=message, venue_id=venue_id, venue_name=venue_name)
+    payload.update(media.to_json_singular())
+    yield "checkin", payload
+
+
+@delete
+def delete_checkin():
+    yield "checkin"
+
+
 class Scrobbler(object):
     """Scrobbling is a seemless and automated way to track what you're watching
     in a media center. This class allows the media center to easily send events
@@ -265,24 +281,24 @@ class Scrobbler(object):
         """Handle actually posting the scrobbling data to trakt
 
         :param uri: The uri to post to
-        :param args: Any additional data to post to trakt alond with the
+        :param args: Any additional data to post to trakt along with the
             generic scrobbling data
         """
         payload = dict(progress=self.progress, app_version=self.version,
                        date=self.date)
-        payload.update(self.media.to_json())
+        payload.update(self.media.to_json_singular())
         yield uri, payload
 
     def __enter__(self):
         """Context manager support for `with Scrobbler` syntax. Begins
-        scrobbling the :class:`Scrobller`'s *media* object
+        scrobbling the :class:`Scrobbler`'s *media* object
         """
         self.start()
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         """Context manager support for `with Scrobbler` syntax. Completes
-        scrobbling the :class:`Scrobller`'s *media* object
+        scrobbling the :class:`Scrobbler`'s *media* object
         """
         self.finish()
 

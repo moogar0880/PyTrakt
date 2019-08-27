@@ -82,7 +82,6 @@ Sync
 - Create a comment class to facilitate
   - returning an instance when a comment is created, instead of None
   - add ability to update and delete comments
-- Add checkin support
 
 Movies
 ^^^^^^

@@ -6,7 +6,8 @@ from trakt.core import Airs, Alias, Comment, Genre, delete, get
 from trakt.errors import NotFoundException
 from trakt.sync import (Scrobbler, rate, comment, add_to_collection,
                         add_to_watchlist, add_to_history, remove_from_history,
-                        remove_from_collection, remove_from_watchlist, search)
+                        remove_from_collection, remove_from_watchlist, search,
+                        checkin_media, delete_checkin)
 from trakt.utils import slugify, extract_ids, airs_date, unicode_safe
 from trakt.people import Person
 
@@ -325,6 +326,11 @@ class TVShow(object):
     def remove_from_watchlist(self):
         remove_from_watchlist(self)
 
+    def to_json_singular(self):
+        return {'show': {
+            'title': self.title, 'year': self.year, 'ids': self.ids
+        }}
+
     def to_json(self):
         return {'shows': [{
             'title': self.title, 'year': self.year, 'ids': self.ids
@@ -412,7 +418,7 @@ class TVSeason(object):
     @get
     def _episode_getter(self, episode):
         """Recursive episode getter generator. Will attempt to get the
-        speicifed episode for this season, and if the requested episode wasn't
+        specified episode for this season, and if the requested episode wasn't
         found, then we return :const:`None` to indicate to the `episodes`
         property that we've already yielded all valid episodes for this season.
 
@@ -658,6 +664,37 @@ class TVEpisode(object):
             your plugin.
         """
         return Scrobbler(self, progress, app_version, app_date)
+
+    def checkin(self, app_version, app_date, message="", sharing=None,
+                venue_id="", venue_name="", delete=False):
+        """Checkin this :class:`TVEpisode` via the TraktTV API
+
+        :param app_version:Version number of the media center, be as specific
+            as you can including nightly build number, etc. Used to help debug
+            your plugin.
+        :param app_date: Build date of the media center. Used to help debug
+            your plugin.
+        :param message: Message used for sharing. If not sent, it will use the
+            watching string in the user settings.
+        :param sharing: Control sharing to any connected social networks.
+        :param venue_id: Foursquare venue ID.
+        :param venue_name: Foursquare venue name.
+        """
+        if delete:
+            delete_checkin()
+        checkin_media(self, app_version, app_date, message, sharing, venue_id,
+                      venue_name)
+
+    def to_json_singular(self):
+        """Return this :class:`TVEpisode` as a trakt recognizable JSON object
+        """
+        return {
+            'episode': {
+                'ids': {
+                    'trakt': self.trakt
+                }
+            }
+        }
 
     def to_json(self):
         """Return this :class:`TVEpisode` as a trakt recognizable JSON object

@@ -97,6 +97,7 @@ class TVShow(object):
         self.trakt = self.tmdb = self._aliases = self._comments = None
         self._images = self._people = self._ratings = self._translations = None
         self._seasons = None
+        self._last_episode = self._next_episode = None
         self.title = title
         self.slug = slug or slugify(self.title)
         if len(kwargs) > 0:
@@ -253,6 +254,28 @@ class TVShow(object):
                 self._seasons.append(TVSeason(self.title,
                                               season['number'], **season))
         yield self._seasons
+
+    @property
+    @get
+    def last_episode(self):
+        """Returns the most recently aired :class:`TVEpisode`. If no episode
+        is found, `None` will be returned.
+        """
+        if self._last_episode is None:
+            data = yield (self.ext + '/last_episode?extended=full')
+            self._last_episode = data and TVEpisode(show=self.title, **data)
+        yield self._last_episode
+
+    @property
+    @get
+    def next_episode(self):
+        """Returns the next scheduled to air :class:`TVEpisode`. If no episode
+        is found, `None` will be returned.
+        """
+        if self._next_episode is None:
+            data = yield (self.ext + '/next_episode?extended=full')
+            self._next_episode = data and TVEpisode(show=self.title, **data)
+        yield self._next_episode
 
     @property
     @get

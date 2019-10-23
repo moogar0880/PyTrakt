@@ -19,3 +19,4 @@ PyTrakt is primarily written and maintained by [Jon Nappi](https://github.com/mo
 - [anongit](https://github.com/anongit)
 - [Forcide](https://github.com/forcide)
 - [Omja Das](https://github.com/omjadas)
+- [Peter Kovary](https://github.com/Faboor)

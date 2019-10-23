@@ -1,5 +1,10 @@
 Release History
 ^^^^^^^^^^^^^^^
+2.12.0 (2019-10-22)
++++++++++++++++++++
+
+* Implement TV Show last_episode and next_episode @Faboor (#111)
+
 2.11.0 (2019-08-26)
 +++++++++++++++++++
 

@@ -3,7 +3,7 @@
 from trakt.core import Comment
 from trakt.people import Person
 from trakt.tv import (trending_shows, popular_shows, updated_shows, TVShow,
-                      dismiss_recommendation, get_recommended_shows)
+                      dismiss_recommendation, get_recommended_shows, TVEpisode)
 from trakt.users import User
 
 
@@ -118,3 +118,13 @@ def test_show_comment():
 def test_rate_show():
     got = TVShow('Game of Thrones')
     got.rate(10)
+
+
+def test_next_episode():
+    got = TVShow('Game of Thrones')
+    assert isinstance(got.next_episode, TVEpisode)
+
+
+def test_last_episode():
+    got = TVShow('Game of Thrones')
+    assert isinstance(got.last_episode, TVEpisode)

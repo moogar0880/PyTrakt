@@ -1,5 +1,11 @@
 Release History
 ^^^^^^^^^^^^^^^
+2.13.0 (2020-04-26)
++++++++++++++++++++
+
+* Add support for media type when searching by id @teancom (#115)
+* Implement TV Episode first_aired_end_time and end_time_from_custom_start methods (#114)
+
 2.12.0 (2019-10-22)
 +++++++++++++++++++
 

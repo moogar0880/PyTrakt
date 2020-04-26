@@ -175,20 +175,45 @@ def get_search_results(query, search_type=None):
 
 
 @get
-def search_by_id(query, id_type='imdb'):
+def search_by_id(query, id_type='imdb', media_type=None):
     """Perform a search query by using a Trakt.tv ID or other external ID
 
-    :param query: Your search string
-    :param id_type: The type of object you're looking for. Must be one of
-        'trakt-movie', 'trakt-show', 'trakt-episode', 'imdb', 'tmdb', 'tvdb' or
-        'tvrage'
+    :param query: Your search string, which should be an ID from your source
+    :param id_type: The source of the ID you're looking for. Must be one of
+        'trakt', trakt-movie', 'trakt-show', 'trakt-episode', 'trakt-person',
+        'imdb', 'tmdb', or 'tvdb'
+    :param media_type: The type of media you're looking for. May be one of
+        'movie', 'show', 'episode', or 'person', or a comma-separated list of
+        any combination of those. Null by default, which will return all types
+        of media that match the ID given.
     """
-    valids = ('trakt-movie', 'trakt-show', 'trakt-episode', 'imdb', 'tmdb',
-              'tvdb', 'tvrage')
+    valids = ('trakt', 'trakt-movie', 'trakt-show', 'trakt-episode',
+              'trakt-person', 'imdb', 'tmdb', 'tvdb')
+    id_types = {'trakt': 'trakt', 'trakt-movie': 'trakt',
+                'trakt-show': 'trakt', 'trakt-episode': 'trakt',
+                'trakt-person': 'trakt', 'imdb': 'imdb', 'tmdb': 'tmdb',
+                'tvdb': 'tvdb'}
     if id_type not in valids:
         raise ValueError('search_type must be one of {}'.format(valids))
-    data = yield 'search?id={query}&id_type={id_type}'.format(
-        query=slugify(query), id_type=id_type)
+    source = id_types.get(id_type)
+
+    media_types = {'trakt-movie': 'movie', 'trakt-show': 'show',
+                   'trakt-episode': 'episode', 'trakt-person': 'person'}
+
+    # If there was no media_type passed in, see if we can guess based off the
+    # ID source. None is still an option here, as that will return all possible
+    # types for a given source.
+    if media_type is None:
+        media_type = media_types.get(source, None)
+
+    # If media_type is still none, don't add it as a parameter to the search
+    if media_type is None:
+        uri = 'search/{source}/{query}'.format(
+            query=slugify(query), source=source)
+    else:
+        uri = 'search/{source}/{query}?type={media_type}'.format(
+            query=slugify(query), source=source, media_type=media_type)
+    data = yield uri
 
     for media_item in data:
         extract_ids(media_item)

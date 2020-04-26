@@ -72,6 +72,20 @@ def test_search_person_by_id():
     assert all(isinstance(p, Person) for p in results)
 
 
+def test_search_show_by_id_with_explicit_type():
+    """test that tv show by id search results are successfully returned when
+    explicitly adding the media type"""
+    results = search_by_id('78845', id_type='tvdb', media_type='show')
+    assert isinstance(results, list)
+
+
+def test_search_by_id_with_multiple_results():
+    """test that searching by id search results are successfully returned when
+    there are multiple types"""
+    results = search_by_id('78845', id_type='tvdb', media_type='show')
+    assert isinstance(results, list)
+
+
 def test_get_search_results():
     """test that entire results can be returned by get_search_results"""
     results = get_search_results('batman', search_type=['movie'])

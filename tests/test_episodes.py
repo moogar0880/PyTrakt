@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 """trakt.tv functional tests"""
+from datetime import datetime
 from trakt.core import Comment
 from trakt.sync import Scrobbler
 from trakt.tv import TVSeason, TVEpisode
 from trakt.users import User
+from trakt.utils import airs_date
 
 
 def test_get_episodes():
@@ -93,3 +95,8 @@ def test_episode_magic_methods():
     assert str(e1) == '<TVEpisode>: %s S%dE%d %s' % (e1.show, e1.season,
                                                      e1.number, e1.title)
     assert str(e1) == repr(e1)
+
+def test_episode_aired_dates():
+    e1 = TVEpisode('Game of Thrones', season=1, number=1)
+    assert e1.first_aired_date == airs_date('2011-04-18T01:00:00.000Z')
+    assert e1.first_aired_end_time == airs_date('2011-04-18T01:58:00.000Z')

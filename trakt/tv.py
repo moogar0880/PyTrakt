@@ -609,6 +609,32 @@ class TVEpisode(object):
         return airs_date(self.first_aired)
 
     @property
+    def first_aired_end_time(self):
+        """Python datetime object representing the corresponding end time of
+        the first_aired date of this episode
+        """
+        return self.end_time_from_custom_start(start_date=None)
+
+    def end_time_from_custom_start(self, start_date=None):
+        """Calculate a python datetime object representing the calculated end
+        time of an episode from the given start_date. ie, start_date +
+        runtime.
+
+        :param start_date: a datetime instance indicating the start date of a
+        given airing of this episode. Defaults to the first_aired_date of this
+        episode.
+        """
+        if start_date is None:
+            start_date = self.first_aired_date
+
+        # create a timedelta instance for the runtime of the episode
+        runtime = timedelta(minutes=self.runtime)
+
+        # calculate the end time as the difference between the first_aired_date
+        # and the runtime timedelta
+        return start_date + runtime
+
+    @property
     @get
     def ratings(self):
         """Ratings (between 0 and 10) and distribution for a movie."""

@@ -624,7 +624,7 @@ class TVEpisode(object):
         given airing of this episode. Defaults to the first_aired_date of this
         episode.
         """
-        if start_date == None:
+        if start_date is None:
             start_date = self.first_aired_date
 
         # create a timedelta instance for the runtime of the episode

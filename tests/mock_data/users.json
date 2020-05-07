@@ -206,7 +206,15 @@
                 "item_count":5,
                 "comment_count":0,
                 "likes":0,
-                "ids":{"trakt":55,"slug":"star-wars-in-machete-order"}
+                "ids":{"trakt":55,"slug":"star-wars-in-machete-order"},
+                "user":{
+                    "username": "sean",
+                    "private": false,
+                    "name": "Sean Rudford",
+                    "vip": true,
+                    "vip_ep": true,
+                    "ids":{"slug":"sean"}
+                }
             },
             {
                 "name":"Vampires FTW",
@@ -221,7 +229,15 @@
                 "item_count":5,
                 "comment_count":0,
                 "likes":0,
-                "ids":{"trakt":52,"slug":"vampires-ftw"}
+                "ids":{"trakt":52,"slug":"vampires-ftw"},
+                "user":{
+                    "username": "sean",
+                    "private": false,
+                    "name": "Sean Rudford",
+                    "vip": true,
+                    "vip_ep": true,
+                    "ids":{"slug":"sean"}
+                }
             }
         ],
         "POST": {

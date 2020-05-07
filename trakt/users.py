@@ -295,6 +295,10 @@ class User(object):
             data = yield 'users/{username}/lists'.format(
                 username=self.username
             )
+            for ul in data:
+                if "user" in ul:
+                    # user will be replaced with the self User object
+                    del ul["user"]
             self._lists = [UserList(creator=self.username, user=self,
                            **extract_ids(ul)) for ul in data]
         yield self._lists

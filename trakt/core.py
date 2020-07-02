@@ -392,7 +392,7 @@ def _refresh_token(s):
         OAUTH_REFRESH = data.get("refresh_token")
         OAUTH_EXPIRES_AT = data.get("created_at") + data.get("expires_in")
         OAUTH_TOKEN_VALID = True
-        s.logger.dinfo("OAuth token successfully refreshed, valid until", datetime.fromtimestamp(OAUTH_EXPIRES_AT))
+        s.logger.info("OAuth token successfully refreshed, valid until", datetime.fromtimestamp(OAUTH_EXPIRES_AT))
         _store(
             CLIENT_ID=CLIENT_ID, CLIENT_SECRET=CLIENT_SECRET,
             OAUTH_TOKEN=OAUTH_TOKEN, OAUTH_REFRESH=OAUTH_REFRESH,

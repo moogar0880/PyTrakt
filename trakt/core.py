@@ -362,6 +362,7 @@ Comment = namedtuple('Comment', ['id', 'parent_id', 'created_at', 'comment',
                                  'spoiler', 'review', 'replies', 'user',
                                  'updated_at', 'likes', 'user_rating'])
 
+
 def _validate_token(s):
     """Check if current OAuth token has not expired"""
     global OAUTH_TOKEN_VALID
@@ -371,6 +372,7 @@ def _validate_token(s):
         OAUTH_TOKEN_VALID = True
     else:
         _refresh_token(s)
+
 
 def _refresh_token(s):
     """Request Trakt API for a new valid OAuth token using refresh_token"""
@@ -392,16 +394,23 @@ def _refresh_token(s):
         OAUTH_REFRESH = data.get("refresh_token")
         OAUTH_EXPIRES_AT = data.get("created_at") + data.get("expires_in")
         OAUTH_TOKEN_VALID = True
-        s.logger.info("OAuth token successfully refreshed, valid until", datetime.fromtimestamp(OAUTH_EXPIRES_AT))
+        s.logger.info(
+            "OAuth token successfully refreshed, valid until",
+            datetime.fromtimestamp(OAUTH_EXPIRES_AT)
+        )
         _store(
             CLIENT_ID=CLIENT_ID, CLIENT_SECRET=CLIENT_SECRET,
             OAUTH_TOKEN=OAUTH_TOKEN, OAUTH_REFRESH=OAUTH_REFRESH,
             OAUTH_EXPIRES_AT=OAUTH_EXPIRES_AT
         )
     elif response.status_code == 401:
-        s.logger.debug("Rejected - Unable to refresh expired OAuth token, refresh_token is invalid")
+        s.logger.debug(
+            "Rejected - Unable to refresh expired OAuth token, "
+            "refresh_token is invalid"
+        )
     elif response.status_code in s.error_map:
         raise s.error_map[response.status_code]()
+
 
 def _bootstrapped(f):
     """Bootstrap your authentication environment when authentication is needed
@@ -410,8 +419,8 @@ def _bootstrapped(f):
     """
     @wraps(f)
     def inner(*args, **kwargs):
-        global CLIENT_ID, CLIENT_SECRET, OAUTH_TOKEN, OAUTH_EXPIRES_AT, OAUTH_REFRESH
-        global APPLICATION_ID
+        global CLIENT_ID, CLIENT_SECRET, OAUTH_TOKEN, OAUTH_EXPIRES_AT
+        global OAUTH_REFRESH, APPLICATION_ID
         if (CLIENT_ID is None or CLIENT_SECRET is None) and \
                 os.path.exists(CONFIG_PATH):
             # Load in trakt API auth data from CONFIG_PATH
@@ -432,7 +441,8 @@ def _bootstrapped(f):
                 APPLICATION_ID = config_data.get('APPLICATION_ID', None)
 
             # Check token validity and refresh token if needed
-            if not OAUTH_TOKEN_VALID and OAUTH_EXPIRES_AT is not None and OAUTH_REFRESH is not None:
+            if (not OAUTH_TOKEN_VALID and OAUTH_EXPIRES_AT is not None and
+                    OAUTH_REFRESH is not None):
                 _validate_token(args[0])
             # For backwards compatability with trakt<=2.3.0
             if api_key is not None and OAUTH_TOKEN is None:

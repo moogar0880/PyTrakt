@@ -130,7 +130,7 @@ def search(query, search_type='movie', year=None, slugify_query=False):
     # conversion to maintain backwards compatability
     if isinstance(search_type, str):
         search_type = [search_type]
-    results = get_search_results(query, search_type)
+    results = get_search_results(query, search_type, slugify_query)
     return [result.media for result in results]
 
 

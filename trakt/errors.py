@@ -11,7 +11,7 @@ __all__ = ['TraktException', 'BadRequestException', 'OAuthException',
            'TraktUnavailable']
 
 
-class TraktException(BaseException):
+class TraktException(Exception):
     """Base Exception type for trakt module"""
     http_code = message = None
 

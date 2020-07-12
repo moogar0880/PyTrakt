@@ -114,7 +114,7 @@ def remove_from_collection(media):
     yield 'sync/collection/remove', media.to_json()
 
 
-def search(query, search_type='movie', year=None):
+def search(query, search_type='movie', year=None, slugify_query=False):
     """Perform a search query against all of trakt's media types
 
     :param query: Your search string
@@ -123,29 +123,38 @@ def search(query, search_type='movie', year=None):
     :param year: This parameter is ignored as it is no longer a part of the
         official API. It is left here as a valid arg for backwards
         compatability.
+    :param slugify_query: A boolean indicating whether or not the provided
+        query should be slugified or not prior to executing the query.
     """
     # the new get_search_results expects a list of types, so handle this
     # conversion to maintain backwards compatability
     if isinstance(search_type, str):
         search_type = [search_type]
-    results = get_search_results(query, search_type)
+    results = get_search_results(query, search_type, slugify_query)
     return [result.media for result in results]
 
 
 @get
-def get_search_results(query, search_type=None):
+def get_search_results(query, search_type=None, slugify_query=False):
     """Perform a search query against all of trakt's media types
 
     :param query: Your search string
     :param search_type: The types of objects you're looking for. Must be
         specified as a list of strings containing any of 'movie', 'show',
         'episode', or 'person'.
+    :param slugify_query: A boolean indicating whether or not the provided
+        query should be slugified or not prior to executing the query.
     """
     # if no search type was specified, then search everything
     if search_type is None:
         search_type = ['movie', 'show', 'episode', 'person']
+
+    # If requested, slugify the query prior to running the search
+    if slugify:
+        query = slugify(query)
+
     uri = 'search/{type}?query={query}'.format(
-        query=slugify(query), type=','.join(search_type))
+        query=query, type=','.join(search_type))
 
     data = yield uri
 
@@ -175,7 +184,7 @@ def get_search_results(query, search_type=None):
 
 
 @get
-def search_by_id(query, id_type='imdb', media_type=None):
+def search_by_id(query, id_type='imdb', media_type=None, slugify_query=False):
     """Perform a search query by using a Trakt.tv ID or other external ID
 
     :param query: Your search string, which should be an ID from your source
@@ -186,6 +195,8 @@ def search_by_id(query, id_type='imdb', media_type=None):
         'movie', 'show', 'episode', or 'person', or a comma-separated list of
         any combination of those. Null by default, which will return all types
         of media that match the ID given.
+    :param slugify_query: A boolean indicating whether or not the provided
+        query should be slugified or not prior to executing the query.
     """
     valids = ('trakt', 'trakt-movie', 'trakt-show', 'trakt-episode',
               'trakt-person', 'imdb', 'tmdb', 'tvdb')
@@ -206,13 +217,17 @@ def search_by_id(query, id_type='imdb', media_type=None):
     if media_type is None:
         media_type = media_types.get(source, None)
 
+    # If requested, slugify the query prior to running the search
+    if slugify:
+        query = slugify(query)
+
     # If media_type is still none, don't add it as a parameter to the search
     if media_type is None:
         uri = 'search/{source}/{query}'.format(
-            query=slugify(query), source=source)
+            query=query, source=source)
     else:
         uri = 'search/{source}/{query}?type={media_type}'.format(
-            query=slugify(query), source=source, media_type=media_type)
+            query=query, source=source, media_type=media_type)
     data = yield uri
 
     for media_item in data:

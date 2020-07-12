@@ -1,5 +1,13 @@
 Release History
 ^^^^^^^^^^^^^^^
+2.x.x (2020-07-12)
++++++++++++++++++++
+
+* TraktException now properly inherits from Exception @mindigmarton (#122)
+* OAUTH token is automatically refreshed once a request is made within 2 days of the tokens expiration @twolaw (#121)
+* Users custom lists can now be properly read without causing an exception @tecknicaltom (#120)
+* Search queries are no longer slugified by default. Queries can be slugified by specifying `slugify=True` when running a search. (#116)
+
 2.13.0 (2020-04-26)
 +++++++++++++++++++
 

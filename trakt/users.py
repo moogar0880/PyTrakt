@@ -224,7 +224,7 @@ class User(object):
     @get
     def _get(self):
         """Get this :class:`User` from the trakt.tv API"""
-        data = yield 'users/{username}'.format(username=self.username)
+        data = yield 'users/{username}'.format(username=self.ids.get('slug'))
         self._build(data)
 
     def _build(self, data):
@@ -241,7 +241,7 @@ class User(object):
         display data either.
         """
         if self._followers is None:
-            data = yield 'users/{user}/followers'.format(user=self.username)
+            data = yield 'users/{user}/followers'.format(user=self.ids.get('slug'))
             self._followers = []
             for user in data:
                 user_data = user.pop('user')
@@ -258,7 +258,7 @@ class User(object):
         that are protected won't display data either.
         """
         if self._following is None:
-            data = yield 'users/{user}/following'.format(user=self.username)
+            data = yield 'users/{user}/following'.format(user=self.ids.get('slug'))
             self._following = []
             for user in data:
                 user_data = user.pop('user')
@@ -277,7 +277,7 @@ class User(object):
         """
         if self._friends is None:
             self._friends = []
-            data = yield 'users/{user}/friends'.format(user=self.username)
+            data = yield 'users/{user}/friends'.format(user=self.ids.get('slug'))
             for user in data:
                 user_data = user.pop('user')
                 date = user.pop('friends_at')
@@ -293,13 +293,13 @@ class User(object):
         """
         if self._lists is None:
             data = yield 'users/{username}/lists'.format(
-                username=self.username
+                username=self.ids.get('slug')
             )
             for ul in data:
                 if "user" in ul:
                     # user will be replaced with the self User object
                     del ul["user"]
-            self._lists = [UserList(creator=self.username, user=self,
+            self._lists = [UserList(creator=self.ids.get('slug'), user=self,
                            **extract_ids(ul)) for ul in data]
         yield self._lists
 
@@ -310,7 +310,7 @@ class User(object):
         """
         if self._show_watchlist is None:
             data = yield 'users/{username}/watchlist/shows'.format(
-                username=self.username,
+                username=self.ids.get('slug'),
             )
             self._show_watchlist = []
             for show in data:
@@ -328,7 +328,7 @@ class User(object):
         """
         if self._movie_watchlist is None:
             data = yield 'users/{username}/watchlist/movies'.format(
-                username=self.username,
+                username=self.ids.get('slug'),
             )
             self._movie_watchlist = []
             for movie in data:
@@ -347,7 +347,7 @@ class User(object):
         """
         if self._movie_collection is None:
             ext = 'users/{username}/collection/movies?extended=metadata'
-            data = yield ext.format(username=self.username)
+            data = yield ext.format(username=self.ids.get('slug'))
             self._movie_collection = []
             for movie in data:
                 mov = movie.pop('movie')
@@ -364,7 +364,7 @@ class User(object):
         """
         if self._show_collection is None:
             ext = 'users/{username}/collection/shows?extended=metadata'
-            data = yield ext.format(username=self.username)
+            data = yield ext.format(username=self.ids.get('slug'))
             self._show_collection = []
             for show in data:
                 s = show.pop('show')
@@ -383,7 +383,7 @@ class User(object):
         """
         if self._watched_movies is None:
             data = yield 'users/{user}/watched/movies'.format(
-                user=self.username
+                user=self.ids.get('slug')
             )
             self._watched_movies = []
             for movie in data:
@@ -401,7 +401,7 @@ class User(object):
         """
         if self._watched_shows is None:
             data = yield 'users/{user}/watched/shows'.format(
-                user=self.username
+                user=self.ids.get('slug')
             )
             self._watched_shows = []
             for show in data:
@@ -419,7 +419,7 @@ class User(object):
         will be returned. Protected users won't return any data unless you are
         friends.
         """
-        data = yield 'users/{user}/watching'.format(user=self.username)
+        data = yield 'users/{user}/watching'.format(user=self.ids.get('slug'))
 
         # if a user isn't watching anything, trakt returns a 204
         if data is None or data == '':
@@ -450,7 +450,7 @@ class User(object):
         :class:`User`'s won't return any data unless you are friends. To view
         your own private lists, you will need to authenticate as yourself.
         """
-        return UserList.get(title, self.username)
+        return UserList.get(title, self.ids.get('slug'))
 
     @get
     def get_ratings(self, media_type='movies', rating=None):
@@ -461,7 +461,7 @@ class User(object):
             'movies', 'shows', 'seasons', 'episodes'
         :param rating: Optional rating between 1 and 10
         """
-        uri = 'users/{user}/ratings/{type}'.format(user=self.username,
+        uri = 'users/{user}/ratings/{type}'.format(user=self.ids.get('slug'),
                                                    type=media_type)
         if rating is not None:
             uri += '/{rating}'.format(rating=rating)
@@ -474,16 +474,16 @@ class User(object):
         """Returns stats about the movies, shows, and episodes a user has
         watched and collected
         """
-        data = yield 'users/{user}/stats'.format(user=self.username)
+        data = yield 'users/{user}/stats'.format(user=self.ids.get('slug'))
         yield data
 
     def follow(self):
         """Follow this :class:`User`"""
-        follow(self.username)
+        follow(self.ids.get('slug'))
 
     def unfollow(self):
         """Unfollow this :class:`User`, if you already follow them"""
-        unfollow(self.username)
+        unfollow(self.ids.get('slug'))
 
     def __str__(self):
         """String representation of a :class:`User`"""

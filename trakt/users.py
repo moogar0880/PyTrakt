@@ -224,7 +224,7 @@ class User(object):
     @get
     def _get(self):
         """Get this :class:`User` from the trakt.tv API"""
-        data = yield 'users/{username}'.format(username=self.ids.get('slug'))
+        data = yield 'users/{username}'.format(username=slugify(self.username))
         self._build(data)
 
     def _build(self, data):

@@ -241,7 +241,9 @@ class User(object):
         display data either.
         """
         if self._followers is None:
-            data = yield 'users/{user}/followers'.format(user=self.ids.get('slug'))
+            data = yield 'users/{user}/followers'.format(
+                user=self.ids.get('slug')
+            )
             self._followers = []
             for user in data:
                 user_data = user.pop('user')
@@ -258,7 +260,9 @@ class User(object):
         that are protected won't display data either.
         """
         if self._following is None:
-            data = yield 'users/{user}/following'.format(user=self.ids.get('slug'))
+            data = yield 'users/{user}/following'.format(
+                user=self.ids.get('slug')
+            )
             self._following = []
             for user in data:
                 user_data = user.pop('user')
@@ -277,7 +281,9 @@ class User(object):
         """
         if self._friends is None:
             self._friends = []
-            data = yield 'users/{user}/friends'.format(user=self.ids.get('slug'))
+            data = yield 'users/{user}/friends'.format(
+                user=self.ids.get('slug')
+            )
             for user in data:
                 user_data = user.pop('user')
                 date = user.pop('friends_at')

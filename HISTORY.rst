@@ -1,6 +1,11 @@
 Release History
 ^^^^^^^^^^^^^^^
-2.x.x (2020-07-12)
+2.14.1 (2020-09-23)
++++++++++++++++++++
+
+* Ensure that only trakt username slugs are only used when forming URLs @twolaw (#128)
+
+2.14.0 (2020-07-12)
 +++++++++++++++++++
 
 * TraktException now properly inherits from Exception @mindigmarton (#122)

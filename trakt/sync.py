@@ -5,11 +5,12 @@ from datetime import datetime
 from trakt.core import get, post, delete
 from trakt.utils import slugify, extract_ids, timestamp
 
+
 __author__ = 'Jon Nappi'
-__all__ = ['Scrobbler', 'comment', 'rate', 'add_to_history',
-           'add_to_watchlist', 'remove_from_history', 'remove_from_watchlist',
-           'add_to_collection', 'remove_from_collection', 'search',
-           'search_by_id']
+__all__ = ['Scrobbler', 'comment', 'rate', 'add_to_history', 'get_collection',
+           'get_watchlist', 'add_to_watchlist', 'remove_from_history',
+           'remove_from_watchlist', 'add_to_collection', 'remove_from_collection',
+           'search', 'search_by_id']
 
 
 @post
@@ -30,7 +31,8 @@ def comment(media, comment_body, spoiler=False, review=False):
         review = True
     data = dict(comment=comment_body, spoiler=spoiler, review=review)
     data.update(media.to_json_singular())
-    yield 'comments', data
+    result = yield 'comments', data
+    yield result
 
 
 @post
@@ -48,7 +50,8 @@ def rate(media, rating, rated_at=None):
 
     data = dict(rating=rating, rated_at=timestamp(rated_at))
     data.update(media.ids)
-    yield 'sync/ratings', {media.media_type: [data]}
+    result = yield 'sync/ratings', {media.media_type: [data]}
+    yield result
 
 
 @post
@@ -65,53 +68,96 @@ def add_to_history(media, watched_at=None):
 
     data = dict(watched_at=timestamp(watched_at))
     data.update(media.ids)
-    yield 'sync/history', {media.media_type: [data]}
+    result = yield 'sync/history', {media.media_type: [data]}
+    yield result
 
 
 @post
 def add_to_watchlist(media):
-    """Add a :class:`TVShow` to your watchlist
-
-    :param media: The :class:`TVShow` object to add to your watchlist
+    """Add a :class:`Movie`, :class:`TVShow`, or :class:`TVEpisode`
+        to your watchlist
+    :param media: Supports both the PyTrakt :class:`Movie`, :class:`TVShow`, etc.
+        But also supports passing custom json structures.
     """
-    yield 'sync/watchlist', media.to_json()
+    from trakt.tv import TVEpisode, TVSeason, TVShow
+    from trakt.movies import Movie
+    if isinstance(media, (TVEpisode, TVSeason, TVShow, Movie)):
+        media_object = media.to_json()
+    else:
+        media_object = media
+
+    result = yield 'sync/watchlist', media_object
+    yield result
 
 
 @post
 def remove_from_history(media):
     """Remove the specified media object from your history
 
-    :param media: The media object to remove from your history
+    :param media: Supports both the PyTrakt :class:`Movie`, :class:`TVShow`, etc.
+        But also supports passing custom json structures.
     """
-    yield 'sync/history/remove', media.to_json()
+    from trakt.tv import TVEpisode, TVSeason, TVShow
+    from trakt.movies import Movie
+    if isinstance(media, (TVEpisode, TVSeason, TVShow, Movie)):
+        media_object = media.to_json()
+    else:
+        media_object = media
+
+    result = yield 'sync/history/remove', media_object
+    yield result
 
 
 @post
-def remove_from_watchlist(media):
-    """Remove a :class:`TVShow` from your watchlist
-
-    :param media: The :class:`TVShow` to remove from your watchlist
+def remove_from_watchlist(media=None):
+    """Remove a :class:`TVShow` from your watchlist.
+    :param media: Supports both the PyTrakt :class:`Movie`, :class:`TVShow`, etc.
+        But also supports passing custom json structures.
     """
-    yield 'sync/watchlist/remove', media.to_json()
+    from trakt.tv import TVEpisode, TVSeason, TVShow
+    from trakt.movies import Movie
+    if isinstance(media, (TVEpisode, TVSeason, TVShow, Movie)):
+        media_object = media.to_json()
+    else:
+        media_object = media
+
+    result = yield 'sync/watchlist/remove', media_object
+    yield result
 
 
 @post
 def add_to_collection(media):
     """Add a :class:`Movie`, :class:`TVShow`, or :class:`TVEpisode` to your
     collection
-
-    :param media: The media object to collect
+    :param media: Supports both the PyTrakt :class:`Movie`, :class:`TVShow`, etc.
+        But also supports passing custom json structures.
     """
-    yield 'sync/collection', media.to_json()
+    from trakt.tv import TVEpisode, TVSeason, TVShow
+    from trakt.movies import Movie
+    if isinstance(media, (TVEpisode, TVSeason, TVShow, Movie)):
+        media_object = media.to_json()
+    else:
+        media_object = media
+
+    result = yield 'sync/collection', media_object
+    yield result
 
 
 @post
 def remove_from_collection(media):
-    """Remove a media item from your collection
-
-    :param media: The media object to remove from your collection
+    """Remove a :class:`TVShow` from your collection
+    :param media: Supports both the PyTrakt :class:`Movie`, :class:`TVShow`, etc.
+        But also supports passing custom json structures.
     """
-    yield 'sync/collection/remove', media.to_json()
+    from trakt.tv import TVEpisode, TVSeason, TVShow
+    from trakt.movies import Movie
+    if isinstance(media, (TVEpisode, TVSeason, TVShow, Movie)):
+        media_object = media.to_json()
+    else:
+        media_object = media
+
+    result = yield 'sync/collection/remove', media_object
+    yield result
 
 
 def search(query, search_type='movie', year=None, slugify_query=False):
@@ -150,7 +196,7 @@ def get_search_results(query, search_type=None, slugify_query=False):
         search_type = ['movie', 'show', 'episode', 'person']
 
     # If requested, slugify the query prior to running the search
-    if slugify:
+    if slugify_query:
         query = slugify(query)
 
     uri = 'search/{type}?query={query}'.format(
@@ -218,7 +264,7 @@ def search_by_id(query, id_type='imdb', media_type=None, slugify_query=False):
         media_type = media_types.get(source, None)
 
     # If requested, slugify the query prior to running the search
-    if slugify:
+    if slugify_query:
         query = slugify(query)
 
     # If media_type is still none, don't add it as a parameter to the search
@@ -239,7 +285,7 @@ def search_by_id(query, id_type='imdb', media_type=None, slugify_query=False):
             from trakt.tv import TVEpisode
             show = d.pop('show')
             extract_ids(d['episode'])
-            results.append(TVEpisode(show['title'], **d['episode']))
+            results.append(TVEpisode(show, **d['episode']))
         elif 'movie' in d:
             from trakt.movies import Movie
             results.append(Movie(**d.pop('movie')))
@@ -252,6 +298,121 @@ def search_by_id(query, id_type='imdb', media_type=None, slugify_query=False):
     yield results
 
 
+@get
+def get_watchlist(list_type=None, sort=None):
+    """
+    Get a watchlist.
+
+    optionally with a filter for a specific item type.
+    :param list_type: Optional Filter by a specific type.
+        Possible values: movies, shows, seasons or episodes.
+    :param sort: Optional sort. Only if the type is also sent.
+        Possible values: rank, added, released or title.
+    """
+    valid_type = ('movies', 'shows', 'seasons', 'episodes')
+    valid_sort = ('rank', 'added', 'released', 'title')
+
+    if list_type and list_type not in valid_type:
+        raise ValueError('list_type must be one of {}'.format(valid_type))
+
+    if sort and sort not in valid_sort:
+        raise ValueError('sort must be one of {}'.format(valid_sort))
+
+    uri = 'sync/watchlist'
+    if list_type:
+        uri += '/{}'.format(list_type)
+
+    if list_type and sort:
+        uri += '/{}'.format(sort)
+
+    data = yield uri
+    results = []
+    for d in data:
+        if 'episode' in d:
+            from trakt.tv import TVEpisode
+            show = d.pop('show')
+            extract_ids(d['episode'])
+            results.append(TVEpisode(show, **d['episode']))
+        elif 'movie' in d:
+            from trakt.movies import Movie
+            results.append(Movie(**d.pop('movie')))
+        elif 'show' in d:
+            from trakt.tv import TVShow
+            results.append(TVShow(**d.pop('show')))
+
+    yield results
+
+
+@get
+def get_watched(list_type=None, extended=None):
+    """Returns all movies or shows a user has watched sorted by most plays
+
+    :param list_type: Optional Filter by a specific type.
+        Possible values: movies, shows, seasons or episodes.
+    :param extended: Optional value for requesting extended information.
+    """
+    valid_type = ('movies', 'shows', 'seasons', 'episodes')
+
+    if list_type and list_type not in valid_type:
+        raise ValueError('list_type must be one of {}'.format(valid_type))
+
+    uri = 'sync/watchlist'
+    if list_type:
+        uri += '/{}'.format(list_type)
+
+    if list_type == 'shows' and extended:
+        uri += '?extended={extended}'.format(extended=extended)
+
+    data = yield uri
+    results = []
+    for d in data:
+        if 'movie' in d:
+            from trakt.movies import Movie
+            results.append(Movie(**d.pop('movie')))
+        elif 'show' in d:
+            from trakt.tv import TVShow
+            results.append(TVShow(**d.pop('show')))
+
+    yield results
+
+
+@get
+def get_collection(list_type=None, extended=None):
+    """
+    Get all collected items in a user's collection.
+
+    A collected item indicates availability to watch digitally
+    or on physical media.
+
+    :param list_type: Optional Filter by a specific type.
+        Possible values: movies or shows.
+    :param extended: Optional value for requesting extended information.
+    """
+    valid_type = ('movies', 'shows')
+
+    if list_type and list_type not in valid_type:
+        raise ValueError('list_type must be one of {}'.format(valid_type))
+
+    uri = 'sync/watchlist'
+    if list_type:
+        uri += '/{}'.format(list_type)
+
+    if extended:
+        uri += '?extended={extended}'.format(extended=extended)
+
+    data = yield uri
+    results = []
+    for d in data:
+        if 'movie' in d:
+            from trakt.movies import Movie
+            results.append(Movie(**d.pop('movie')))
+        elif 'show' in d:
+            from trakt.tv import TVShow
+            results.append(TVShow(**d.pop('show')))
+
+    yield results
+
+
 @post
 def checkin_media(media, app_version, app_date, message="", sharing=None,
                   venue_id="", venue_name=""):
@@ -260,7 +421,8 @@ def checkin_media(media, app_version, app_date, message="", sharing=None,
     payload = dict(app_version=app_version, app_date=app_date, sharing=sharing,
                    message=message, venue_id=venue_id, venue_name=venue_name)
     payload.update(media.to_json_singular())
-    yield "checkin", payload
+    result = yield "checkin", payload
+    yield result
 
 
 @delete
@@ -321,8 +483,6 @@ class Scrobbler(object):
         """Handle actually posting the scrobbling data to trakt
 
         :param uri: The uri to post to
-        :param args: Any additional data to post to trakt along with the
-            generic scrobbling data
         """
         payload = dict(progress=self.progress, app_version=self.version,
                        date=self.date)

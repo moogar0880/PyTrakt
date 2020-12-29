@@ -18,7 +18,7 @@ class Calendar(object):
     """
     url = None
 
-    def __init__(self, date=None, days=7):
+    def __init__(self, date=None, days=7, extended=None):
         """Create a new :class:`Calendar` object
 
         :param date: Start date of this :class:`Calendar` in the format Ymd
@@ -27,7 +27,7 @@ class Calendar(object):
             days
         """
         super(Calendar, self).__init__()
-        self.date, self.days, self._calendar = date or now(), days, []
+        self.date, self.days, self._calendar, self.extended = date or now(), days, [], extended
         self._get()
 
     def __getitem__(self, key):
@@ -50,7 +50,10 @@ class Calendar(object):
     @property
     def ext(self):
         """construct the fully formatted url for this Calendar"""
-        return '/'.join([self.url, str(self.date), str(self.days)])
+        uri = '/'.join([self.url, str(self.date), str(self.days)])
+        if self.extended:
+            uri += '?extended={extended}'.format(self.extended)
+        return uri
 
     @get
     def _get(self):

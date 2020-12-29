@@ -130,7 +130,9 @@ def played_shows(time_period='weekly', page=1, limit=10, extended=None):
 
 @get
 def watched_shows(time_period='weekly', page=1, limit=10, extended=None):
-    """The most watched (unique users) shows in the specified time period, defaulting to weekly.
+    """Return most watched (unique users) shows in the specified time period.
+
+    Defaulting to weekly.
     All stats are relative to the specific time period."""
     valid_time_period = ('daily', 'weekly', 'monthly', 'yearly', 'all')
     if time_period not in valid_time_period:
@@ -148,8 +150,10 @@ def watched_shows(time_period='weekly', page=1, limit=10, extended=None):
 
 @get
 def collected_shows(time_period='weekly', page=1, limit=10, extended=None):
-    """The most collected (unique users) shows in the specified time period, defaulting to weekly.
-    All stats are relative to the specific time period.."""
+    """Return most collected (unique users) shows in the specified time period.
+
+    Defaulting to weekly.
+    All stats are relative to the specific time period."""
     valid_time_period = ('daily', 'weekly', 'monthly', 'yearly', 'all')
     if time_period not in valid_time_period:
         raise ValueError('time_period must be one of {}'.format(valid_time_period))
@@ -166,8 +170,13 @@ def collected_shows(time_period='weekly', page=1, limit=10, extended=None):
 
 @get
 def anticipated_shows(page=1, limit=10, extended=None):
-    """The most anticipated shows based on the number of lists a show appears on."""
-    uri = 'shows/anticipated?page={page}&limit={limit}'.format(page=page, limit=limit)
+    """
+    Return most anticipated shows based on the number of lists
+        a show appears on.
+    """
+    uri = 'shows/anticipated?page={page}&limit={limit}'.format(
+        page=page, limit=limit
+    )
     if extended:
         uri += '&extended={extended}'.format(extended=extended)
     data = yield uri
@@ -175,7 +184,7 @@ def anticipated_shows(page=1, limit=10, extended=None):
 
 
 class TVShow(object):
-    """A Class representing a TV Show object"""
+    """A Class representing a TV Show object."""
 
     def __init__(self, title='', slug=None, **kwargs):
         super(TVShow, self).__init__()
@@ -195,7 +204,7 @@ class TVShow(object):
 
     @classmethod
     def search(cls, title, year=None):
-        """Perform a search for the specified *title*
+        """Perform a search for the specified *title*.
 
         :param title: The title to search for
         """

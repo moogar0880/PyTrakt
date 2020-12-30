@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """trakt.tv functional tests"""
+import pytest
 from trakt.core import Comment
 from trakt.people import Person
 from trakt.tv import (trending_shows, popular_shows, updated_shows, TVShow,
@@ -100,24 +101,37 @@ def test_show_ids():
     assert isinstance(got.ids, dict)
 
 
-def test_oneliners():
+@pytest.mark.parametrize('tvshow_fn,get_key', [
+        ('add_to_library', 'added'),
+        ('add_to_collection', 'added'),
+        ('add_to_watchlist', 'added'),
+        ('dismiss', 'skip'),
+        ('mark_as_seen', 'added'),
+        ('mark_as_unseen', 'deleted'),
+        ('remove_from_library', 'deleted'),
+        ('remove_from_collection', 'deleted'),
+        ('remove_from_watchlist', 'deleted')
+    ]
+)
+def test_oneliners(tvshow_fn, get_key):
     got = TVShow('Game of Thrones')
-    functions = [got.add_to_library, got.add_to_collection,
-                 got.add_to_watchlist, got.dismiss, got.mark_as_seen,
-                 got.mark_as_unseen, got.remove_from_library,
-                 got.remove_from_collection, got.remove_from_watchlist]
-    for fn in functions:
-        assert fn() is None
+    fn = getattr(got, tvshow_fn)
+    response = fn()
+    if get_key == 'skip':
+        # The @deleted method, does not give back a result.
+        assert response is None
+    elif get_key in ('added', 'deleted'):
+        assert response.get(get_key)
 
 
 def test_show_comment():
     got = TVShow('Game of Thrones')
-    got.comment('Test Comment Data')
+    assert got.comment('Test Comment Data').get('comment')
 
 
 def test_rate_show():
     got = TVShow('Game of Thrones')
-    got.rate(10)
+    assert got.rate(10)['added'] == {'episodes': 2, 'movies': 1, 'seasons': 1, 'shows': 1}
 
 
 def test_next_episode():

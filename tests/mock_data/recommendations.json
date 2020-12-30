@@ -16,7 +16,7 @@
     "recommendations/movies/922": {
         "DELETE": ""
     },
-    "recommendations/shows": {
+    "recommendations/shows?page=1&limit=10": {
         "GET": [
             {"title":"The Biggest Loser","year":2004,"ids":{"trakt":9,"slug":"the-biggest-loser","tvdb":75166,"imdb":"tt0429318","tmdb":579,"tvrage":null}},
             {"title":"Shark Tank","year":2009,"ids":{"trakt":36,"slug":"shark-tank","tvdb":100981,"imdb":"tt1442550","tmdb":30703,"tvrage":22610}},

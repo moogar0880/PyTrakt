@@ -1,11 +1,11 @@
 {
-    "shows/trending": {
+    "shows/trending?page=1&limit=10": {
         "GET": [
             {"watchers":541,"show":{"title":"Breaking Bad","year":2008,"ids":{"trakt":1,"slug":"breaking-bad","tvdb":81189,"imdb":"tt0903747","tmdb":1396,"tvrage":18164}}},
             {"watchers":432,"show":{"title":"The Walking Dead","year":2010,"ids":{"trakt":2,"slug":"the-walking-dead","tvdb":153021,"imdb":"tt1520211","tmdb":1402,"tvrage":25056}}}
         ]
     },
-    "shows/popular": {
+    "shows/popular?page=1&limit=10": {
         "GET": [
             {"title":"Community","year":2009,"ids":{"trakt":41,"slug":"community","tvdb":94571,"imdb":"tt1439629","tmdb":18347,"tvrage":22589}},
             {"title":"The Walking Dead","year":2010,"ids":{"trakt":2,"slug":"the-walking-dead","tvdb":153021,"imdb":"tt1520211","tmdb":1402,"tvrage":25056}},
@@ -19,7 +19,7 @@
             {"title":"Firefly","year":2002,"ids":{"trakt":329,"slug":"firefly","tvdb":78874,"imdb":"tt0303461","tmdb":1437,"tvrage":null}}
         ]
     },
-    "shows/played/weekly": {
+    "shows/played/weekly?page=1&limit=10": {
         "GET": [
             {"watcher_count":155291,"play_count":23542030,"collected_count":6635583,"collector_count":54953,"show":{"title":"The Big Bang Theory","year":2007,"ids":{"trakt":1409,"slug":"the-big-bang-theory","tvdb":80379,"imdb":"tt0898266","tmdb":1418,"tvrage":8511}}},
             {"watcher_count":100242,"play_count":19787304,"collected_count":4529880,"collector_count":32335,"show":{"title":"How I Met Your Mother","year":2005,"ids":{"trakt":1095,"slug":"how-i-met-your-mother","tvdb":75760,"imdb":"tt0460649","tmdb":1100,"tvrage":3918}}},
@@ -33,7 +33,7 @@
             {"watcher_count":203742,"play_count":8784154,"collected_count":2436824,"collector_count":73224,"show":{"title":"Game of Thrones","year":2011,"ids":{"trakt":1390,"slug":"game-of-thrones","tvdb":121361,"imdb":"tt0944947","tmdb":1399,"tvrage":24493}}}
         ]
     },
-    "shows/watched/weekly": {
+    "shows/watched/weekly?page=1&limit=10": {
         "GET": [
             {"watcher_count":203742,"play_count":8784154,"collected_count":2436824,"collector_count":73224,"show":{"title":"Game of Thrones","year":2011,"ids":{"trakt":1390,"slug":"game-of-thrones","tvdb":121361,"imdb":"tt0944947","tmdb":1399,"tvrage":24493}}},
             {"watcher_count":163097,"play_count":9945882,"collected_count":2423833,"collector_count":57617,"show":{"title":"The Walking Dead","year":2010,"ids":{"trakt":1393,"slug":"the-walking-dead","tvdb":153021,"imdb":"tt1520211","tmdb":1402,"tvrage":25056}}},
@@ -47,7 +47,7 @@
             {"watcher_count":83087,"play_count":2795758,"collected_count":881552,"collector_count":31982,"show":{"title":"Marvel's Agents of S.H.I.E.L.D.","year":2013,"ids":{"trakt":1394,"slug":"marvel-s-agents-of-s-h-i-e-l-d","tvdb":263365,"imdb":"tt2364582","tmdb":1403,"tvrage":32656}}}
         ]
     },
-    "shows/collected/weekly": {
+    "shows/collected/weekly?page=1&limit=1": {
         "GET": [
             {"watcher_count":56216,"play_count":19286818,"collected_count":7427018,"collector_count":23876,"show":{"title":"The Simpsons","year":1989,"ids":{"trakt":455,"slug":"the-simpsons","tvdb":71663,"imdb":"tt0096697","tmdb":456,"tvrage":6190}}},
             {"watcher_count":155291,"play_count":23542030,"collected_count":6635583,"collector_count":54953,"show":{"title":"The Big Bang Theory","year":2007,"ids":{"trakt":1409,"slug":"the-big-bang-theory","tvdb":80379,"imdb":"tt0898266","tmdb":1418,"tvrage":8511}}},
@@ -61,7 +61,7 @@
             {"watcher_count":54604,"play_count":8986802,"collected_count":2546116,"collector_count":20113,"show":{"title":"House","year":2004,"ids":{"trakt":1399,"slug":"house","tvdb":73255,"imdb":"tt0412142","tmdb":1408,"tvrage":3908}}}
         ]
     },
-    "shows/anticipated": {
+    "shows/anticipated?page=1&limit=10": {
         "GET": [
             {"list_count":5383,"show":{"title":"Supergirl","year":2015,"ids":{"trakt":99046,"slug":"supergirl","tvdb":295759,"imdb":"tt4016454","tmdb":62688,"tvrage":null}}},
             {"list_count":3132,"show":{"title":"Marvel's Jessica Jones","year":2015,"ids":{"trakt":79385,"slug":"marvel-s-jessica-jones","tvdb":284190,"imdb":"tt2357547","tmdb":38472,"tvrage":38797}}},
@@ -75,7 +75,7 @@
             {"list_count":838,"show":{"title":"Dr. Ken","year":2015,"ids":{"trakt":98913,"slug":"dr-ken-1969","tvdb":295557,"imdb":"tt3216608","tmdb":62776,"tvrage":37966}}}
         ]
     },
-    "shows/updates/2014-09-22": {
+    "shows/updates/2014-09-22?page=1&limit=10": {
         "GET": [
             {"updated_at":"2014-09-22T21:56:03.000Z","show":{"title":"Breaking Bad","year":2008,"ids":{"trakt":1,"slug":"breaking-bad","tvdb":81189,"imdb":"tt0903747","tmdb":1396,"tvrage":18164}}},
             {"updated_at":"2014-09-23T21:56:03.000Z","show":{"title":"The Walking Dead","year":2010,"ids":{"trakt":2,"slug":"the-walking-dead","tvdb":153021,"imdb":"tt1520211","tmdb":1402,"tvrage":25056}}}

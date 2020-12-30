@@ -99,7 +99,9 @@ def recommended_shows(time_period='weekly', page=1, limit=10, extended=None):
     All stats are relative to the specific time period."""
     valid_time_period = ('daily', 'weekly', 'monthly', 'yearly', 'all')
     if time_period not in valid_time_period:
-        raise ValueError('time_period must be one of {}'.format(valid_time_period))
+        raise ValueError('time_period must be one of {}'.format(
+            valid_time_period
+        ))
 
     uri = 'shows/recommended/{time_period}?page={page}&limit={limit}'.format(
         time_period=time_period, page=page, limit=limit
@@ -120,7 +122,9 @@ def played_shows(time_period='weekly', page=1, limit=10, extended=None):
             All stats are relative to the specific time period."""
     valid_time_period = ('daily', 'weekly', 'monthly', 'yearly', 'all')
     if time_period not in valid_time_period:
-        raise ValueError('time_period must be one of {}'.format(valid_time_period))
+        raise ValueError('time_period must be one of {}'.format(
+            valid_time_period
+        ))
 
     uri = 'shows/played/{time_period}?page={page}&limit={limit}'.format(
         time_period=time_period, page=page, limit=limit
@@ -140,7 +144,9 @@ def watched_shows(time_period='weekly', page=1, limit=10, extended=None):
     All stats are relative to the specific time period."""
     valid_time_period = ('daily', 'weekly', 'monthly', 'yearly', 'all')
     if time_period not in valid_time_period:
-        raise ValueError('time_period must be one of {}'.format(valid_time_period))
+        raise ValueError('time_period must be one of {}'.format(
+            valid_time_period
+        ))
 
     uri = 'shows/watched/{time_period}?page={page}&limit={limit}'.format(
         time_period=time_period, page=page, limit=limit

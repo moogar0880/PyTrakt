@@ -27,7 +27,10 @@ class Calendar(object):
             days
         """
         super(Calendar, self).__init__()
-        self.date, self.days, self._calendar, self.extended = date or now(), days, [], extended
+        self.date = date or now()
+        self.days = days
+        self._calendar = []
+        self.extended = extended
         self._get()
 
     def __getitem__(self, key):
@@ -52,7 +55,7 @@ class Calendar(object):
         """construct the fully formatted url for this Calendar"""
         uri = '/'.join([self.url, str(self.date), str(self.days)])
         if self.extended:
-            uri += '?extended={extended}'.format(self.extended)
+            uri += '?extended={extended}'.format(extended=self.extended)
         return uri
 
     @get

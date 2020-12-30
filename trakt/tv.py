@@ -235,7 +235,7 @@ class TVShow(object):
 
     @property
     def images_ext(self):
-        """Uri to retrieve additional image information"""
+        """Uri to retrieve additional image information."""
         return self.ext + '?extended=images'
 
     @property

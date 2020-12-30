@@ -399,17 +399,17 @@ class TVShow(object):
 
     def add_to_library(self):
         """Add this :class:`TVShow` to your library."""
-        add_to_collection(self)
+        return add_to_collection(self)
 
     add_to_collection = add_to_library
 
     def add_to_watchlist(self):
         """Add this :class:`TVShow` to your watchlist"""
-        add_to_watchlist(self)
+        return add_to_watchlist(self)
 
     def comment(self, comment_body, spoiler=False, review=False):
         """Add a comment (shout or review) to this :class:`Move` on trakt."""
-        comment(self, comment_body, spoiler, review)
+        return comment(self, comment_body, spoiler, review)
 
     def dismiss(self):
         """Dismiss this movie from showing up in Movie Recommendations"""
@@ -434,29 +434,29 @@ class TVShow(object):
     def mark_as_seen(self, watched_at=None):
         """Add this :class:`TVShow`, watched outside of trakt, to your library.
         """
-        add_to_history(self, watched_at)
+        return add_to_history(self, watched_at)
 
     def mark_as_unseen(self):
         """Remove this :class:`TVShow`, watched outside of trakt, from your
         library.
         """
-        remove_from_history(self)
+        return remove_from_history(self)
 
     def rate(self, rating):
         """Rate this :class:`TVShow` on trakt. Depending on the current users
         settings, this may also send out social updates to facebook, twitter,
         tumblr, and path.
         """
-        rate(self, rating)
+        return rate(self, rating)
 
     def remove_from_library(self):
         """Remove this :class:`TVShow` from your library."""
-        remove_from_collection(self)
+        return remove_from_collection(self)
 
     remove_from_collection = remove_from_library
 
     def remove_from_watchlist(self):
-        remove_from_watchlist(self)
+        return remove_from_watchlist(self)
 
     def to_json_singular(self):
         return {'show': {

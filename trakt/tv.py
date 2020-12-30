@@ -13,9 +13,10 @@ from trakt.people import Person
 
 __author__ = 'Jon Nappi'
 __all__ = ['dismiss_recommendation', 'get_recommended_shows', 'genres',
-           'popular_shows', 'trending_shows', 'updated_shows', 'recommmended_shows', 
-           'played_shows', 'watched_shows', 'collected_shows', 'anticipated_shows',
-           'TVShow', 'TVEpisode', 'TVSeason', 'Translation']
+           'popular_shows', 'trending_shows', 'updated_shows',
+           'recommended_shows', 'played_shows', 'watched_shows',
+           'collected_shows', 'anticipated_shows', 'TVShow', 'TVEpisode',
+           'TVSeason', 'Translation']
 
 
 Translation = namedtuple('Translation', ['title', 'overview', 'language'])
@@ -93,7 +94,8 @@ def updated_shows(timestamp=None, page=1, limit=10, extended=None):
 
 @get
 def recommended_shows(time_period='weekly', page=1, limit=10, extended=None):
-    """The most recommended shows in the specified time period, defaulting to weekly.
+    """The most recommended shows in the specified time period,
+        defaulting to weekly.
     All stats are relative to the specific time period."""
     valid_time_period = ('daily', 'weekly', 'monthly', 'yearly', 'all')
     if time_period not in valid_time_period:
@@ -112,8 +114,10 @@ def recommended_shows(time_period='weekly', page=1, limit=10, extended=None):
 @get
 def played_shows(time_period='weekly', page=1, limit=10, extended=None):
     """the most played shows.
-    (a single user can watch multiple episodes multiple times) shows in the specified time period,
-    defaulting to weekly. All stats are relative to the specific time period."""
+    (a single user can watch multiple episodes multiple times)
+            shows in the specified time period,
+            defaulting to weekly.
+            All stats are relative to the specific time period."""
     valid_time_period = ('daily', 'weekly', 'monthly', 'yearly', 'all')
     if time_period not in valid_time_period:
         raise ValueError('time_period must be one of {}'.format(valid_time_period))
@@ -156,7 +160,9 @@ def collected_shows(time_period='weekly', page=1, limit=10, extended=None):
     All stats are relative to the specific time period."""
     valid_time_period = ('daily', 'weekly', 'monthly', 'yearly', 'all')
     if time_period not in valid_time_period:
-        raise ValueError('time_period must be one of {}'.format(valid_time_period))
+        raise ValueError('time_period must be one of {}'.format(
+            valid_time_period
+        ))
 
     uri = 'shows/collected/{time_period}?page={page}&limit={limit}'.format(
         time_period=time_period, page=page, limit=limit

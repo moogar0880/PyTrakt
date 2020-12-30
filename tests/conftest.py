@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 import json
 import os
-import pytest
-import trakt
+import sys
 from copy import deepcopy
+
+import trakt
+
 
 MOCK_DATA_DIR = os.path.abspath('tests/mock_data')
 
@@ -24,13 +26,20 @@ MOCK_DATA_FILES = [
     os.path.join(MOCK_DATA_DIR, 'users.json'),
 ]
 
+# Need a way of open files in py3 with encoding utf-8. Or else tests will fail
+# on windows.
+if sys.version_info.major > 2:
+    do_open = lambda filename: open(filename, encoding='utf-8')
+else:
+    do_open = lambda filename: open(filename)
+
 
 class MockCore(trakt.core.Core):
     def __init__(self, *args, **kwargs):
         super(MockCore, self).__init__(*args, **kwargs)
         self.mock_data = {}
         for mock_file in MOCK_DATA_FILES:
-            with open(mock_file, encoding='utf-8') as f:
+            with do_open(mock_file) as f:
                 self.mock_data.update(json.load(f))
 
     def _handle_request(self, method, url, data=None):

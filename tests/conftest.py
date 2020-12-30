@@ -30,7 +30,7 @@ class MockCore(trakt.core.Core):
         super(MockCore, self).__init__(*args, **kwargs)
         self.mock_data = {}
         for mock_file in MOCK_DATA_FILES:
-            with open(mock_file) as f:
+            with open(mock_file, encoding='utf-8') as f:
                 self.mock_data.update(json.load(f))
 
     def _handle_request(self, method, url, data=None):

@@ -63,6 +63,7 @@ including example usages.
    tv.rst
    users.rst
    core.rst
+   sync.rst
 
 
 Indices and tables

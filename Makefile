@@ -44,7 +44,7 @@ publish:
 	rm -fr build dist .egg $(PACKAGE).egg-info
 
 .PHONY: style
-style:
+style: clean init
 ifeq ($(strip $(LINT_RESULTS)),)
 	flake8 $(PACKAGE)
 else
@@ -53,7 +53,7 @@ else
 endif
 
 .PHONY: test
-test: clean
+test: clean init
 ifeq ($(strip $(TEST_RESULTS)),)
 	py.test -s --verbose -p no:cacheprovider tests
 else

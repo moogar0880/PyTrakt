@@ -1,10 +1,19 @@
 PACKAGE=trakt
 
+# TEST_RESULTS defines the directory to which test results will be saved.
+TEST_RESULTS=
+
+# LINT_RESULTS defines the directory to which linter results will be saved.
+LINT_RESULTS=
+
+
 .PHONY: ci
 ci: init style test
 
 .PHONY: clean
 clean:
+	rm -rf dist/
+	rm -rf build/
 	rm -rf $(PACKAGE)/*.pyc
 	rm -rf $(PACKAGE)/__pycache__
 	rm -rf $(PACKAGE)/__pycache__
@@ -27,10 +36,6 @@ docs:
 init:
 	pip install -r testing-requirements.txt
 
-.PHONY: labels
-labels:
-	ghlabels -remove -file .github/labels.json
-
 .PHONY: publish
 publish:
 	pip install -U pip setuptools wheel twine
@@ -40,8 +45,18 @@ publish:
 
 .PHONY: style
 style:
+ifeq ($(strip $(LINT_RESULTS)),)
 	flake8 $(PACKAGE)
+else
+	mkdir -p $(LINT_RESULTS)
+	flake8 $(PACKAGE) > $(LINT_RESULTS)/linter.out
+endif
 
 .PHONY: test
 test: clean
+ifeq ($(strip $(TEST_RESULTS)),)
 	py.test -s --verbose -p no:cacheprovider tests
+else
+	mkdir -p $(LINT_RESULTS)
+	py.test -s --verbose -p no:cacheprovider tests > $(TEST_RESULTS)/tests.out
+endif

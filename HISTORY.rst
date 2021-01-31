@@ -1,5 +1,17 @@
 Release History
 ^^^^^^^^^^^^^^^
+2.15.0 (2021-01-31)
++++++++++++++++++++
+
+* Add documentation for the sync module @p0psicles (#133)
+* Added option for fetching extended calendar objects and cleaned up calendar building logic @p0psicles (#133)
+* Added load_config function for standalone authentication loading @p0psicles (#133)
+* Ensure sync functions return their responses and allow for raw json data to be used when syncing @p0psicles (#133)
+* Added sync.get_watchlist, sync.get_watched, and sync.get_collection functions @p0psicles (#133)
+* Added pagination options to tv.get_recommended_shows, tv.popular_shows, tv.trending_shows, and tv.updated_shows @p0psicles (#133)
+* Added tv.recommended_shows, tv.played_shows, tv.watched_shows, tv.collected_shows, and tv.anticipated_shows functions @p0psicles (#133)
+* Added TVShow.progress attribute for fetching the progress through a TVShow instance @p0psicles (#133)
+
 2.14.1 (2020-09-23)
 +++++++++++++++++++
 

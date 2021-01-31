@@ -13,8 +13,10 @@ from trakt.people import Person
 
 __author__ = 'Jon Nappi'
 __all__ = ['dismiss_recommendation', 'get_recommended_shows', 'genres',
-           'popular_shows', 'trending_shows', 'updated_shows', 'TVShow',
-           'TVEpisode', 'TVSeason', 'Translation']
+           'popular_shows', 'trending_shows', 'updated_shows',
+           'recommended_shows', 'played_shows', 'watched_shows',
+           'collected_shows', 'anticipated_shows', 'TVShow', 'TVEpisode',
+           'TVSeason', 'Translation']
 
 
 Translation = namedtuple('Translation', ['title', 'overview', 'language'])
@@ -29,16 +31,15 @@ def dismiss_recommendation(title=None):
 
 
 @get
-def get_recommended_shows():
+def get_recommended_shows(page=1, limit=10):
     """Get a list of :class:`TVShow`'s recommended based on your watching
     history and your friends. Results are returned with the top recommendation
     first.
     """
-    data = yield 'recommendations/shows'
-    shows = []
-    for show in data:
-        shows.append(TVShow(**show))
-    yield shows
+    data = yield 'recommendations/shows?page={page}&limit={limit}'.format(
+        page=page, limit=limit
+    )
+    yield [TVShow(**show) for show in data]
 
 
 @get
@@ -49,45 +50,153 @@ def genres():
 
 
 @get
-def popular_shows():
-    data = yield 'shows/popular'
-    shows = []
-    for show in data:
-        data = show.get('ids', {})
-        extract_ids(data)
-        data['year'] = show['year']
-        shows.append(TVShow(show['title'], **data))
-    yield shows
+def popular_shows(page=1, limit=10, extended=None):
+    uri = 'shows/popular?page={page}&limit={limit}'.format(
+        page=page, limit=limit
+    )
+    if extended:
+        uri += '&extended={extended}'.format(extended=extended)
+
+    data = yield uri
+    yield [TVShow(**show) for show in data]
 
 
 @get
-def trending_shows():
+def trending_shows(page=1, limit=10, extended=None):
     """All :class:`TVShow`'s being watched right now"""
-    data = yield 'shows/trending'
-    to_ret = []
-    for show in data:
-        show_data = show.pop('show')
-        ids = show_data.pop('ids')
-        extract_ids(ids)
-        show_data['watchers'] = show.get('watchers')
-        to_ret.append(TVShow(**show_data))
-    yield to_ret
+    uri = 'shows/trending?page={page}&limit={limit}'.format(
+        page=page, limit=limit
+    )
+    if extended:
+        uri += '&extended={extended}'.format(extended=extended)
+
+    data = yield uri
+    yield [TVShow(**show['show']) for show in data]
 
 
 @get
-def updated_shows(timestamp=None):
+def updated_shows(timestamp=None, page=1, limit=10, extended=None):
     """All :class:`TVShow`'s updated since *timestamp* (PST). To establish a
     baseline timestamp, you can use the server/time method. It's recommended to
     store the timestamp so you can be efficient in using this method.
     """
     y_day = datetime.now() - timedelta(1)
     ts = timestamp or int(y_day.strftime('%s')) * 1000
-    data = yield 'shows/updates/{start_date}'.format(start_date=ts)
-    yield [TVShow(**d['show']) for d in data]
+    uri = 'shows/updates/{start_date}?page={page}&limit={limit}'.format(
+        start_date=ts, page=page, limit=limit
+    )
+    if extended:
+        uri += '&extended={extended}'.format(extended=extended)
+
+    data = yield uri
+    yield [TVShow(**show) for show in data]
+
+
+@get
+def recommended_shows(time_period='weekly', page=1, limit=10, extended=None):
+    """The most recommended shows in the specified time period,
+        defaulting to weekly.
+    All stats are relative to the specific time period."""
+    valid_time_period = ('daily', 'weekly', 'monthly', 'yearly', 'all')
+    if time_period not in valid_time_period:
+        raise ValueError('time_period must be one of {}'.format(
+            valid_time_period
+        ))
+
+    uri = 'shows/recommended/{time_period}?page={page}&limit={limit}'.format(
+        time_period=time_period, page=page, limit=limit
+    )
+    if extended:
+        uri += '&extended={extended}'.format(extended=extended)
+
+    data = yield uri
+    yield [TVShow(**show['show']) for show in data]
+
+
+@get
+def played_shows(time_period='weekly', page=1, limit=10, extended=None):
+    """the most played shows.
+    (a single user can watch multiple episodes multiple times)
+            shows in the specified time period,
+            defaulting to weekly.
+            All stats are relative to the specific time period."""
+    valid_time_period = ('daily', 'weekly', 'monthly', 'yearly', 'all')
+    if time_period not in valid_time_period:
+        raise ValueError('time_period must be one of {}'.format(
+            valid_time_period
+        ))
+
+    uri = 'shows/played/{time_period}?page={page}&limit={limit}'.format(
+        time_period=time_period, page=page, limit=limit
+    )
+    if extended:
+        uri += '&extended={extended}'.format(extended=extended)
+
+    data = yield uri
+    yield [TVShow(**show['show']) for show in data]
+
+
+@get
+def watched_shows(time_period='weekly', page=1, limit=10, extended=None):
+    """Return most watched (unique users) shows in the specified time period.
+
+    Defaulting to weekly.
+    All stats are relative to the specific time period."""
+    valid_time_period = ('daily', 'weekly', 'monthly', 'yearly', 'all')
+    if time_period not in valid_time_period:
+        raise ValueError('time_period must be one of {}'.format(
+            valid_time_period
+        ))
+
+    uri = 'shows/watched/{time_period}?page={page}&limit={limit}'.format(
+        time_period=time_period, page=page, limit=limit
+    )
+    if extended:
+        uri += '&extended={extended}'.format(extended=extended)
+
+    data = yield uri
+    yield [TVShow(**show['show']) for show in data]
+
+
+@get
+def collected_shows(time_period='weekly', page=1, limit=10, extended=None):
+    """Return most collected (unique users) shows in the specified time period.
+
+    Defaulting to weekly.
+    All stats are relative to the specific time period."""
+    valid_time_period = ('daily', 'weekly', 'monthly', 'yearly', 'all')
+    if time_period not in valid_time_period:
+        raise ValueError('time_period must be one of {}'.format(
+            valid_time_period
+        ))
+
+    uri = 'shows/collected/{time_period}?page={page}&limit={limit}'.format(
+        time_period=time_period, page=page, limit=limit
+    )
+    if extended:
+        uri += '&extended={extended}'.format(extended=extended)
+
+    data = yield uri
+    yield [TVShow(**show['show']) for show in data]
+
+
+@get
+def anticipated_shows(page=1, limit=10, extended=None):
+    """
+    Return most anticipated shows based on the number of lists
+        a show appears on.
+    """
+    uri = 'shows/anticipated?page={page}&limit={limit}'.format(
+        page=page, limit=limit
+    )
+    if extended:
+        uri += '&extended={extended}'.format(extended=extended)
+    data = yield uri
+    yield [TVShow(**show['show']) for show in data]
 
 
 class TVShow(object):
-    """A Class representing a TV Show object"""
+    """A Class representing a TV Show object."""
 
     def __init__(self, title='', slug=None, **kwargs):
         super(TVShow, self).__init__()
@@ -107,7 +216,7 @@ class TVShow(object):
 
     @classmethod
     def search(cls, title, year=None):
-        """Perform a search for the specified *title*
+        """Perform a search for the specified *title*.
 
         :param title: The title to search for
         """
@@ -138,7 +247,7 @@ class TVShow(object):
 
     @property
     def images_ext(self):
-        """Uri to retrieve additional image information"""
+        """Uri to retrieve additional image information."""
         return self.ext + '?extended=images'
 
     @property
@@ -173,6 +282,18 @@ class TVShow(object):
             user = User(**com.pop('user'))
             self._comments.append(Comment(user=user, **com))
         yield self._comments
+
+    @property
+    @get
+    def progress(self):
+        """
+        collection progress for a show including details on all aired
+        seasons and episodes.
+
+        The next_episode will be the next episode the user should collect,
+        if there are no upcoming episodes it will be set to null.
+        """
+        yield (self.ext + '/progress/collection')
 
     @property
     def crew(self):
@@ -290,17 +411,17 @@ class TVShow(object):
 
     def add_to_library(self):
         """Add this :class:`TVShow` to your library."""
-        add_to_collection(self)
+        return add_to_collection(self)
 
     add_to_collection = add_to_library
 
     def add_to_watchlist(self):
         """Add this :class:`TVShow` to your watchlist"""
-        add_to_watchlist(self)
+        return add_to_watchlist(self)
 
     def comment(self, comment_body, spoiler=False, review=False):
         """Add a comment (shout or review) to this :class:`Move` on trakt."""
-        comment(self, comment_body, spoiler, review)
+        return comment(self, comment_body, spoiler, review)
 
     def dismiss(self):
         """Dismiss this movie from showing up in Movie Recommendations"""
@@ -325,29 +446,29 @@ class TVShow(object):
     def mark_as_seen(self, watched_at=None):
         """Add this :class:`TVShow`, watched outside of trakt, to your library.
         """
-        add_to_history(self, watched_at)
+        return add_to_history(self, watched_at)
 
     def mark_as_unseen(self):
         """Remove this :class:`TVShow`, watched outside of trakt, from your
         library.
         """
-        remove_from_history(self)
+        return remove_from_history(self)
 
     def rate(self, rating):
         """Rate this :class:`TVShow` on trakt. Depending on the current users
         settings, this may also send out social updates to facebook, twitter,
         tumblr, and path.
         """
-        rate(self, rating)
+        return rate(self, rating)
 
     def remove_from_library(self):
         """Remove this :class:`TVShow` from your library."""
-        remove_from_collection(self)
+        return remove_from_collection(self)
 
     remove_from_collection = remove_from_library
 
     def remove_from_watchlist(self):
-        remove_from_watchlist(self)
+        return remove_from_watchlist(self)
 
     def to_json_singular(self):
         return {'show': {

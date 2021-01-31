@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 """trakt.sync functional tests"""
 from datetime import datetime
+
+import pytest
+
 from trakt.sync import (comment, rate, add_to_history, add_to_watchlist,
                         remove_from_history, remove_from_watchlist,
                         add_to_collection, remove_from_collection)
+
 
 
 class FakeMedia(object):
@@ -23,26 +27,29 @@ class FakeMedia(object):
 def test_create_comment():
     """test comment creation"""
     response = comment(FakeMedia(), 'This is a new comment', spoiler=True)
-    assert response is None
+    assert response.get('comment')
 
 
 def test_create_review():
     """verify that a review can be successfully created"""
     response = comment(FakeMedia(), 'This is a new comment', review=True)
-    assert response is None
+    assert response.get('comment')
 
 
 def test_forced_review():
     """verify that a comment is forced as a review if it's length is > 200"""
     response = comment(FakeMedia(), '*' * 201, review=False)
-    assert response is None
+    assert response.get('comment')
 
 
 def test_rating():
     timestamps = [datetime.now(), None]
     for timestamp in timestamps:
         response = rate(FakeMedia(), 10, timestamp)
-        assert response is None
+        assert response['added'] == {
+            'episodes': 2, 'movies': 1, 'seasons': 1, 'shows': 1
+        }
+        assert len(response['not_found']['movies']) == 1
 
 
 def test_add_to_history():
@@ -51,10 +58,15 @@ def test_add_to_history():
         response = add_to_history(FakeMedia(), timestamp)
 
 
-def test_oneliners():
+@pytest.mark.parametrize('fn,get_key', [
+        (add_to_watchlist, 'added'),
+        (remove_from_history, 'deleted'),
+        (remove_from_watchlist, 'deleted'),
+        (add_to_collection, 'added'),
+        (remove_from_collection, 'deleted')
+    ]
+)
+def test_oneliners(fn, get_key):
     media = FakeMedia()
-    functions = [add_to_watchlist, remove_from_history, remove_from_watchlist,
-                 add_to_collection, remove_from_collection]
-    for fn in functions:
-        response = fn(media)
-        assert response is None
+    response = fn(media)
+    assert response.get(get_key)

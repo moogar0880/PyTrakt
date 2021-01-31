@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
 import re
-import six
 import unicodedata
 from datetime import datetime
 
 __author__ = 'Jon Nappi'
-__all__ = ['slugify', 'airs_date', 'now', 'timestamp', 'extract_ids',
-           'unicode_safe']
+__all__ = ['slugify', 'airs_date', 'now', 'timestamp', 'extract_ids']
 
 
 def slugify(value):
@@ -16,8 +14,6 @@ def slugify(value):
 
     Adapted from django.utils.text.slugify
     """
-    if six.PY2 and isinstance(value, str):
-        value = unicode(value, 'utf-8')  # NOQA
     nfkd_form = unicodedata.normalize('NFKD', value)
     decoded = nfkd_form.encode('ascii', 'ignore').decode('utf-8')
     value = re.sub(r'[^\w\s-]', ' ', decoded).strip().lower()
@@ -57,9 +53,3 @@ def extract_ids(id_dict):
     """
     id_dict.update(id_dict.pop('ids', {}))
     return id_dict
-
-
-def unicode_safe(s):
-    if six.PY3:
-        return s
-    return s.encode('ascii', 'ignore').decode('ascii')

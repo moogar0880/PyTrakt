@@ -2,17 +2,16 @@
 """Objects, properties, and methods to be shared across other modules in the
 trakt package
 """
-from __future__ import print_function
 import json
 import logging
 import os
+from urllib.parse import urljoin
+
 import requests
-import six
 import sys
 import time
 from collections import namedtuple
 from functools import wraps
-from requests.compat import urljoin
 from requests_oauthlib import OAuth2Session
 from datetime import datetime, timedelta
 from trakt import errors
@@ -90,12 +89,12 @@ def _get_client_info(app_id=False):
     print('If you do not have a client ID and secret. Please visit the '
           'following url to create them.')
     print('http://trakt.tv/oauth/applications')
-    client_id = six.moves.input('Please enter your client id: ')
-    client_secret = six.moves.input('Please enter your client secret: ')
+    client_id = input('Please enter your client id: ')
+    client_secret = input('Please enter your client secret: ')
     if app_id:
         msg = 'Please enter your application ID ({default}): '.format(
             default=APPLICATION_ID)
-        user_input = six.moves.input(msg)
+        user_input = input(msg)
         if user_input:
             APPLICATION_ID = user_input
     return client_id, client_secret
@@ -106,6 +105,9 @@ def pin_auth(pin=None, client_id=None, client_secret=None, store=False):
 
     :param pin: Optional Trakt API PIN code. If one is not specified, you will
         be prompted to go generate one
+    :param client_id: The oauth client_id for authenticating to the trakt API.
+    :param client_secret: The oauth client_secret for authenticating to the
+        trakt API.
     :param store: Boolean flag used to determine if your trakt api auth data
         should be stored locally on the system. Default is :const:`False` for
         the security conscious
@@ -126,7 +128,7 @@ def pin_auth(pin=None, client_id=None, client_secret=None, store=False):
               'url and log in to generate one.')
         pin_url = 'https://trakt.tv/pin/{id}'.format(id=APPLICATION_ID)
         print(pin_url)
-        pin = six.moves.input('Please enter your PIN: ')
+        pin = input('Please enter your PIN: ')
     args = {'code': pin,
             'redirect_uri': REDIRECT_URI,
             'grant_type': 'authorization_code',
@@ -152,7 +154,7 @@ def _terminal_oauth_pin(authorization_url):
     print('Please go here and authorize,', authorization_url)
 
     # Get the authorization verifier code from the callback url
-    response = six.moves.input('Paste the Code returned here: ')
+    response = input('Paste the Code returned here: ')
     return response
 
 
@@ -210,9 +212,6 @@ def get_device_code(client_id=None, client_secret=None):
     authentication-devices/device-code
     :param client_id: Your Trakt OAuth Application's Client ID
     :param client_secret: Your Trakt OAuth Application's Client Secret
-    :param store: Boolean flag used to determine if your trakt api auth data
-        should be stored locally on the system. Default is :const:`False` for
-        the security conscious
     :return: Your OAuth device code.
     """
     global CLIENT_ID, CLIENT_SECRET, OAUTH_TOKEN

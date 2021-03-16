@@ -1,5 +1,12 @@
 Release History
 ^^^^^^^^^^^^^^^
+3.0.0 (2021-03-XX)
++++++++++++++++++++
+
+* Drop python 2 support + update dependencies (#137)
+* Drop Travis CI in favor of CircleCI (#137)
+* Update in-code documentation to match existing APIs (#137)
+
 2.15.0 (2021-01-31)
 +++++++++++++++++++
 

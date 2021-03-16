@@ -409,7 +409,7 @@ def _refresh_token(s):
             "refresh_token is invalid"
         )
     elif response.status_code in s.error_map:
-        raise s.error_map[response.status_code]()
+        raise s.error_map[response.status_code](response)
 
 
 def load_config():
@@ -521,7 +521,7 @@ class Core(object):
                                         headers=HEADERS)
         self.logger.debug('RESPONSE [%s] (%s): %s', method, url, str(response))
         if response.status_code in self.error_map:
-            raise self.error_map[response.status_code]()
+            raise self.error_map[response.status_code](response)
         elif response.status_code == 204:  # HTTP no content
             return None
         json_data = json.loads(response.content.decode('UTF-8', 'ignore'))

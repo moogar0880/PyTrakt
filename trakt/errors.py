@@ -15,6 +15,9 @@ class TraktException(Exception):
     """Base Exception type for trakt module"""
     http_code = message = None
 
+    def __init__(self, response=None):
+        self.response = response
+
     def __str__(self):
         return self.message
 

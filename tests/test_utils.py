@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 """unit tests for the trakt.utils module"""
 from datetime import datetime
-from trakt.utils import (slugify, airs_date, now, timestamp, extract_ids,
-                         unicode_safe)
+from trakt.utils import (slugify, airs_date, now, timestamp, extract_ids)
 
 
 def test_slugify():

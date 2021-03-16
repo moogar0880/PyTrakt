@@ -10,7 +10,8 @@ __author__ = 'Jon Nappi'
 __all__ = ['Scrobbler', 'comment', 'rate', 'add_to_history', 'get_collection',
            'get_watchlist', 'add_to_watchlist', 'remove_from_history',
            'remove_from_watchlist', 'add_to_collection',
-           'remove_from_collection', 'search', 'search_by_id']
+           'remove_from_collection', 'search', 'search_by_id', 'checkin_media',
+           'delete_checkin']
 
 
 @post

@@ -13,7 +13,7 @@ import time
 from collections import namedtuple
 from functools import wraps
 from requests_oauthlib import OAuth2Session
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from trakt import errors
 
 __author__ = 'Jon Nappi'
@@ -366,8 +366,8 @@ Comment = namedtuple('Comment', ['id', 'parent_id', 'created_at', 'comment',
 def _validate_token(s):
     """Check if current OAuth token has not expired"""
     global OAUTH_TOKEN_VALID
-    current = datetime.utcnow()
-    expires_at = datetime.utcfromtimestamp(OAUTH_EXPIRES_AT)
+    current = datetime.now(tz=timezone.utc)
+    expires_at = datetime.fromtimestamp(OAUTH_EXPIRES_AT, tz=timezone.utc)
     if expires_at - current > timedelta(days=2):
         OAUTH_TOKEN_VALID = True
     else:
@@ -396,7 +396,7 @@ def _refresh_token(s):
         OAUTH_TOKEN_VALID = True
         s.logger.info(
             "OAuth token successfully refreshed, valid until",
-            datetime.fromtimestamp(OAUTH_EXPIRES_AT)
+            datetime.fromtimestamp(OAUTH_EXPIRES_AT, tz=timezone.utc)
         )
         _store(
             CLIENT_ID=CLIENT_ID, CLIENT_SECRET=CLIENT_SECRET,

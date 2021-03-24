@@ -35,10 +35,7 @@ def airs_date(airs_at):
 def now():
     """Get the current day in the format expected by each :class:`Calendar`"""
     meow = datetime.now(tz=timezone.utc)
-    year = meow.year
-    month = meow.month if meow.month >= 10 else '0{}'.format(meow.month)
-    day = meow.day if meow.day >= 10 else '0{}'.format(meow.day)
-    return '{}-{}-{}'.format(year, month, day)
+    return meow.strftime("%Y-%m-%d")
 
 
 def timestamp(date_object):

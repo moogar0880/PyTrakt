@@ -1,5 +1,11 @@
 Release History
 ^^^^^^^^^^^^^^^
+3.1.0 (2021-04-10)
++++++++++++++++++++
+
+* Add MethodNotAllowedException for 405 status codes (#141)
+* Ensure CI commands use python3 (#142)
+
 3.0.0 (2021-03-16)
 +++++++++++++++++++
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import re
 import unicodedata
-from datetime import datetime
+from datetime import datetime, timezone
 
 __author__ = 'Jon Nappi'
 __all__ = ['slugify', 'airs_date', 'now', 'timestamp', 'extract_ids']
@@ -34,11 +34,8 @@ def airs_date(airs_at):
 
 def now():
     """Get the current day in the format expected by each :class:`Calendar`"""
-    meow = datetime.now()
-    year = meow.year
-    month = meow.month if meow.month >= 10 else '0{}'.format(meow.month)
-    day = meow.day if meow.day >= 10 else '0{}'.format(meow.day)
-    return '{}-{}-{}'.format(year, month, day)
+    meow = datetime.now(tz=timezone.utc)
+    return meow.strftime("%Y-%m-%d")
 
 
 def timestamp(date_object):

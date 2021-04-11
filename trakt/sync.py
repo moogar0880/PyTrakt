@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """This module contains Trakt.tv sync endpoint support functions"""
-from datetime import datetime
+from datetime import datetime, timezone
 
 from trakt.core import get, post, delete
 from trakt.utils import slugify, extract_ids, timestamp
@@ -47,7 +47,7 @@ def rate(media, rating, rated_at=None):
         this rating was created
     """
     if rated_at is None:
-        rated_at = datetime.now()
+        rated_at = datetime.now(tz=timezone.utc)
 
     data = dict(rating=rating, rated_at=timestamp(rated_at))
     data.update(media.ids)
@@ -65,7 +65,7 @@ def add_to_history(media, watched_at=None):
         which this media item was viewed
     """
     if watched_at is None:
-        watched_at = datetime.now()
+        watched_at = datetime.now(tz=timezone.utc)
 
     data = dict(watched_at=timestamp(watched_at))
     data.update(media.ids)

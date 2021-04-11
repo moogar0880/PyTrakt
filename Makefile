@@ -25,7 +25,7 @@ coverage:
 
 .PHONY: docs-init
 docs-init:
-	pip install -r docs/requirements.txt
+	python3 -m pip install -r docs/requirements.txt
 
 .PHONY: docs
 docs:
@@ -34,11 +34,11 @@ docs:
 
 .PHONY: init
 init:
-	pip install -r testing-requirements.txt
+	python3 -m pip install -r testing-requirements.txt
 
 .PHONY: publish
 publish:
-	pip install -U pip setuptools wheel twine
+	python3 -m pip install -U pip setuptools wheel twine
 	python3 setup.py sdist bdist_wheel
 	python3 -m twine upload dist/*
 	rm -fr build dist .egg $(PACKAGE).egg-info

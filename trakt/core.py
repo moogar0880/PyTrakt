@@ -227,8 +227,8 @@ def get_device_code(client_id=None, client_secret=None):
     headers = {'Content-Type': 'application/json'}
     data = {"client_id": CLIENT_ID}
 
-    device_response = session.post(device_code_url, json=data,
-                                    headers=headers).json()
+    device_response = session.post(device_code_url,
+                                   json=data, headers=headers).json()
     print('Your user code is: {user_code}, please navigate to '
           '{verification_url} to authenticate'.format(
             user_code=device_response.get('user_code'),
@@ -268,8 +268,9 @@ def get_device_token(device_code, client_id=None, client_secret=None,
         "client_secret": CLIENT_SECRET
     }
 
-    response = session.post(urljoin(BASE_URL, '/oauth/device/token'),
-                             json=data)
+    response = session.post(
+        urljoin(BASE_URL, '/oauth/device/token'), json=data
+    )
 
     # We only get json on success.
     if response.status_code == 200:
@@ -517,11 +518,11 @@ class Core(object):
         self.logger.debug('headers: %s', str(HEADERS))
         self.logger.debug('method, url :: %s, %s', method, url)
         if method == 'get':  # GETs need to pass data as params, not body
-            response = session.request(method, url, params=data,
-                                        headers=HEADERS)
+            response = session.request(method, url, headers=HEADERS,
+                                       params=data)
         else:
-            response = session.request(method, url, data=json.dumps(data),
-                                        headers=HEADERS)
+            response = session.request(method, url, headers=HEADERS,
+                                       data=json.dumps(data))
         self.logger.debug('RESPONSE [%s] (%s): %s', method, url, str(response))
         if response.status_code in self.error_map:
             raise self.error_map[response.status_code](response)

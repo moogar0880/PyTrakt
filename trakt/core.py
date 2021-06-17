@@ -517,10 +517,10 @@ class Core(object):
         self.logger.debug('headers: %s', str(HEADERS))
         self.logger.debug('method, url :: %s, %s', method, url)
         if method == 'get':  # GETs need to pass data as params, not body
-            response = requests.request(method, url, params=data,
+            response = session.request(method, url, params=data,
                                         headers=HEADERS)
         else:
-            response = requests.request(method, url, data=json.dumps(data),
+            response = session.request(method, url, data=json.dumps(data),
                                         headers=HEADERS)
         self.logger.debug('RESPONSE [%s] (%s): %s', method, url, str(response))
         if response.status_code in self.error_map:

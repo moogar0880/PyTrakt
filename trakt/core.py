@@ -138,7 +138,7 @@ def pin_auth(pin=None, client_id=None, client_secret=None, store=False):
             'client_id': CLIENT_ID,
             'client_secret': CLIENT_SECRET}
 
-    response = requests.post(''.join([BASE_URL, '/oauth/token']), data=args)
+    response = session.post(''.join([BASE_URL, '/oauth/token']), data=args)
     OAUTH_TOKEN = response.json().get('access_token', None)
 
     if store:
@@ -227,7 +227,7 @@ def get_device_code(client_id=None, client_secret=None):
     headers = {'Content-Type': 'application/json'}
     data = {"client_id": CLIENT_ID}
 
-    device_response = requests.post(device_code_url, json=data,
+    device_response = session.post(device_code_url, json=data,
                                     headers=headers).json()
     print('Your user code is: {user_code}, please navigate to '
           '{verification_url} to authenticate'.format(
@@ -268,7 +268,7 @@ def get_device_token(device_code, client_id=None, client_secret=None,
         "client_secret": CLIENT_SECRET
     }
 
-    response = requests.post(urljoin(BASE_URL, '/oauth/device/token'),
+    response = session.post(urljoin(BASE_URL, '/oauth/device/token'),
                              json=data)
 
     # We only get json on success.
@@ -389,7 +389,7 @@ def _refresh_token(s):
                 'redirect_uri': REDIRECT_URI,
                 'grant_type': 'refresh_token'
             }
-    response = requests.post(url, json=data, headers=HEADERS)
+    response = session.post(url, json=data, headers=HEADERS)
     s.logger.debug('RESPONSE [post] (%s): %s', url, str(response))
     if response.status_code == 200:
         data = response.json()

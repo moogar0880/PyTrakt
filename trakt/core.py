@@ -69,6 +69,9 @@ AUTH_METHOD = PIN_AUTH
 #: The ID of the application to register with, when using PIN authentication
 APPLICATION_ID = None
 
+#: Global session to make requests with
+session = requests.Session()
+
 
 def _store(**kwargs):
     """Helper function used to store Trakt configurations at ``CONFIG_PATH``

@@ -1,5 +1,11 @@
 Release History
 ^^^^^^^^^^^^^^^
+
+3.2.0 (2021-06-21)
++++++++++++++++++++
+
+* Add global `session` instance which will allow clients to override requests behavior (#151)
+
 3.1.0 (2021-04-10)
 +++++++++++++++++++
 

@@ -399,8 +399,9 @@ def _refresh_token(s):
         OAUTH_EXPIRES_AT = data.get("created_at") + data.get("expires_in")
         OAUTH_TOKEN_VALID = True
         s.logger.info(
-            "OAuth token successfully refreshed, valid until",
-            datetime.fromtimestamp(OAUTH_EXPIRES_AT, tz=timezone.utc)
+            "OAuth token successfully refreshed, valid until {}".format(
+                datetime.fromtimestamp(OAUTH_EXPIRES_AT, tz=timezone.utc)
+            )
         )
         _store(
             CLIENT_ID=CLIENT_ID, CLIENT_SECRET=CLIENT_SECRET,

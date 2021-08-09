@@ -1,6 +1,11 @@
 Release History
 ^^^^^^^^^^^^^^^
 
+3.2.1 (2021-08-08)
++++++++++++++++++++
+
+* Fix an issue when accessing the `seasons` property of a `TVShow` instance whose slug requires a year
+
 3.2.0 (2021-06-21)
 +++++++++++++++++++
 

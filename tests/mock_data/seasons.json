@@ -8,6 +8,15 @@
             {"number":4,"ids":{"trakt":5,"tvdb":522882,"tmdb":3628,"tvrage":null}}
         ]
     },
+    "shows/the-flash-2014/seasons?extended=full": {
+        "GET": [
+            {"number":0,"ids":{"trakt":1,"tvdb":137481,"tmdb":3627,"tvrage":null}},
+            {"number":1,"ids":{"trakt":2,"tvdb":364731,"tmdb":3624,"tvrage":null}},
+            {"number":2,"ids":{"trakt":3,"tvdb":473271,"tmdb":3625,"tvrage":null}},
+            {"number":3,"ids":{"trakt":4,"tvdb":488434,"tmdb":3626,"tvrage":null}},
+            {"number":4,"ids":{"trakt":5,"tvdb":522882,"tmdb":3628,"tvrage":null}}
+        ]
+    },
     "shows/game-of-thrones/seasons?extended=images": {
         "GET": [
             {"number":0,"ids":{"trakt":1,"tvdb":137481,"tmdb":3627,"tvrage":null},"images":{"poster":{"full":"https://walter.trakt.us/images/seasons/000/002/145/posters/original/41221f3712.jpg?1409351965","medium":"https://walter.trakt.us/images/seasons/000/002/145/posters/medium/41221f3712.jpg?1409351965","thumb":"https://walter.trakt.us/images/seasons/000/002/145/posters/thumb/41221f3712.jpg?1409351965"},"thumb":{"full":"https://walter.trakt.us/images/seasons/000/002/145/thumbs/original/c41b46dd09.jpg?1409351965"}}},

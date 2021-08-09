@@ -223,7 +223,7 @@ class TVShow(object):
         if self.year is None:
             return slugify(self.title)
 
-        return slugify(self.title + ' ', + str(self.year))
+        return slugify(self.title + ' ' + str(self.year))
 
     @classmethod
     def search(cls, title, year=None):

@@ -207,12 +207,23 @@ class TVShow(object):
         self._images = self._people = self._ratings = self._translations = None
         self._seasons = None
         self._last_episode = self._next_episode = None
+        self._slug = slug
         self.title = title
-        self.slug = slug or slugify(self.title)
+
         if len(kwargs) > 0:
             self._build(kwargs)
         else:
             self._get()
+
+    @property
+    def slug(self):
+        if self._slug is not None:
+            return self._slug
+
+        if self.year is None:
+            return slugify(self.title)
+
+        return slugify(self.title + ' ' + str(self.year))
 
     @classmethod
     def search(cls, title, year=None):

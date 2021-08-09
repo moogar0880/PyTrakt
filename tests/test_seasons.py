@@ -10,6 +10,11 @@ def test_get_seasons():
     assert all([isinstance(s, TVSeason) for s in got.seasons])
 
 
+def test_get_seasons_with_year():
+    got = TVShow('The Flash', year=2014)
+    assert all([isinstance(s, TVSeason) for s in got.seasons])
+
+
 def test_get_season():
     s1 = TVSeason('Game of Thrones', season=1)
     assert isinstance(s1, TVSeason)

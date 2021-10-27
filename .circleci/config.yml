@@ -21,6 +21,11 @@
     # CircleCI Python images available at: https://hub.docker.com/r/circleci/python/
     - image: circleci/python:3.9
 
+.py_3_10_container: &py_3_10_container
+  docker:
+    # CircleCI Python images available at: https://hub.docker.com/r/circleci/python/
+    - image: circleci/python:3.10
+
 .pytest: &pytest
   run:
     name: Run unit tests
@@ -115,6 +120,18 @@ jobs:
     <<: *common
     <<: *lint_steps
 
+  #############################################################################
+  ### Python 3.10 Jobs
+  #############################################################################
+  test.3.10:
+    <<: *py_3_10_container
+    <<: *common
+    <<: *test_steps
+  lint.3.10:
+    <<: *py_3_10_container
+    <<: *common
+    <<: *lint_steps
+
 workflows:
   version: 2
 
@@ -137,3 +154,8 @@ workflows:
     jobs:
       - test.3.9
       - lint.3.9
+
+  py-3.10-verify:
+    jobs:
+      - test.3.10
+      - lint.3.10

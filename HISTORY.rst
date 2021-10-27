@@ -1,5 +1,9 @@
 Release History
 ^^^^^^^^^^^^^^^
+3.2.2 (2021-10-26)
++++++++++++++++++++
+
+* Fix an issue where the show of a TVEpisode was not always set properly @twolaw (#157)
 
 3.2.1 (2021-08-08)
 +++++++++++++++++++

@@ -555,7 +555,6 @@ class Core(object):
         json_data = json.loads(response.content.decode('UTF-8', 'ignore'))
         return json_data
 
-    @_bootstrapped
     def get(self, f):
         """Perform a HTTP GET request using the provided uri yielded from the
         *f* co-routine. The processed JSON results are then sent back to the
@@ -567,6 +566,7 @@ class Core(object):
         """
         @wraps(f)
         def inner(*args, **kwargs):
+            self._bootstrap()
             resp = self._get_first(f, *args, **kwargs)
             if not isinstance(resp, tuple):
                 # Handle cached property responses
@@ -579,7 +579,6 @@ class Core(object):
                 return None
         return inner
 
-    @_bootstrapped
     def delete(self, f):
         """Perform an HTTP DELETE request using the provided uri
 
@@ -587,13 +586,13 @@ class Core(object):
         """
         @wraps(f)
         def inner(*args, **kwargs):
+            self._bootstrap()
             generator = f(*args, **kwargs)
             uri = next(generator)
             url = BASE_URL + uri
             self._handle_request('delete', url)
         return inner
 
-    @_bootstrapped
     def post(self, f):
         """Perform an HTTP POST request using the provided uri and optional
         args yielded from the *f* co-routine. The processed JSON results are
@@ -606,6 +605,7 @@ class Core(object):
         """
         @wraps(f)
         def inner(*args, **kwargs):
+            self._bootstrap()
             url, generator, args = self._get_first(f, *args, **kwargs)
             json_data = self._handle_request('post', url, data=args)
             try:
@@ -614,7 +614,6 @@ class Core(object):
                 return None
         return inner
 
-    @_bootstrapped
     def put(self, f):
         """Perform an HTTP PUT request using the provided uri and optional args
         yielded from the *f* co-routine. The processed JSON results are then
@@ -627,6 +626,7 @@ class Core(object):
         """
         @wraps(f)
         def inner(*args, **kwargs):
+            self._bootstrap()
             url, generator, args = self._get_first(f, *args, **kwargs)
             json_data = self._handle_request('put', url, data=args)
             try:

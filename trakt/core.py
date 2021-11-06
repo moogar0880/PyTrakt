@@ -474,11 +474,11 @@ class Core(object):
         self.logger = logging.getLogger('trakt.core')
 
         # Get all of our exceptions except the base exception
-        errs = [getattr(errors, att) for att in errors.__all__
-                if att != 'TraktException']
+        errs = [getattr(errors, att) for att in dir(errors)
+                if att != 'TraktException' and att[0] != '_']
 
         # Map HTTP response codes to exception types
-        self.error_map = {err.http_code: err for err in errs}
+        self.error_map = {err.http_code: err for err in errs if hasattr(err, 'http_code')}
 
     @staticmethod
     def _get_first(f, *args, **kwargs):

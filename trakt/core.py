@@ -441,29 +441,6 @@ def load_config():
             APPLICATION_ID = config_data.get('APPLICATION_ID', None)
 
 
-def _bootstrapped(f):
-    """Bootstrap your authentication environment when authentication is needed
-    and if a file at `CONFIG_PATH` exists. The process is completed by setting
-    the client id header.
-    """
-    @wraps(f)
-    def inner(*args, **kwargs):
-        global OAUTH_TOKEN_VALID, OAUTH_EXPIRES_AT
-        global OAUTH_REFRESH, OAUTH_TOKEN
-
-        load_config()
-        # Check token validity and refresh token if needed
-        if (not OAUTH_TOKEN_VALID and OAUTH_EXPIRES_AT is not None
-                and OAUTH_REFRESH is not None):
-            _validate_token(args[0])
-        # For backwards compatability with trakt<=2.3.0
-        if api_key is not None and OAUTH_TOKEN is None:
-            OAUTH_TOKEN = api_key
-
-        return f(*args, **kwargs)
-    return inner
-
-
 class Core(object):
     """This class contains all of the functionality required for interfacing
     with the Trakt.tv API

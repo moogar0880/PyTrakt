@@ -479,6 +479,29 @@ class Core(object):
 
         # Map HTTP response codes to exception types
         self.error_map = {err.http_code: err for err in errs}
+        self._bootstrapped = False
+
+    def _bootstrap(self):
+        """Bootstrap your authentication environment when authentication is
+        needed and if a file at `CONFIG_PATH` exists.
+        The process is completed by setting the client id header.
+        """
+
+        if self._bootstrapped:
+            return
+        self._bootstrapped = True
+
+        global OAUTH_TOKEN_VALID, OAUTH_EXPIRES_AT
+        global OAUTH_REFRESH, OAUTH_TOKEN
+
+        load_config()
+        # Check token validity and refresh token if needed
+        if (not OAUTH_TOKEN_VALID and OAUTH_EXPIRES_AT is not None
+                and OAUTH_REFRESH is not None):
+            _validate_token(self)
+        # For backwards compatibility with trakt<=2.3.0
+        if api_key is not None and OAUTH_TOKEN is None:
+            OAUTH_TOKEN = api_key
 
     @staticmethod
     def _get_first(f, *args, **kwargs):

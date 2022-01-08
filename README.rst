@@ -1,12 +1,8 @@
 PyTrakt
 =======
-.. image:: https://travis-ci.org/moogar0880/PyTrakt.svg
-    :target: https://travis-ci.org/moogar0880/PyTrakt
-    :alt: Travis CI Status
-
-.. image:: https://landscape.io/github/moogar0880/PyTrakt/master/landscape.svg?style=flat
-    :target: https://landscape.io/github/moogar0880/PyTrakt/master
-    :alt: Code Health
+.. image:: https://circleci.com/gh/moogar0880/PyTrakt/tree/master.svg?style=svg
+    :target: https://circleci.com/gh/moogar0880/PyTrakt/tree/master
+    :alt: CircleCI Status
 
 .. image:: https://img.shields.io/pypi/dm/trakt.svg
     :target: https://pypi.python.org/pypi/trakt

@@ -66,6 +66,13 @@ class Person(object):
             except AttributeError as ae:
                 if not hasattr(self, '_' + key):
                     raise ae
+    @property
+    def ids(self):
+        """Accessor to the trakt, imdb, and tmdb ids, as well as the trakt.tv
+        slug
+        """
+        return {'ids': {'trakt': self.trakt, 'slug': self.slug,
+                        'imdb': self.imdb, 'tmdb': self.tmdb}}
 
     @property
     @get

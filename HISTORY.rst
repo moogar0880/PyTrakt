@@ -1,5 +1,11 @@
 Release History
 ^^^^^^^^^^^^^^^
+3.3.0 (2022-01-07)
++++++++++++++++++++
+
+* Add LockedUserAccountException support @glensc (#163)
+* Add ids property to People objects @thechicacode (#135)
+
 3.2.2 (2021-10-26)
 +++++++++++++++++++
 

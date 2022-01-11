@@ -295,6 +295,9 @@ class TVShow(object):
             self._comments.append(Comment(user=user, **com))
         yield self._comments
 
+    def _progress(self, progress_type):
+        yield f'{self.ext}/progress/{progress_type}'
+
     @property
     @get
     def progress(self):
@@ -305,7 +308,7 @@ class TVShow(object):
         The next_episode will be the next episode the user should collect,
         if there are no upcoming episodes it will be set to null.
         """
-        yield (self.ext + '/progress/collection')
+        return self._progress('collection')
 
     @property
     def crew(self):

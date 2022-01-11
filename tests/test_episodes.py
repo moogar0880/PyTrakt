@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 """trakt.tv functional tests"""
-from datetime import datetime
 from trakt.core import Comment
 from trakt.sync import Scrobbler
 from trakt.tv import TVSeason, TVEpisode

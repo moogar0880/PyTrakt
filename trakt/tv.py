@@ -314,6 +314,21 @@ class TVShow(object):
         """
         return self._progress('collection')
 
+    @get
+    def collection_progress(self, specials=False):
+        """
+        collection progress for a show including details on all aired
+        seasons and episodes.
+
+        The next_episode will be the next episode the user should collect,
+        if there are no upcoming episodes it will be set to null.
+
+        specials: include specials as season 0 Example: false.
+
+        https://trakt.docs.apiary.io/#reference/shows/collection-progress/get-show-collection-progress
+        """
+        return self._progress('collection', specials)
+
     @property
     def crew(self):
         """All of the crew members that worked on this :class:`TVShow`"""

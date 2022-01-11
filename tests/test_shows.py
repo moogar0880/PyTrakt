@@ -129,6 +129,13 @@ def test_show_comment():
     assert got.comment('Test Comment Data').get('comment')
 
 
+def test_collection_progress():
+    show = TVShow('Game of Thrones')
+    assert show.progress is None
+    assert show.collection_progress() is None
+    assert show.watched_progress() is None
+
+
 def test_rate_show():
     got = TVShow('Game of Thrones')
     assert got.rate(10)['added'] == {'episodes': 2, 'movies': 1, 'seasons': 1, 'shows': 1}

@@ -329,6 +329,18 @@ class TVShow(object):
         """
         return self._progress('collection', specials)
 
+    @get
+    def watched_progress(self, specials=False):
+        """
+        watched progress for a show including details on all aired seasons
+        and episodes.
+
+        specials: include specials as season 0 Example: false.
+
+        https://trakt.docs.apiary.io/#reference/shows/watched-progress/get-show-collection-progress
+        """
+        return self._progress('watched', specials)
+
     @property
     def crew(self):
         """All of the crew members that worked on this :class:`TVShow`"""

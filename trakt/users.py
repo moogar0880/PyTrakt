@@ -480,6 +480,27 @@ class User(object):
         data = yield 'users/{user}/stats'.format(user=slugify(self.username))
         yield data
 
+    @get
+    def get_liked_lists(self, list_type=None, limit=None):
+        """Get items a user likes.
+
+        This will return an array of standard media objects.
+        You can optionally limit the type of results to return.
+
+        list_type possible values are "comments", "lists".
+
+        https://trakt.docs.apiary.io/#reference/users/likes/get-likes
+        """
+        uri = 'users/likes'
+        if list_type is not None:
+            uri += f'/{list_type}'
+
+        if limit is not None:
+            uri += f'?limit={limit}'
+
+        data = yield uri
+        yield data
+
     def follow(self):
         """Follow this :class:`User`"""
         follow(self.username)

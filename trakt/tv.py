@@ -295,8 +295,12 @@ class TVShow(object):
             self._comments.append(Comment(user=user, **com))
         yield self._comments
 
-    def _progress(self, progress_type):
-        yield f'{self.ext}/progress/{progress_type}'
+    def _progress(self, progress_type, specials=False):
+        uri = f'{self.ext}/progress/{progress_type}'
+        if specials:
+            uri += '?specials=true'
+        data = yield uri
+        yield data
 
     @property
     @get

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 """trakt.sync functional tests"""
-import pytest
 from trakt.movies import Movie
 from trakt.people import Person
 from trakt.sync import get_search_results, search, search_by_id, SearchResult

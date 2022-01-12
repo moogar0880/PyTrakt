@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from trakt.movies import Movie
 from trakt.tv import TVShow, TVEpisode, TVSeason
-from trakt.users import (User, UserList, Request, follow, get_all_requests,
-                         get_user_settings, unfollow)
+from trakt.users import (User, UserList, Request, get_all_requests,
+                         get_user_settings)
 from trakt.people import Person
 
 

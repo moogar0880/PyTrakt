@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """Interfaces to all of the User objects offered by the Trakt.tv API"""
 from collections import namedtuple
+
+from deprecated import deprecated
+
 from trakt.core import get, post, delete
 from trakt.movies import Movie
 from trakt.people import Person
@@ -54,6 +57,7 @@ def get_user_settings():
 
 
 @delete
+@deprecated("Use User.unfollow")
 def unfollow(user_name):
     """Unfollow a user you're currently following with a username of *user_name*
     """

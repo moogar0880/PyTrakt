@@ -431,6 +431,30 @@ def delete_checkin():
     yield "checkin"
 
 
+class Sync(object):
+    """Container for Sync operations"""
+
+    def __init__(self):
+        super(Sync, self).__init__()
+
+    @staticmethod
+    def _watched(watch_type):
+        uri = f'sync/watched/{watch_type}'
+
+        data = yield uri
+
+        yield data
+
+    @get
+    def watched_shows(self):
+        """
+        Returns all shows a user has watched sorted by most plays.
+
+        https://trakt.docs.apiary.io/#reference/sync/get-watched/get-watched
+        """
+        return self._watched('shows')
+
+
 class Scrobbler(object):
     """Scrobbling is a seemless and automated way to track what you're watching
         in a media center. This class allows the media center to easily send

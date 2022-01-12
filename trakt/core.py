@@ -441,29 +441,6 @@ def load_config():
             APPLICATION_ID = config_data.get('APPLICATION_ID', None)
 
 
-def _bootstrapped(f):
-    """Bootstrap your authentication environment when authentication is needed
-    and if a file at `CONFIG_PATH` exists. The process is completed by setting
-    the client id header.
-    """
-    @wraps(f)
-    def inner(*args, **kwargs):
-        global OAUTH_TOKEN_VALID, OAUTH_EXPIRES_AT
-        global OAUTH_REFRESH, OAUTH_TOKEN
-
-        load_config()
-        # Check token validity and refresh token if needed
-        if (not OAUTH_TOKEN_VALID and OAUTH_EXPIRES_AT is not None
-                and OAUTH_REFRESH is not None):
-            _validate_token(args[0])
-        # For backwards compatability with trakt<=2.3.0
-        if api_key is not None and OAUTH_TOKEN is None:
-            OAUTH_TOKEN = api_key
-
-        return f(*args, **kwargs)
-    return inner
-
-
 class Core(object):
     """This class contains all of the functionality required for interfacing
     with the Trakt.tv API
@@ -479,6 +456,29 @@ class Core(object):
 
         # Map HTTP response codes to exception types
         self.error_map = {err.http_code: err for err in errs}
+        self._bootstrapped = False
+
+    def _bootstrap(self):
+        """Bootstrap your authentication environment when authentication is
+        needed and if a file at `CONFIG_PATH` exists.
+        The process is completed by setting the client id header.
+        """
+
+        if self._bootstrapped:
+            return
+        self._bootstrapped = True
+
+        global OAUTH_TOKEN_VALID, OAUTH_EXPIRES_AT
+        global OAUTH_REFRESH, OAUTH_TOKEN
+
+        load_config()
+        # Check token validity and refresh token if needed
+        if (not OAUTH_TOKEN_VALID and OAUTH_EXPIRES_AT is not None
+                and OAUTH_REFRESH is not None):
+            _validate_token(self)
+        # For backwards compatibility with trakt<=2.3.0
+        if api_key is not None and OAUTH_TOKEN is None:
+            OAUTH_TOKEN = api_key
 
     @staticmethod
     def _get_first(f, *args, **kwargs):
@@ -532,7 +532,6 @@ class Core(object):
         json_data = json.loads(response.content.decode('UTF-8', 'ignore'))
         return json_data
 
-    @_bootstrapped
     def get(self, f):
         """Perform a HTTP GET request using the provided uri yielded from the
         *f* co-routine. The processed JSON results are then sent back to the
@@ -544,6 +543,7 @@ class Core(object):
         """
         @wraps(f)
         def inner(*args, **kwargs):
+            self._bootstrap()
             resp = self._get_first(f, *args, **kwargs)
             if not isinstance(resp, tuple):
                 # Handle cached property responses
@@ -556,7 +556,6 @@ class Core(object):
                 return None
         return inner
 
-    @_bootstrapped
     def delete(self, f):
         """Perform an HTTP DELETE request using the provided uri
 
@@ -564,13 +563,13 @@ class Core(object):
         """
         @wraps(f)
         def inner(*args, **kwargs):
+            self._bootstrap()
             generator = f(*args, **kwargs)
             uri = next(generator)
             url = BASE_URL + uri
             self._handle_request('delete', url)
         return inner
 
-    @_bootstrapped
     def post(self, f):
         """Perform an HTTP POST request using the provided uri and optional
         args yielded from the *f* co-routine. The processed JSON results are
@@ -583,6 +582,7 @@ class Core(object):
         """
         @wraps(f)
         def inner(*args, **kwargs):
+            self._bootstrap()
             url, generator, args = self._get_first(f, *args, **kwargs)
             json_data = self._handle_request('post', url, data=args)
             try:
@@ -591,7 +591,6 @@ class Core(object):
                 return None
         return inner
 
-    @_bootstrapped
     def put(self, f):
         """Perform an HTTP PUT request using the provided uri and optional args
         yielded from the *f* co-routine. The processed JSON results are then
@@ -604,6 +603,7 @@ class Core(object):
         """
         @wraps(f)
         def inner(*args, **kwargs):
+            self._bootstrap()
             url, generator, args = self._get_first(f, *args, **kwargs)
             json_data = self._handle_request('put', url, data=args)
             try:

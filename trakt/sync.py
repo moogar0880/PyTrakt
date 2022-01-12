@@ -431,6 +431,13 @@ def delete_checkin():
     yield "checkin"
 
 
+class Sync(object):
+    """Container for Sync operations"""
+
+    def __init__(self):
+        super(Sync, self).__init__()
+
+
 class Scrobbler(object):
     """Scrobbling is a seemless and automated way to track what you're watching
         in a media center. This class allows the media center to easily send

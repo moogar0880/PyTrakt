@@ -2,6 +2,8 @@
 """Interfaces to all of the TV objects offered by the Trakt.tv API"""
 from collections import namedtuple
 from datetime import datetime, timedelta
+from urllib.parse import urlencode
+
 from trakt.core import Airs, Alias, Comment, Genre, delete, get
 from trakt.errors import NotFoundException
 from trakt.sync import (Scrobbler, rate, comment, add_to_collection,
@@ -295,11 +297,22 @@ class TVShow(object):
             self._comments.append(Comment(user=user, **com))
         yield self._comments
 
-    def _progress(self, progress_type, specials=False):
+    def _progress(self, progress_type,
+                  specials=False, count_specials=False, hidden=False):
         uri = f'{self.ext}/progress/{progress_type}'
+        params = {}
         if specials:
-            uri += '?specials=true'
+            params['specials'] = 'true'
+        if count_specials:
+            params['count_specials'] = 'true'
+        if hidden:
+            params['hidden'] = 'true'
+
+        if params:
+            uri += '?' + urlencode(params)
+
         data = yield uri
+
         yield data
 
     @property

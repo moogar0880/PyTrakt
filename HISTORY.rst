@@ -1,5 +1,12 @@
 Release History
 ^^^^^^^^^^^^^^^
+3.4.0 (2022-01-11)
++++++++++++++++++++
+
+* Config boostrapping now occurs at runtime rather than load time @glensc (#162)
+* Unit tests can now be run from any working directory @glensc (#170)
+* Code cleanup - removed unused imports and superfluous parens from some yield statements @glensc (#171)
+
 3.3.0 (2022-01-07)
 +++++++++++++++++++
 

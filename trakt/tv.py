@@ -381,20 +381,20 @@ class TVShow(object):
         """
         if self._seasons is None:
             data = yield self.ext + '/seasons?extended=episodes'
-            self._seasons = []
+            self._seasons = {}
             for season in data:
                 extract_ids(season)
 
                 # Prepare episodes
-                episodes = []
+                episodes = {}
                 for ep in season.pop('episodes', []):
                     episode = TVEpisode(show=self.title, **ep)
-                    episodes.append(episode)
+                    episodes[episode.number] = episode
                 season['episodes'] = episodes
 
                 number = season.pop('number')
                 season = TVSeason(self.title, number, **season)
-                self._seasons.append(season)
+                self._seasons[season.season] = season
         yield self._seasons
 
     @property

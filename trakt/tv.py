@@ -377,15 +377,23 @@ class TVShow(object):
     @get
     def seasons(self):
         """A list of :class:`TVSeason` objects representing all of this show's
-        seasons
+        seasons which each contain :class:`TVEpisode` elements
         """
         if self._seasons is None:
-            data = yield self.ext + '/seasons?extended=full'
+            data = yield self.ext + '/seasons?extended=episodes'
             self._seasons = []
             for season in data:
                 extract_ids(season)
-                self._seasons.append(TVSeason(self.title,
-                                              season['number'], **season))
+
+                # Prepare episodes
+                episodes = []
+                for ep in season.pop('episodes', []):
+                    episode = TVEpisode(show=self.title, **ep)
+                    episodes.append(episode)
+                season['episodes'] = episodes
+
+                season = TVSeason(self.title, season['number'], **season)
+                self._seasons.append(season)
         yield self._seasons
 
     @property

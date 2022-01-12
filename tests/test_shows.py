@@ -131,9 +131,9 @@ def test_show_comment():
 
 def test_collection_progress():
     show = TVShow('Game of Thrones')
-    assert show.progress is None
-    assert show.collection_progress() is None
-    assert show.watched_progress() is None
+    assert isinstance(show.progress, dict)
+    assert isinstance(show.collection_progress(), dict)
+    assert isinstance(show.watched_progress(), dict)
 
 
 def test_rate_show():

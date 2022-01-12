@@ -128,3 +128,16 @@ def test_watched():
 def test_stats():
     sean = User('sean')
     assert isinstance(sean.get_stats(), dict)
+
+
+def test_liked_lists():
+    sean = User('sean')
+
+    lists = sean.get_liked_lists()
+    assert lists is None
+
+    lists = sean.get_liked_lists('lists')
+    assert isinstance(lists, list)
+
+    lists = sean.get_liked_lists('comments')
+    assert isinstance(lists, list)

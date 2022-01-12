@@ -328,7 +328,7 @@ class TVShow(object):
         return self._progress('collection')
 
     @get
-    def collection_progress(self, specials=False):
+    def collection_progress(self, **kwargs):
         """
         collection progress for a show including details on all aired
         seasons and episodes.
@@ -336,23 +336,27 @@ class TVShow(object):
         The next_episode will be the next episode the user should collect,
         if there are no upcoming episodes it will be set to null.
 
-        specials: include specials as season 0 Example: false.
+        specials: include specials as season 0. Default: false.
+        count_specials: count specials in the overall stats. Default: false.
+        hidden: include any hidden seasons. Default: false.
 
         https://trakt.docs.apiary.io/#reference/shows/collection-progress/get-show-collection-progress
         """
-        return self._progress('collection', specials)
+        return self._progress('collection', **kwargs)
 
     @get
-    def watched_progress(self, specials=False):
+    def watched_progress(self, **kwargs):
         """
         watched progress for a show including details on all aired seasons
         and episodes.
 
-        specials: include specials as season 0 Example: false.
+        specials: include specials as season 0. Default: false.
+        count_specials: count specials in the overall stats. Default: false.
+        hidden: include any hidden seasons. Default: false.
 
         https://trakt.docs.apiary.io/#reference/shows/watched-progress/get-show-collection-progress
         """
-        return self._progress('watched', specials)
+        return self._progress('watched', **kwargs)
 
     @property
     def crew(self):

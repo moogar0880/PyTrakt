@@ -27,6 +27,11 @@ def _get_first(f, *args, **kwargs):
         return uri, generator, None
 
 
+def api():
+    from trakt.core import get_api
+    return get_api()
+
+
 def get(f):
     """Perform a HTTP GET request using the provided uri yielded from the
     *f* co-routine. The processed JSON results are then sent back to the
@@ -44,8 +49,7 @@ def get(f):
             # Handle cached property responses
             return resp
         url, generator, _ = resp
-        api = args[0].api
-        json_data = api.get(url)
+        json_data = api().get(url)
         try:
             return generator.send(json_data)
         except StopIteration:
@@ -64,8 +68,7 @@ def delete(f):
     def inner(*args, **kwargs):
         generator = f(*args, **kwargs)
         url = next(generator)
-        api = args[0].api
-        api.delete(url)
+        api().delete(url)
 
     return inner
 
@@ -84,8 +87,7 @@ def post(f):
     @wraps(f)
     def inner(*args, **kwargs):
         url, generator, data = _get_first(f, *args, **kwargs)
-        api = args[0].api
-        json_data = api.post(url, data)
+        json_data = api().post(url, data)
         try:
             return generator.send(json_data)
         except StopIteration:
@@ -108,8 +110,7 @@ def put(f):
     @wraps(f)
     def inner(*args, **kwargs):
         url, generator, data = _get_first(f, *args, **kwargs)
-        api = args[0].api
-        json_data = api.put(url, data)
+        json_data = api().put(url, data)
         try:
             return generator.send(json_data)
         except StopIteration:

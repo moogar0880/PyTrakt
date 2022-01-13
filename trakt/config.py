@@ -28,8 +28,11 @@ class AuthConfig:
 
         return self
 
-    def get(self, name):
-        return self.__getattribute__(name)
+    def get(self, name, default=None):
+        try:
+            return self.__getattribute__(name)
+        except AttributeError:
+            return default
 
     def set(self, name, value):
         self.__setattr__(name, value)

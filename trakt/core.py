@@ -13,7 +13,7 @@ from functools import lru_cache
 __author__ = 'Jon Nappi'
 __all__ = ['Airs', 'Alias', 'Comment', 'Genre',
            'init', 'BASE_URL', 'CLIENT_ID', 'CLIENT_SECRET', 'DEVICE_AUTH',
-           'CONFIG_PATH', 'OAUTH_TOKEN', 'AuthConfig',
+           'CONFIG_PATH', 'OAUTH_TOKEN',
            'OAUTH_REFRESH', 'PIN_AUTH', 'OAUTH_AUTH', 'AUTH_METHOD', 'api', 'config',
            'APPLICATION_ID']
 
@@ -58,29 +58,6 @@ APPLICATION_ID = None
 session = requests.Session()
 
 
-@dataclass
-class AuthConfig:
-    CLIENT_ID: Optional[str]
-    CLIENT_SECRET: Optional[str]
-    OAUTH_EXPIRES_AT: Optional[int]
-    OAUTH_REFRESH: Optional[int]
-    OAUTH_TOKEN: Optional[str]
-    #: The OAuth2 Redirect URI for your OAuth Application
-    REDIRECT_URI: str = 'urn:ietf:wg:oauth:2.0:oob'
-
-    def update(self, **kwargs):
-        for name, value in kwargs.items():
-            self.__setattr__(name, value)
-
-        return self
-
-    def get(self, name):
-        return self.__getattribute__(name)
-
-    def set(self, name, value):
-        self.__setattr__(name, value)
-
-
 def init(*args, **kwargs):
     """Run the auth function specified by *AUTH_METHOD*"""
     from trakt.auth import init_auth
@@ -98,9 +75,9 @@ Comment = namedtuple('Comment', ['id', 'parent_id', 'created_at', 'comment',
 
 @lru_cache(maxsize=None)
 def config():
-    from trakt.config import Config
+    from trakt.config import AuthConfig
 
-    return Config(CONFIG_PATH)
+    return AuthConfig(CONFIG_PATH)
 
 
 @lru_cache(maxsize=None)
@@ -120,8 +97,7 @@ def api():
         OAUTH_TOKEN=OAUTH_TOKEN,
     )
     client = HttpClient(BASE_URL, session)
-    c = config().update(**params)
-    auth = TokenAuth(client=client, config=c)
+    auth = TokenAuth(client=client, config=config().update(**params))
     client.set_auth(auth)
 
     return client

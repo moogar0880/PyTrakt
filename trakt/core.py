@@ -12,7 +12,7 @@ from functools import lru_cache
 __author__ = 'Jon Nappi'
 __all__ = ['Airs', 'Alias', 'Comment', 'Genre',
            'init', 'BASE_URL', 'CLIENT_ID', 'CLIENT_SECRET', 'DEVICE_AUTH',
-           'HEADERS', 'CONFIG_PATH', 'OAUTH_TOKEN',
+           'CONFIG_PATH', 'OAUTH_TOKEN',
            'OAUTH_REFRESH', 'PIN_AUTH', 'OAUTH_AUTH', 'AUTH_METHOD', 'api', 'config',
            'APPLICATION_ID']
 
@@ -25,9 +25,6 @@ CLIENT_ID = None
 
 #: The Trakt.tv OAuth Client Secret for your OAuth Application
 CLIENT_SECRET = None
-
-#: Default request HEADERS
-HEADERS = {'Content-Type': 'application/json', 'trakt-api-version': '2'}
 
 #: Default path for where to store your trakt.tv API authentication information
 CONFIG_PATH = os.path.join(os.path.expanduser('~'), '.pytrakt.json')

@@ -79,7 +79,7 @@ class HttpClient:
             raise self.error_map[response.status_code](response)
 
     @property
-    @lru_cache(maxsize=1)
+    @lru_cache(maxsize=None)
     def error_map(self):
         """Map HTTP response codes to exception types
         """

@@ -34,6 +34,7 @@ class HttpClient:
     """
 
     def __init__(self, base_url: str, session: Session):
+        self.auth = None
         self.base_url = base_url
         self.session = session
         self.logger = logging.getLogger('trakt.http_client')
@@ -54,6 +55,9 @@ class HttpClient:
     def set_headers(self, headers):
         self.headers.update(headers)
 
+    def set_auth(self, auth):
+        self.auth = auth
+
     def request(self, method, url, data=None):
         """Handle actually talking out to the trakt API, logging out debug
         information, raising any relevant `TraktException` Exception types,
@@ -71,9 +75,9 @@ class HttpClient:
         self.logger.debug('%s: %s', method, url)
         self.logger.debug('method, url :: %s, %s', method, url)
         if method == 'get':  # GETs need to pass data as params, not body
-            response = self.session.request(method, url, headers=self.headers, params=data)
+            response = self.session.request(method, url, headers=self.headers, auth=self.auth, params=data)
         else:
-            response = self.session.request(method, url, headers=self.headers, data=json.dumps(data))
+            response = self.session.request(method, url, headers=self.headers, auth=self.auth, data=json.dumps(data))
         self.logger.debug('RESPONSE [%s] (%s): %s', method, url, str(response))
         if response.status_code == 204:  # HTTP no content
             return None

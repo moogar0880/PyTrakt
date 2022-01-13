@@ -193,8 +193,7 @@ class TokenAuth(dict, AuthBase):
 
     def load_config(self):
         """Manually load config from json config file."""
-        # global CLIENT_ID, CLIENT_SECRET, OAUTH_TOKEN, OAUTH_EXPIRES_AT
-        # global OAUTH_REFRESH, APPLICATION_ID, CONFIG_PATH
+
         if (self['CLIENT_ID'] is None or self['CLIENT_SECRET'] is None) and \
                 os.path.exists(self.CONFIG_PATH):
             # Load in trakt API auth data from CONFIG_PATH

@@ -18,7 +18,6 @@ from trakt.errors import OAuthException
 
 
 class TraktApiParameters(NamedTuple):
-    BASE_URL: str
     CLIENT_ID: Optional[str]
     CLIENT_SECRET: Optional[str]
     OAUTH_EXPIRES_AT: Optional[int]

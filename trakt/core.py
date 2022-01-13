@@ -449,7 +449,6 @@ def get_config():
 
     from trakt.api import TraktApiParameters
     return TraktApiParameters(
-        BASE_URL=BASE_URL,
         CLIENT_ID=CLIENT_ID,
         CLIENT_SECRET=CLIENT_SECRET,
         OAUTH_EXPIRES_AT=OAUTH_EXPIRES_AT,

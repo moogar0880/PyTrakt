@@ -12,7 +12,7 @@ from functools import lru_cache
 __author__ = 'Jon Nappi'
 __all__ = ['Airs', 'Alias', 'Comment', 'Genre',
            'init', 'BASE_URL', 'CLIENT_ID', 'CLIENT_SECRET', 'DEVICE_AUTH',
-           'REDIRECT_URI', 'HEADERS', 'CONFIG_PATH', 'OAUTH_TOKEN',
+           'HEADERS', 'CONFIG_PATH', 'OAUTH_TOKEN',
            'OAUTH_REFRESH', 'PIN_AUTH', 'OAUTH_AUTH', 'AUTH_METHOD', 'api', 'config',
            'APPLICATION_ID']
 
@@ -66,7 +66,6 @@ class AuthConfig(NamedTuple):
     OAUTH_EXPIRES_AT: Optional[int]
     OAUTH_REFRESH: Optional[int]
     OAUTH_TOKEN: Optional[str]
-    HEADERS: Optional[dict[str, str]] = HEADERS
     #: The OAuth2 Redirect URI for your OAuth Application
     REDIRECT_URI: str = 'urn:ietf:wg:oauth:2.0:oob'
 
@@ -108,7 +107,6 @@ def api():
         OAUTH_EXPIRES_AT=OAUTH_EXPIRES_AT,
         OAUTH_REFRESH=OAUTH_REFRESH,
         OAUTH_TOKEN=OAUTH_TOKEN,
-        HEADERS=HEADERS,
     )
     client = HttpClient(BASE_URL, session)
     client.set_headers(params.HEADERS)

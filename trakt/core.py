@@ -5,6 +5,7 @@ trakt package
 import json
 import logging
 import os
+from typing import NamedTuple, Optional
 from urllib.parse import urljoin
 
 import requests
@@ -71,6 +72,16 @@ APPLICATION_ID = None
 
 #: Global session to make requests with
 session = requests.Session()
+
+
+class TraktApiParameters(NamedTuple):
+    CLIENT_ID: Optional[str]
+    CLIENT_SECRET: Optional[str]
+    OAUTH_EXPIRES_AT: Optional[int]
+    OAUTH_REFRESH: Optional[int]
+    OAUTH_TOKEN: Optional[str]
+    OAUTH_TOKEN_VALID: Optional[bool]
+    HEADERS: Optional[dict[str, str]]
 
 
 def _store(**kwargs):
@@ -231,9 +242,9 @@ def get_device_code(client_id=None, client_secret=None):
                                    json=data, headers=headers).json()
     print('Your user code is: {user_code}, please navigate to '
           '{verification_url} to authenticate'.format(
-            user_code=device_response.get('user_code'),
-            verification_url=device_response.get('verification_url')
-          ))
+        user_code=device_response.get('user_code'),
+        verification_url=device_response.get('verification_url')
+    ))
 
     device_response['requested'] = time.time()
     return device_response
@@ -372,7 +383,6 @@ def get_config():
     global OAUTH_REFRESH, OAUTH_TOKEN
     global CLIENT_ID, CLIENT_SECRET
 
-    from trakt.api import TraktApiParameters
     return TraktApiParameters(
         CLIENT_ID=CLIENT_ID,
         CLIENT_SECRET=CLIENT_SECRET,

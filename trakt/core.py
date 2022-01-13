@@ -3,7 +3,8 @@
 trakt package
 """
 import os
-from typing import NamedTuple, Optional
+from dataclasses import dataclass
+from typing import Optional
 
 import requests
 from collections import namedtuple
@@ -57,7 +58,8 @@ APPLICATION_ID = None
 session = requests.Session()
 
 
-class AuthConfig(NamedTuple):
+@dataclass
+class AuthConfig:
     CLIENT_ID: Optional[str]
     CLIENT_SECRET: Optional[str]
     OAUTH_EXPIRES_AT: Optional[int]
@@ -65,6 +67,12 @@ class AuthConfig(NamedTuple):
     OAUTH_TOKEN: Optional[str]
     #: The OAuth2 Redirect URI for your OAuth Application
     REDIRECT_URI: str = 'urn:ietf:wg:oauth:2.0:oob'
+
+    def update(self, **kwargs):
+        for name, value in kwargs.items():
+            self.__setattr__(name, value)
+
+        return self
 
 
 def init(*args, **kwargs):

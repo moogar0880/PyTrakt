@@ -20,26 +20,6 @@ __all__ = [
     'TraktUnavailable',
 ]
 
-from functools import lru_cache
-
-
-class Errors:
-    def raise_if_needed(self, response):
-        if response.status_code in self.error_map:
-            raise self.error_map[response.status_code](response)
-
-    @lru_cache(maxsize=None)
-    def error_map(self):
-        """Map HTTP response codes to exception types
-        """
-        import sys
-        module = sys.modules[__name__]
-        # Get all of our exceptions except the base exception
-        errs = [getattr(module, att) for att in __all__
-                if att != 'TraktException']
-
-        return {err.http_code: err for err in errs}
-
 
 class TraktException(Exception):
     """Base Exception type for trakt module"""

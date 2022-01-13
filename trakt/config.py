@@ -6,9 +6,11 @@ __author__ = 'Elan Ruusamäe'
 import json
 from os.path import exists
 
+from trakt.core import AuthConfig
 
-class Config:
-    def __init__(self, config_path: str):
+
+class Config(AuthConfig):
+    def __init__(self, config_path):
         self.config_path = config_path
 
     def exists(self):

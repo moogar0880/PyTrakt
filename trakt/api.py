@@ -101,7 +101,7 @@ class TokenAuth(AuthBase):
         super().__init__()
         self.config = config
         self.client = client
-        self.logger = logging.getLogger('trakt.api.oauth')
+        self.logger = logging.getLogger('trakt.api.token_auth')
 
     def __call__(self, r):
         [client_id, client_token] = self.get_token()

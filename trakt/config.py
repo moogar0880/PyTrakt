@@ -14,6 +14,16 @@ class Config:
     def exists(self):
         return exists(self.config_path)
 
+    def load(self):
+        if not self.exists():
+            return {}
+
+        # Load in trakt API auth data from CONFIG_PATH
+        with open(self.config_path) as config_file:
+            config_data = json.load(config_file)
+
+        return config_data
+
     def store(self, **kwargs):
         """Helper function used to store Trakt configurations at ``CONFIG_PATH``
 

@@ -5,6 +5,8 @@ __author__ = 'Jon Nappi, Elan Ruusamäe'
 
 from functools import wraps
 
+from trakt.core import api
+
 
 def _get_first(f, *args, **kwargs):
     """Extract the first value from the provided generator function *f*
@@ -25,11 +27,6 @@ def _get_first(f, *args, **kwargs):
         return uri, generator, data
     else:
         return uri, generator, None
-
-
-def api():
-    from trakt.core import get_api
-    return get_api()
 
 
 def get(f):

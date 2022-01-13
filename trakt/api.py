@@ -27,10 +27,10 @@ class HttpClient:
     headers = {'Content-Type': 'application/json', 'trakt-api-version': '2'}
 
     def __init__(self, base_url: str, session: Session):
-        self.auth = None
         self.base_url = base_url
         self.session = session
         self.logger = logging.getLogger('trakt.http_client')
+        self.auth = None
 
     def get(self, url: str):
         return self.request('get', url)

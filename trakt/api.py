@@ -23,12 +23,14 @@ class HttpClient:
     """Class for abstracting HTTP requests
     """
 
+    #: Default request HEADERS
+    headers = {'Content-Type': 'application/json', 'trakt-api-version': '2'}
+
     def __init__(self, base_url: str, session: Session):
         self.auth = None
         self.base_url = base_url
         self.session = session
         self.logger = logging.getLogger('trakt.http_client')
-        self.headers = {}
 
     def get(self, url: str):
         return self.request('get', url)
@@ -41,9 +43,6 @@ class HttpClient:
 
     def put(self, url: str, data):
         return self.request('put', url, data=data)
-
-    def set_headers(self, headers):
-        self.headers.update(headers)
 
     def set_auth(self, auth):
         self.auth = auth

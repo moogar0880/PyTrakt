@@ -44,7 +44,8 @@ def get(f):
             # Handle cached property responses
             return resp
         url, generator, _ = resp
-        json_data = f.api.get(url)
+        api = args[0].api
+        json_data = api.get(url)
         try:
             return generator.send(json_data)
         except StopIteration:
@@ -63,7 +64,8 @@ def delete(f):
     def inner(*args, **kwargs):
         generator = f(*args, **kwargs)
         url = next(generator)
-        f.api.delete(url)
+        api = args[0].api
+        api.delete(url)
 
     return inner
 
@@ -82,7 +84,8 @@ def post(f):
     @wraps(f)
     def inner(*args, **kwargs):
         url, generator, data = _get_first(f, *args, **kwargs)
-        json_data = f.api.post(url, data)
+        api = args[0].api
+        json_data = api.post(url, data)
         try:
             return generator.send(json_data)
         except StopIteration:
@@ -105,7 +108,8 @@ def put(f):
     @wraps(f)
     def inner(*args, **kwargs):
         url, generator, data = _get_first(f, *args, **kwargs)
-        json_data = f.api.put(url, data)
+        api = args[0].api
+        json_data = api.put(url, data)
         try:
             return generator.send(json_data)
         except StopIteration:

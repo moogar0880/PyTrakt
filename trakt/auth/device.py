@@ -127,13 +127,7 @@ class DeviceAuth:
             )
 
             if store:
-                _store(
-                    CLIENT_ID=self.config.CLIENT_ID,
-                    CLIENT_SECRET=self.config.CLIENT_SECRET,
-                    OAUTH_TOKEN=self.config.OAUTH_TOKEN,
-                    OAUTH_REFRESH=self.config.OAUTH_REFRESH,
-                    OAUTH_EXPIRES_AT=self.config.OAUTH_EXPIRES_AT,
-                )
+                self.config.store()
 
         return response
 

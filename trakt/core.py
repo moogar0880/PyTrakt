@@ -11,7 +11,7 @@ import requests
 import sys
 import time
 from collections import namedtuple
-from functools import wraps
+from functools import wraps, lru_cache
 from requests_oauthlib import OAuth2Session
 from datetime import datetime, timedelta, timezone
 from trakt import errors
@@ -633,7 +633,8 @@ def get_config():
     )
 
 
-def get_api():
+@lru_cache(maxsize=None)
+def api():
     from trakt.api import HttpClient, TraktApi
 
     params = get_config()

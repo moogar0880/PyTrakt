@@ -3,6 +3,7 @@ from time import sleep, time
 from trakt.api import HttpClient
 from trakt.auth import get_client_info
 from trakt.config import AuthConfig
+from trakt.errors import TraktException, RateLimitException, BadRequestException
 
 
 class DeviceAuth:
@@ -56,22 +57,23 @@ class DeviceAuth:
 
         # No need to check for expiration, the API will notify us.
         while True:
-            response = self.get_device_token(device_code, self.store)
-
-            if response.status_code == 200:
+            try:
+                response = self.get_device_token(device_code, self.store)
                 print(success_message.format_map(response.json()))
-                break
-
-            elif response.status_code == 429:  # slow down
+                return response
+            except RateLimitException:
+                # slow down
                 interval *= 2
-
-            elif response.status_code != 400:  # not pending
-                print(error_messages.get(response.status_code, response.reason))
-                break
+            except BadRequestException as e:
+                # XXX? what now?
+                # # elif response.status_code != 400:  # not pending
+                # raise e
+                print(e)
+                return None
+            except TraktException as e:
+                print(error_messages.get(e.http_code, response.response))
 
             sleep(interval)
-
-        return response
 
     def get_device_code(self):
         """Generate a device code, used for device oauth authentication.
@@ -115,19 +117,18 @@ class DeviceAuth:
             "client_id": self.config.CLIENT_ID,
             "client_secret": self.config.CLIENT_SECRET
         }
+
+        # We only get json on success. Code throws on errors
         response = self.client.post('/oauth/device/token', data=data)
 
-        # We only get json on success.
-        if response.status_code == 200:
-            data = response.json()
-            self.config.update(
-                OAUTH_TOKEN=data.get('access_token'),
-                OAUTH_REFRESH=data.get('refresh_token'),
-                OAUTH_EXPIRES_AT=data.get("created_at") + data.get("expires_in"),
-            )
+        self.config.update(
+            OAUTH_TOKEN=response.get('access_token'),
+            OAUTH_REFRESH=response.get('refresh_token'),
+            OAUTH_EXPIRES_AT=response.get("created_at") + response.get("expires_in"),
+        )
 
-            if store:
-                self.config.store()
+        if store:
+            self.config.store()
 
         return response
 

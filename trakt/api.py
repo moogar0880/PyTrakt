@@ -97,11 +97,10 @@ class TokenAuth(dict, AuthBase):
     # OAuth token validity checked
     OAUTH_TOKEN_VALID = None
 
-    def __init__(self, client: HttpClient, config: Config, params: AuthConfig):
+    def __init__(self, client: HttpClient, config: Config):
         super().__init__()
         self.config = config
         self.client = client
-        self.update(**params._asdict())
         self.logger = logging.getLogger('trakt.api.oauth')
 
     def __call__(self, r):

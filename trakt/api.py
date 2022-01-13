@@ -79,6 +79,10 @@ class HttpClient:
         json_data = json.loads(response.content.decode('UTF-8', 'ignore'))
         return json_data
 
+    def raise_if_needed(self, response):
+        if response.status_code in self.error_map:
+            raise self.error_map[response.status_code](response)
+
     @property
     @lru_cache(maxsize=1)
     def error_map(self):
@@ -90,10 +94,6 @@ class HttpClient:
                 if att != 'TraktException']
 
         return {err.http_code: err for err in errs}
-
-    def raise_if_needed(self, response):
-        if response.status_code in self.error_map:
-            raise self.error_map[response.status_code](response)
 
 
 class TraktApiTokenAuth(dict):

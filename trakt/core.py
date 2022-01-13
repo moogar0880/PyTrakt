@@ -397,6 +397,13 @@ def get_config():
 
 
 @lru_cache(maxsize=None)
+def config():
+    from trakt.config import Config
+
+    return Config(CONFIG_PATH)
+
+
+@lru_cache(maxsize=None)
 def api():
     from trakt.api import HttpClient
     from trakt.api import TokenAuth

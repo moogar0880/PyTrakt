@@ -632,6 +632,15 @@ class Core(object):
         return inner
 
 
+def get_api():
+    from trakt.api import HttpClient, TraktApi
+
+    params = get_config()
+    client = HttpClient(BASE_URL, session)
+    api = TraktApi(client, params)
+
+    return api
+
 # Here we can simplify the code in each module by exporting these instance
 # method decorators as if they were simple functions.
 CORE = Core()

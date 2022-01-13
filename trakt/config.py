@@ -21,8 +21,7 @@ class AuthConfig:
         self.config_path = config_path
 
     def have_refresh_token(self):
-        # Check token validity and refresh token if needed
-        return self.OAUTH_EXPIRES_AT is not None and self.OAUTH_REFRESH is not None
+        return self.OAUTH_EXPIRES_AT and self.OAUTH_REFRESH
 
     def get(self, name, default=None):
         try:

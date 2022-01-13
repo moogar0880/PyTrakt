@@ -22,6 +22,10 @@ class AuthConfig:
     def __init__(self, config_path):
         self.config_path = config_path
 
+    def have_refresh_token(self):
+        # Check token validity and refresh token if needed
+        return self.OAUTH_EXPIRES_AT is not None and self.OAUTH_REFRESH is not None
+
     def update(self, **kwargs):
         for name, value in kwargs.items():
             self.__setattr__(name, value)

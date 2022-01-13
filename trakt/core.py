@@ -26,9 +26,6 @@ CLIENT_ID = None
 #: The Trakt.tv OAuth Client Secret for your OAuth Application
 CLIENT_SECRET = None
 
-#: The OAuth2 Redirect URI for your OAuth Application
-REDIRECT_URI = 'urn:ietf:wg:oauth:2.0:oob'
-
 #: Default request HEADERS
 HEADERS = {'Content-Type': 'application/json', 'trakt-api-version': '2'}
 
@@ -70,7 +67,8 @@ class AuthConfig(NamedTuple):
     OAUTH_REFRESH: Optional[int]
     OAUTH_TOKEN: Optional[str]
     HEADERS: Optional[dict[str, str]] = HEADERS
-    REDIRECT_URI: str = REDIRECT_URI
+    #: The OAuth2 Redirect URI for your OAuth Application
+    REDIRECT_URI: str = 'urn:ietf:wg:oauth:2.0:oob'
 
 
 def init(*args, **kwargs):

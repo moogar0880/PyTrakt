@@ -24,6 +24,27 @@ def device_auth(*args, **kwargs):
     return DeviceAuth(*args, **kwargs).authenticate()
 
 
+def get_client_info(app_id=False):
+    """Helper function to poll the user for Client ID and Client Secret
+    strings
+
+    :return: A 2-tuple of client_id, client_secret
+    """
+    global APPLICATION_ID
+    print('If you do not have a client ID and secret. Please visit the '
+          'following url to create them.')
+    print('http://trakt.tv/oauth/applications')
+    client_id = input('Please enter your client id: ')
+    client_secret = input('Please enter your client secret: ')
+    if app_id:
+        msg = 'Please enter your application ID ({default}): '.format(
+            default=APPLICATION_ID)
+        user_input = input(msg)
+        if user_input:
+            APPLICATION_ID = user_input
+    return client_id, client_secret
+
+
 def init_auth(method: str, *args, **kwargs):
     """Run the auth function specified by *AUTH_METHOD*"""
 

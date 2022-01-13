@@ -17,7 +17,7 @@ from datetime import datetime, timedelta, timezone
 from trakt import errors
 
 __author__ = 'Jon Nappi'
-__all__ = ['Airs', 'Alias', 'Comment', 'Genre', 'get', 'delete', 'post', 'put',
+__all__ = ['Airs', 'Alias', 'Comment', 'Genre',
            'init', 'BASE_URL', 'CLIENT_ID', 'CLIENT_SECRET', 'DEVICE_AUTH',
            'REDIRECT_URI', 'HEADERS', 'CONFIG_PATH', 'OAUTH_TOKEN',
            'OAUTH_REFRESH', 'PIN_AUTH', 'OAUTH_AUTH', 'AUTH_METHOD', 'api',
@@ -644,11 +644,3 @@ def api():
     client.set_auth(auth)
 
     return client
-
-# Here we can simplify the code in each module by exporting these instance
-# method decorators as if they were simple functions.
-CORE = Core()
-get = CORE.get
-post = CORE.post
-delete = CORE.delete
-put = CORE.put

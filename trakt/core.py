@@ -8,6 +8,8 @@ from functools import lru_cache
 
 import requests
 
+from trakt import decorators
+
 __author__ = 'Jon Nappi'
 __all__ = ['Airs', 'Alias', 'Comment', 'Genre',
            'init', 'BASE_URL', 'CLIENT_ID', 'CLIENT_SECRET', 'DEVICE_AUTH',
@@ -93,3 +95,10 @@ def api():
     client.set_auth(auth)
 
     return client
+
+
+# Backward compat with 3.x
+delete = decorators.delete
+get = decorators.get
+post = decorators.post
+put = decorators.put

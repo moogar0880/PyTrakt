@@ -75,22 +75,21 @@ Comment = namedtuple('Comment', ['id', 'parent_id', 'created_at', 'comment',
 def config():
     from trakt.config import AuthConfig
 
-    return AuthConfig(CONFIG_PATH)
-
-
-@lru_cache(maxsize=None)
-def api():
-    from trakt.api import HttpClient, TokenAuth
-
-    params = dict(
+    return AuthConfig(CONFIG_PATH).update(
         CLIENT_ID=CLIENT_ID,
         CLIENT_SECRET=CLIENT_SECRET,
         OAUTH_EXPIRES_AT=OAUTH_EXPIRES_AT,
         OAUTH_REFRESH=OAUTH_REFRESH,
         OAUTH_TOKEN=OAUTH_TOKEN,
     )
+
+
+@lru_cache(maxsize=None)
+def api():
+    from trakt.api import HttpClient, TokenAuth
+
     client = HttpClient(BASE_URL, session)
-    auth = TokenAuth(client=client, config=config().update(**params))
+    auth = TokenAuth(client=client, config=config())
     client.set_auth(auth)
 
     return client

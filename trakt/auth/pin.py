@@ -1,3 +1,6 @@
+from trakt.auth import _store
+
+
 class PinAuth:
     def __init__(self, pin=None, client_id=None, client_secret=None, store=False):
         """

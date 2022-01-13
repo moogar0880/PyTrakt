@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Class for config loading/storing"""
+"""Class for trakt.tv auth config"""
 
 __author__ = 'Elan Ruusamäe'
 

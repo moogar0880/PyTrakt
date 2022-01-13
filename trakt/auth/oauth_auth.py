@@ -1,4 +1,3 @@
-
 def oauth_auth(username, client_id=None, client_secret=None, store=False,
                oauth_cb=_terminal_oauth_pin):
     """Generate an access_token to allow your application to authenticate via

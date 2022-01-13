@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Decorators to handle http methods magically"""
+"""Decorators to handle HTTP methods magically"""
 
 __author__ = 'Jon Nappi, Elan Ruusamäe'
 

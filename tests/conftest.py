@@ -41,11 +41,11 @@ class MockCore():
             uri = uri[1:]
         # use a deepcopy of the mocked data to ensure clean responses on every
         # request. this prevents rewrites to JSON responses from persisting
-        method_responses = deepcopy(self.mock_data).get(uri, {})
+        method_responses = self.mock_data.get(uri, {})
         response = method_responses.get(method.upper())
         if response is None:
             print(f"No mock for {uri}")
-        return response
+        return deepcopy(response)
 
 
 """Override request function with MockCore instance

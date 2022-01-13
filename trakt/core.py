@@ -81,6 +81,7 @@ class TraktApiParameters(NamedTuple):
     OAUTH_REFRESH: Optional[int]
     OAUTH_TOKEN: Optional[str]
     OAUTH_TOKEN_VALID: Optional[bool]
+    REDIRECT_URI: str
     HEADERS: Optional[dict[str, str]]
 
 

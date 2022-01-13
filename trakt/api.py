@@ -2,15 +2,13 @@
 """Interfaces to all of the People objects offered by the Trakt.tv API"""
 import json
 import logging
-import os
-from datetime import datetime, timezone, timedelta
-from functools import lru_cache, wraps
-from typing import NamedTuple, List, Optional
-from urllib.parse import urljoin
+from datetime import datetime, timedelta, timezone
+from functools import lru_cache
+
+from requests import Session
 from requests.auth import AuthBase
 
 from trakt import errors
-from requests import Session
 
 __author__ = 'Jon Nappi, Elan Ruusamäe'
 

@@ -85,10 +85,6 @@ def api():
     from trakt.api import HttpClient
     from trakt.api import TokenAuth
 
-    global OAUTH_EXPIRES_AT
-    global OAUTH_REFRESH, OAUTH_TOKEN
-    global CLIENT_ID, CLIENT_SECRET
-
     params = dict(
         CLIENT_ID=CLIENT_ID,
         CLIENT_SECRET=CLIENT_SECRET,

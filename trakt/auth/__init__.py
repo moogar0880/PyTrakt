@@ -10,8 +10,10 @@ def pin_auth():
     pass
 
 
-def oauth_auth():
-    pass
+def oauth_auth(*args, **kwargs):
+    from trakt.auth.oauth import OAuth
+
+    return OAuth(*args, **kwargs).authenticate()
 
 
 def device_auth(*args, **kwargs):

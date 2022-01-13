@@ -120,7 +120,7 @@ def api():
     )
     client = HttpClient(BASE_URL, session)
     client.set_headers(params.HEADERS)
-    auth = TokenAuth(client=client, config_path=CONFIG_PATH, params=params)
+    auth = TokenAuth(client=client, config=config(), params=params)
     client.set_auth(auth)
 
     return client

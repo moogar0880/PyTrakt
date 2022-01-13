@@ -1,6 +1,6 @@
 import time
 
-from trakt.auth import get_client_info
+from trakt.auth import get_client_info, _store
 
 
 class DeviceAuth:

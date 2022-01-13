@@ -1,4 +1,5 @@
 from trakt.auth import get_client_info, _store
+from requests_oauthlib import OAuth2Session
 
 
 class OAuth:

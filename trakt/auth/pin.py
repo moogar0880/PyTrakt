@@ -49,7 +49,7 @@ class PinAuth:
         response = session.post(''.join([BASE_URL, '/oauth/token']), data=args)
         OAUTH_TOKEN = response.json().get('access_token', None)
 
-        if store:
+        if self.store:
             _store(CLIENT_ID=CLIENT_ID, CLIENT_SECRET=CLIENT_SECRET,
                    OAUTH_TOKEN=OAUTH_TOKEN, APPLICATION_ID=APPLICATION_ID)
         return OAUTH_TOKEN

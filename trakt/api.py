@@ -28,21 +28,87 @@ class TraktApiParameters(NamedTuple):
     HEADERS: Optional[dict[str, str]]
 
 
+class HttpClient:
+    """Class for abstracting HTTP requests
+    """
+
+    def __init__(self, base_url: str, session: Session):
+        self.base_url = base_url
+        self.session = session
+        self.logger = logging.getLogger('trakt.http_client')
+        self.headers = {}
+
+    def get(self, url: str):
+        return self.request('get', url)
+
+    def delete(self, url: str):
+        self.request('delete', self.base_url + url)
+
+    def post(self, url: str, data):
+        return self.request('post', url, data=data)
+
+    def put(self, url: str, data):
+        return self.request('put', url, data=data)
+
+    def request(self, method, url, data=None):
+        """Handle actually talking out to the trakt API, logging out debug
+        information, raising any relevant `TraktException` Exception types,
+        and extracting and returning JSON data
+
+        :param method: The HTTP method we're executing on. Will be one of
+            post, put, delete, get
+        :param url: The fully qualified url to send our request to
+        :param data: Optional data payload to send to the API
+        :return: The decoded JSON response from the Trakt API
+        :raises TraktException: If any non-200 return code is encountered
+        """
+
+        self.logger.debug('%s: %s', method, url)
+        self.logger.debug('method, url :: %s, %s', method, url)
+        if method == 'get':  # GETs need to pass data as params, not body
+            response = self.session.request(method, url, headers=self.headers, params=data)
+        else:
+            response = self.session.request(method, url, headers=self.headers, data=json.dumps(data))
+        self.logger.debug('RESPONSE [%s] (%s): %s', method, url, str(response))
+        if response.status_code == 204:  # HTTP no content
+            return None
+        self.raise_if_needed(response)
+        json_data = json.loads(response.content.decode('UTF-8', 'ignore'))
+        return json_data
+
+    @property
+    @lru_cache(maxsize=1)
+    def error_map(self):
+        """Map HTTP response codes to exception types
+        """
+
+        # Get all of our exceptions except the base exception
+        errs = [getattr(errors, att) for att in errors.__all__
+                if att != 'TraktException']
+
+        return {err.http_code: err for err in errs}
+
+    def raise_if_needed(self, response):
+        if response.status_code in self.error_map:
+            raise self.error_map[response.status_code](response)
+
+    def set_headers(self, headers):
+        self.headers.update(headers)
+
+
 class TraktApiTokenAuth(dict):
     """Class dealing with loading and updating oauth refresh token.
     """
 
-    def __init__(self, client: 'TraktApi', params: TraktApiParameters):
+    def __init__(self, client: HttpClient, params: TraktApiParameters):
         super().__init__()
         self.client = client
         self.CONFIG_PATH = None
         self.update(**params._asdict())
         self.logger = logging.getLogger('trakt.api.oauth')
 
-    def bootstrap(self):
-        """Bootstrap your authentication environment when authentication is
-        needed and if a file at `CONFIG_PATH` exists.
-        The process is completed by setting the client id header.
+    def get_token(self):
+        """Return client_id, client_token pair needed for Trakt.tv authentication
         """
 
         self.load_config()
@@ -147,72 +213,35 @@ class TraktApi:
     def __init__(self, session: Session, params: TraktApiParameters):
         self.BASE_URL = params.BASE_URL
         self.session = session
-        self.token_auth = TraktApiTokenAuth(params=params, client=self)
+        self.client = HttpClient(params.BASE_URL, session)
+        self.token_auth = TraktApiTokenAuth(params=params, client=self.client)
         self.logger = logging.getLogger('trakt.api')
 
     def get(self, url: str):
-        return self.request('get', url)
+        self.authorize()
+        return self.client.get(url)
 
     def delete(self, url: str):
-        self.request('delete', self.BASE_URL + url)
+        self.authorize()
+        self.client.delete(url)
 
     def post(self, url: str, data):
-        return self.request('post', url, data=data)
+        self.authorize()
+        return self.client.post(url, data=data)
 
     def put(self, url: str, data):
-        return self.request('put', url, data=data)
-
-    def request(self, method, url, data=None):
-        """Handle actually talking out to the trakt API, logging out debug
-        information, raising any relevant `TraktException` Exception types,
-        and extracting and returning JSON data
-
-        :param method: The HTTP method we're executing on. Will be one of
-            post, put, delete, get
-        :param url: The fully qualified url to send our request to
-        :param data: Optional data payload to send to the API
-        :return: The decoded JSON response from the Trakt API
-        :raises TraktException: If any non-200 return code is encountered
-        """
-
-        headers = self.prepare()
-        self.logger.debug('%s: %s', method, url)
-        self.logger.debug('method, url :: %s, %s', method, url)
-        if method == 'get':  # GETs need to pass data as params, not body
-            response = self.session.request(method, url, headers=headers, params=data)
-        else:
-            response = self.session.request(method, url, headers=headers, data=json.dumps(data))
-        self.logger.debug('RESPONSE [%s] (%s): %s', method, url, str(response))
-        if response.status_code == 204:  # HTTP no content
-            return None
-        self.raise_if_needed(response)
-        json_data = json.loads(response.content.decode('UTF-8', 'ignore'))
-        return json_data
+        self.authorize()
+        return self.client.put(url, data=data)
 
     @lru_cache(maxsize=None)
-    def prepare(self):
-        [client_id, client_token] = self.token_auth.bootstrap()
+    def authorize(self):
+        [client_id, client_token] = self.token_auth.get_token()
 
         headers = {
             'trakt-api-key': client_id,
             'Authorization': f'Bearer {client_token}',
         }
         self.logger.debug('headers: %s', str(headers))
+        self.client.set_headers(headers)
 
         return headers
-
-    @property
-    @lru_cache(maxsize=1)
-    def error_map(self):
-        """Map HTTP response codes to exception types
-        """
-
-        # Get all of our exceptions except the base exception
-        errs = [getattr(errors, att) for att in errors.__all__
-                if att != 'TraktException']
-
-        return {err.http_code: err for err in errs}
-
-    def raise_if_needed(self, response):
-        if response.status_code in self.error_map:
-            raise self.error_map[response.status_code](response)

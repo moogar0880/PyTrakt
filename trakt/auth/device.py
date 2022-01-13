@@ -120,9 +120,11 @@ class DeviceAuth:
         # We only get json on success.
         if response.status_code == 200:
             data = response.json()
-            self.config.OAUTH_TOKEN = data.get('access_token')
-            self.config.OAUTH_REFRESH = data.get('refresh_token')
-            self.config.OAUTH_EXPIRES_AT = data.get("created_at") + data.get("expires_in")
+            self.config.update(
+                OAUTH_TOKEN=data.get('access_token'),
+                OAUTH_REFRESH=data.get('refresh_token'),
+                OAUTH_EXPIRES_AT=data.get("created_at") + data.get("expires_in"),
+            )
 
             if store:
                 _store(

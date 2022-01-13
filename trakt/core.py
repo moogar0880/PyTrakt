@@ -106,7 +106,7 @@ def api():
     global OAUTH_REFRESH, OAUTH_TOKEN
     global CLIENT_ID, CLIENT_SECRET
 
-    params = AuthConfig(
+    params = dict(
         CLIENT_ID=CLIENT_ID,
         CLIENT_SECRET=CLIENT_SECRET,
         OAUTH_EXPIRES_AT=OAUTH_EXPIRES_AT,
@@ -114,7 +114,8 @@ def api():
         OAUTH_TOKEN=OAUTH_TOKEN,
     )
     client = HttpClient(BASE_URL, session)
-    auth = TokenAuth(client=client, config=config(), params=params)
+    c = config().update(**params)
+    auth = TokenAuth(client=client, config=c)
     client.set_auth(auth)
 
     return client

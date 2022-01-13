@@ -211,10 +211,8 @@ class TraktApi:
     """
 
     def __init__(self, session: Session, params: TraktApiParameters):
-        self.BASE_URL = params.BASE_URL
-        self.session = session
         self.client = HttpClient(params.BASE_URL, session)
-        self.token_auth = TraktApiTokenAuth(params=params, client=self.client)
+        self.token_auth = TraktApiTokenAuth(client=self.client, params=params)
         self.logger = logging.getLogger('trakt.api')
 
     def get(self, url: str):

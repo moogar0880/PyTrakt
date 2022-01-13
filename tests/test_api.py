@@ -11,3 +11,6 @@ def test_api():
 
     show = TVShow('Game of Thrones')
     assert show.title == 'Game of Thrones'
+
+    show.api = api
+    show.new_get()

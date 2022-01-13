@@ -105,10 +105,10 @@ class HttpClient:
 class TokenAuth(dict, AuthBase):
     """Attaches Trakt.tv token Authentication to the given Request object."""
 
-    def __init__(self, client: HttpClient, params: TraktApiParameters):
+    def __init__(self, client: HttpClient, config_path: str, params: TraktApiParameters):
         super().__init__()
         self.client = client
-        self.CONFIG_PATH = None
+        self.config_path = config_path
         self.update(**params._asdict())
         self.logger = logging.getLogger('trakt.api.oauth')
 
@@ -189,17 +189,17 @@ class TokenAuth(dict, AuthBase):
 
         :param kwargs: Keyword args to store at ``CONFIG_PATH``
         """
-        with open(self.CONFIG_PATH, 'w') as config_file:
+        with open(self.config_path, 'w') as config_file:
             json.dump(kwargs, config_file)
 
     def load_config(self):
         """Manually load config from json config file."""
 
-        if self['CLIENT_ID'] is not None and self['CLIENT_SECRET'] is not None or not os.path.exists(self.CONFIG_PATH):
+        if self['CLIENT_ID'] is not None and self['CLIENT_SECRET'] is not None or not os.path.exists(self.config_path):
             return
 
         # Load in trakt API auth data from CONFIG_PATH
-        with open(self.CONFIG_PATH) as config_file:
+        with open(self.config_path) as config_file:
             config_data = json.load(config_file)
 
         keys = [

@@ -117,7 +117,7 @@ class TokenAuth(AuthBase):
 
         self.load_config()
         # Check token validity and refresh token if needed
-        if not self.OAUTH_TOKEN_VALID and self.config.OAUTH_EXPIRES_AT is not None and self.config.OAUTH_REFRESH is not None:
+        if not self.OAUTH_TOKEN_VALID and self.config.have_refresh_token():
             self.validate_token()
 
         return [

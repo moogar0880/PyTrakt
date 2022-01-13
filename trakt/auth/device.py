@@ -85,14 +85,10 @@ class DeviceAuth:
         if client_id is None and client_secret is None:
             client_id, client_secret = get_client_info()
         self.config.CLIENT_ID, self.config.CLIENT_SECRET = client_id, client_secret
-        HEADERS['trakt-api-key'] = CLIENT_ID
 
-        device_code_url = urljoin(BASE_URL, '/oauth/device/code')
-        headers = {'Content-Type': 'application/json'}
-        data = {"client_id": CLIENT_ID}
+        data = {"client_id": self.config.CLIENT_ID}
+        device_response = self.client.post('/oauth/device/code', data=data)
 
-        device_response = session.post(device_code_url,
-                                       json=data, headers=headers).json()
         print('Your user code is: {user_code}, please navigate to '
               '{verification_url} to authenticate'.format(
             user_code=device_response.get('user_code'),

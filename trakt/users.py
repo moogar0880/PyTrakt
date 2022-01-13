@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Interfaces to all of the User objects offered by the Trakt.tv API"""
 from collections import namedtuple
-from trakt.core import get, post, delete
+from trakt.decorators import get, delete, post
 from trakt.movies import Movie
 from trakt.people import Person
 from trakt.tv import TVShow, TVSeason, TVEpisode

@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 """Interfaces to all of the Movie objects offered by the Trakt.tv API"""
 from collections import namedtuple
-from trakt.core import Alias, Comment, Genre, get, delete
+from trakt.core import Alias, Comment, Genre
+from trakt.decorators import get, delete
 from trakt.sync import (Scrobbler, comment, rate, add_to_history,
                         remove_from_history, add_to_watchlist,
                         remove_from_watchlist, add_to_collection,

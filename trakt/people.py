@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Interfaces to all of the People objects offered by the Trakt.tv API"""
-from trakt.core import get
+from trakt.decorators import get
 from trakt.sync import search
 from trakt.utils import extract_ids, slugify
 

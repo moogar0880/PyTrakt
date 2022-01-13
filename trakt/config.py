@@ -57,10 +57,16 @@ class AuthConfig:
 
         return config_data
 
-    def store(self, **kwargs):
-        """Helper function used to store Trakt configurations at ``CONFIG_PATH``
-
-        :param kwargs: Keyword args to store at ``CONFIG_PATH``
+    def store(self):
+        """Store Trakt configurations at ``CONFIG_PATH``
         """
+        config = dict(
+            CLIENT_ID=self.CLIENT_ID,
+            CLIENT_SECRET=self.CLIENT_SECRET,
+            OAUTH_TOKEN=self.OAUTH_TOKEN,
+            OAUTH_REFRESH=self.OAUTH_REFRESH,
+            OAUTH_EXPIRES_AT=self.OAUTH_EXPIRES_AT,
+        )
+
         with open(self.config_path, 'w') as config_file:
-            json.dump(kwargs, config_file)
+            json.dump(config, config_file)

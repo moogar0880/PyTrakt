@@ -1,4 +1,4 @@
-class DeviceAuth:
+class OAuth:
     def __init__(self, username, client_id=None, client_secret=None, store=False, oauth_cb=_terminal_oauth_pin):
         """
         :param username: Your trakt.tv username

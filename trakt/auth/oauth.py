@@ -1,5 +1,5 @@
 class OAuth:
-    def __init__(self, username, client_id=None, client_secret=None, store=False, oauth_cb=_terminal_oauth_pin):
+    def __init__(self, username, client_id=None, client_secret=None, store=False, oauth_cb=None):
         """
         :param username: Your trakt.tv username
         :param client_id: Your Trakt OAuth Application's Client ID
@@ -14,7 +14,7 @@ class OAuth:
         self.client_id = client_id
         self.client_secret = client_secret
         self.store = store
-        self.oauth_cb = oauth_cb
+        self.oauth_cb = self.terminal_oauth_pin if oauth_cb is None else oauth_cb
 
     def authenticate(self):
         """Generate an access_token to allow your application to authenticate via
@@ -38,7 +38,7 @@ class OAuth:
         authorization_url, _ = oauth.authorization_url(authorization_base_url, username=self.username)
 
         # Calling callback function to get the OAuth PIN
-        oauth_pin = oauth_cb(authorization_url)
+        oauth_pin = self.oauth_cb(authorization_url)
 
         # Fetch, assign, and return the access token
         oauth.fetch_token(token_url, client_secret=CLIENT_SECRET, code=oauth_pin)
@@ -51,3 +51,17 @@ class OAuth:
                    OAUTH_TOKEN=OAUTH_TOKEN, OAUTH_REFRESH=OAUTH_REFRESH,
                    OAUTH_EXPIRES_AT=OAUTH_EXPIRES_AT)
         return OAUTH_TOKEN
+
+    @staticmethod
+    def terminal_oauth_pin(authorization_url):
+        """Default OAuth callback used for terminal applications.
+
+        :param authorization_url: Predefined url by function `oauth_auth`. URL will
+            be prompted to you in the terminal
+        :return: OAuth PIN
+        """
+        print('Please go here and authorize,', authorization_url)
+
+        # Get the authorization verifier code from the callback url
+        response = input('Paste the Code returned here: ')
+        return response

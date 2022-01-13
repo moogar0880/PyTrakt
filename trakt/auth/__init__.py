@@ -45,6 +45,12 @@ def get_client_info(app_id=False):
     return client_id, client_secret
 
 
+def _store(**kwargs):
+    from trakt.core import config
+
+    config().store(**kwargs)
+
+
 def init_auth(method: str, *args, **kwargs):
     """Run the auth function specified by *AUTH_METHOD*"""
 

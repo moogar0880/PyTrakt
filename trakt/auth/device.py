@@ -7,6 +7,18 @@ from trakt.errors import TraktException, RateLimitException, BadRequestException
 
 
 class DeviceAuth:
+    error_messages = {
+        404: 'Invalid device_code',
+        409: 'You already approved this code',
+        410: 'The tokens have expired, restart the process',
+        418: 'You explicitly denied this code',
+    }
+
+    success_message = (
+        "You've been successfully authenticated. "
+        "With access_token {access_token} and refresh_token {refresh_token}"
+    )
+
     def __init__(self, client: HttpClient, config: AuthConfig, client_id=None, client_secret=None, store=False):
         """
         :param client_id: Your Trakt OAuth Application's Client ID
@@ -38,17 +50,6 @@ class DeviceAuth:
         :return: A dict with the authentication result.
         Or False of authentication failed.
         """
-        error_messages = {
-            404: 'Invalid device_code',
-            409: 'You already approved this code',
-            410: 'The tokens have expired, restart the process',
-            418: 'You explicitly denied this code',
-        }
-
-        success_message = (
-            "You've been successfully authenticated. "
-            "With access_token {access_token} and refresh_token {refresh_token}"
-        )
 
         self.update_tokens()
         response = self.get_device_code()
@@ -59,7 +60,7 @@ class DeviceAuth:
         while True:
             try:
                 response = self.get_device_token(device_code, self.store)
-                print(success_message.format_map(response.json()))
+                print(self.success_message.format_map(response.json()))
                 return response
             except RateLimitException:
                 # slow down
@@ -71,7 +72,7 @@ class DeviceAuth:
                 print(e)
                 return None
             except TraktException as e:
-                print(error_messages.get(e.http_code, response.response))
+                print(self.error_messages.get(e.http_code, response.response))
 
             sleep(interval)
 

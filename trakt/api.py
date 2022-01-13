@@ -42,7 +42,7 @@ class HttpClient:
         return self.request('get', url)
 
     def delete(self, url: str):
-        self.request('delete', self.base_url + url)
+        self.request('delete', url)
 
     def post(self, url: str, data):
         return self.request('post', url, data=data)
@@ -66,6 +66,7 @@ class HttpClient:
         :raises TraktException: If any non-200 return code is encountered
         """
 
+        url = self.base_url + url
         self.logger.debug('%s: %s', method, url)
         self.logger.debug('method, url :: %s, %s', method, url)
         if method == 'get':  # GETs need to pass data as params, not body

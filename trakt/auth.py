@@ -18,7 +18,7 @@ def device_auth():
     pass
 
 
-def init(AUTH_METHOD, *args, **kwargs):
+def init_auth(AUTH_METHOD, *args, **kwargs):
     auth_method = {
         PIN_AUTH: pin_auth, OAUTH_AUTH: oauth_auth, DEVICE_AUTH: device_auth
     }

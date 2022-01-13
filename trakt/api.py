@@ -122,8 +122,8 @@ class TokenAuth(AuthBase):
             self.validate_token()
 
         return [
-            self['CLIENT_ID'],
-            self['OAUTH_TOKEN'],
+            self.config.CLIENT_ID,
+            self.config.OAUTH_TOKEN,
         ]
 
     def validate_token(self):
@@ -164,7 +164,7 @@ class TokenAuth(AuthBase):
 
         self.logger.info(
             "OAuth token successfully refreshed, valid until {}".format(
-                datetime.fromtimestamp(self['OAUTH_EXPIRES_AT'], tz=timezone.utc)
+                datetime.fromtimestamp(self.config.OAUTH_EXPIRES_AT, tz=timezone.utc)
             )
         )
         self.config.store(

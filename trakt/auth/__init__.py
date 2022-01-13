@@ -14,8 +14,10 @@ def oauth_auth():
     pass
 
 
-def device_auth():
-    pass
+def device_auth(*args, **kwargs):
+    from trakt.auth.device import DeviceAuth
+
+    return DeviceAuth(*args, **kwargs).authenticate()
 
 
 def init_auth(method: str, *args, **kwargs):

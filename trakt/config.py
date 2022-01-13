@@ -4,14 +4,35 @@
 __author__ = 'Elan Ruusamäe'
 
 import json
+from dataclasses import dataclass
 from os.path import exists
+from typing import Optional
 
-from trakt.core import AuthConfig
 
+@dataclass
+class AuthConfig:
+    CLIENT_ID: Optional[str]
+    CLIENT_SECRET: Optional[str]
+    OAUTH_EXPIRES_AT: Optional[int]
+    OAUTH_REFRESH: Optional[int]
+    OAUTH_TOKEN: Optional[str]
+    #: The OAuth2 Redirect URI for your OAuth Application
+    REDIRECT_URI: str = 'urn:ietf:wg:oauth:2.0:oob'
 
-class Config(AuthConfig):
     def __init__(self, config_path):
         self.config_path = config_path
+
+    def update(self, **kwargs):
+        for name, value in kwargs.items():
+            self.__setattr__(name, value)
+
+        return self
+
+    def get(self, name):
+        return self.__getattribute__(name)
+
+    def set(self, name, value):
+        self.__setattr__(name, value)
 
     def exists(self):
         return exists(self.config_path)

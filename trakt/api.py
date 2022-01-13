@@ -13,7 +13,7 @@ from requests import Session
 
 __author__ = 'Jon Nappi, Elan Ruusamäe'
 
-from trakt.errors import Errors
+from trakt.errors import Errors, TraktException, OAuthException
 
 
 class TraktApiParameters(NamedTuple):
@@ -32,12 +32,11 @@ class TraktApiTokenAuth(dict):
     """Class dealing with loading and updating oauth refresh token.
     """
 
-    def __init__(self, params: TraktApiParameters, session: Session, error_map):
+    def __init__(self, client: 'TraktApi', params: TraktApiParameters):
         super().__init__()
+        self.client = client
         self.CONFIG_PATH = None
         self.update(**params._asdict())
-        self.session = session
-        self.error_map = error_map
         self.logger = logging.getLogger('trakt.api.oauth')
 
     def bootstrap(self):
@@ -46,14 +45,11 @@ class TraktApiTokenAuth(dict):
         The process is completed by setting the client id header.
         """
 
-        # global OAUTH_TOKEN_VALID, OAUTH_EXPIRES_AT
-        # global OAUTH_REFRESH, OAUTH_TOKEN
-
         self.load_config()
         # Check token validity and refresh token if needed
         if (not self['OAUTH_TOKEN_VALID'] and self['OAUTH_EXPIRES_AT'] is not None
                 and self['OAUTH_REFRESH'] is not None):
-            self.validate_token(self)
+            self.validate_token()
         # For backwards compatibility with trakt<=2.3.0
         # if api_key is not None and OAUTH_TOKEN is None:
         #     OAUTH_TOKEN = api_key
@@ -65,17 +61,17 @@ class TraktApiTokenAuth(dict):
 
     def validate_token(self):
         """Check if current OAuth token has not expired"""
-        # global OAUTH_TOKEN_VALID
+
         current = datetime.now(tz=timezone.utc)
         expires_at = datetime.fromtimestamp(self['OAUTH_EXPIRES_AT'], tz=timezone.utc)
         if expires_at - current > timedelta(days=2):
             self['OAUTH_TOKEN_VALID'] = True
         else:
-            self.refresh_token(self)
+            self.refresh_token()
 
     def refresh_token(self):
         """Request Trakt API for a new valid OAuth token using refresh_token"""
-        # global OAUTH_TOKEN, OAUTH_EXPIRES_AT, OAUTH_REFRESH, OAUTH_TOKEN_VALID
+
         self.logger.info("OAuth token has expired, refreshing now...")
         url = urljoin(self['BASE_URL'], '/oauth/token')
         data = {
@@ -85,38 +81,38 @@ class TraktApiTokenAuth(dict):
             'redirect_uri': self['REDIRECT_URI'],
             'grant_type': 'refresh_token'
         }
-        response = self.session.post(url, json=data, headers=self['HEADERS'])
-        self.logger.debug('RESPONSE [post] (%s): %s', url, str(response))
-        if response.status_code == 200:
-            data = response.json()
-            self['OAUTH_TOKEN'] = data.get("access_token")
-            self['OAUTH_REFRESH'] = data.get("refresh_token")
-            self['OAUTH_EXPIRES_AT'] = data.get("created_at") + data.get("expires_in")
-            self['OAUTH_TOKEN_VALID'] = True
-            self.logger.info(
-                "OAuth token successfully refreshed, valid until {}".format(
-                    datetime.fromtimestamp(self['OAUTH_EXPIRES_AT'], tz=timezone.utc)
-                )
-            )
-            self.store_token(
-                CLIENT_ID=self['CLIENT_ID'], CLIENT_SECRET=self['CLIENT_SECRET'],
-                OAUTH_TOKEN=self['OAUTH_TOKEN'], OAUTH_REFRESH=self['OAUTH_REFRESH'],
-                OAUTH_EXPIRES_AT=self['OAUTH_EXPIRES_AT']
-            )
-        elif response.status_code == 401:
+
+        try:
+            response = self.client.post(url, data)
+        except OAuthException:
             self.logger.debug(
                 "Rejected - Unable to refresh expired OAuth token, "
                 "refresh_token is invalid"
             )
-        elif response.status_code in self.error_map:
-            raise self.error_map[response.status_code](response)
+            return
+
+        self['OAUTH_TOKEN'] = response.get("access_token")
+        self['OAUTH_REFRESH'] = response.get("refresh_token")
+        self['OAUTH_EXPIRES_AT'] = response.get("created_at") + response.get("expires_in")
+        self['OAUTH_TOKEN_VALID'] = True
+
+        self.logger.info(
+            "OAuth token successfully refreshed, valid until {}".format(
+                datetime.fromtimestamp(self['OAUTH_EXPIRES_AT'], tz=timezone.utc)
+            )
+        )
+        self.store_token(
+            CLIENT_ID=self['CLIENT_ID'], CLIENT_SECRET=self['CLIENT_SECRET'],
+            OAUTH_TOKEN=self['OAUTH_TOKEN'], OAUTH_REFRESH=self['OAUTH_REFRESH'],
+            OAUTH_EXPIRES_AT=self['OAUTH_EXPIRES_AT'],
+        )
 
     def store_token(self, **kwargs):
         """Helper function used to store Trakt configurations at ``CONFIG_PATH``
 
         :param kwargs: Keyword args to store at ``CONFIG_PATH``
         """
-        with open(CONFIG_PATH, 'w') as config_file:
+        with open(self.CONFIG_PATH, 'w') as config_file:
             json.dump(kwargs, config_file)
 
     def load_config(self):
@@ -151,7 +147,7 @@ class TraktApi:
     def __init__(self, session: Session, params: TraktApiParameters):
         self.BASE_URL = params.BASE_URL
         self.session = session
-        self.token_auth = TraktApiTokenAuth(params=params, session=session, error_map=self.error_map)
+        self.token_auth = TraktApiTokenAuth(params=params, client=self)
         self.logger = logging.getLogger('trakt.api')
 
     def get(self, url: str):
@@ -220,5 +216,3 @@ class TraktApi:
     def raise_if_needed(self, response):
         if response.status_code in self.error_map:
             raise self.error_map[response.status_code](response)
-
-

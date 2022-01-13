@@ -6,8 +6,10 @@ __author__ = 'Jon Nappi, Elan Ruusamäe'
 from trakt import PIN_AUTH, OAUTH_AUTH, DEVICE_AUTH
 
 
-def pin_auth():
-    pass
+def pin_auth(*args, **kwargs):
+    from trakt.auth.pin import PinAuth
+
+    return PinAuth(*args, **kwargs).authenticate()
 
 
 def oauth_auth(*args, **kwargs):

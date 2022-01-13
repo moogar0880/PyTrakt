@@ -49,13 +49,14 @@ class DeviceAuth:
             "With access_token {access_token} and refresh_token {refresh_token}"
         )
 
-        response = self.get_device_code(client_id=self.client_id, client_secret=self.client_secret)
+        self.update_tokens()
+        response = self.get_device_code()
         device_code = response['device_code']
         interval = response['interval']
 
         # No need to check for expiration, the API will notify us.
         while True:
-            response = self.get_device_token(device_code, self.client_id, self.client_secret, self.store)
+            response = self.get_device_token(device_code, self.store)
 
             if response.status_code == 200:
                 print(success_message.format_map(response.json()))
@@ -72,19 +73,13 @@ class DeviceAuth:
 
         return response
 
-    def get_device_code(self, client_id=None, client_secret=None):
+    def get_device_code(self):
         """Generate a device code, used for device oauth authentication.
 
         Trakt docs: https://trakt.docs.apiary.io/#reference/
         authentication-devices/device-code
-        :param client_id: Your Trakt OAuth Application's Client ID
-        :param client_secret: Your Trakt OAuth Application's Client Secret
         :return: Your OAuth device code.
         """
-
-        if client_id is None and client_secret is None:
-            client_id, client_secret = get_client_info()
-        self.config.CLIENT_ID, self.config.CLIENT_SECRET = client_id, client_secret
 
         data = {"client_id": self.config.CLIENT_ID}
         device_response = self.client.post('/oauth/device/code', data=data)
@@ -98,8 +93,7 @@ class DeviceAuth:
         device_response['requested'] = time.time()
         return device_response
 
-    def get_device_token(self, device_code, client_id=None, client_secret=None,
-                         store=False):
+    def get_device_token(self, device_code, store=False):
         """
         Trakt docs: https://trakt.docs.apiary.io/#reference/
         authentication-devices/get-token
@@ -116,9 +110,6 @@ class DeviceAuth:
         :return type: dict
         """
 
-        if client_id is None and client_secret is None:
-            client_id, client_secret = get_client_info()
-        self.config.CLIENT_ID, self.config.CLIENT_SECRET = client_id, client_secret
         HEADERS['trakt-api-key'] = CLIENT_ID
 
         data = {
@@ -148,3 +139,11 @@ class DeviceAuth:
                 )
 
         return response
+
+    def update_tokens(self):
+        """
+        Update client_id, client_secret from input or ask them interactively
+        """
+        if self.client_id is None and self.client_secret is None:
+            self.client_id, self.client_secret = get_client_info()
+        self.config.CLIENT_ID, self.config.CLIENT_SECRET = self.client_id, self.client_secret

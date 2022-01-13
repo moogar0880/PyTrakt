@@ -82,15 +82,16 @@ class DeviceAuth:
         """
 
         data = {"client_id": self.config.CLIENT_ID}
-        device_response = self.client.post('/oauth/device/code', data=data)
+        response = self.client.post('/oauth/device/code', data=data)
 
         print('Your user code is: {user_code}, please navigate to {verification_url} to authenticate'.format(
-            user_code=device_response.get('user_code'),
-            verification_url=device_response.get('verification_url')
+            user_code=response.get('user_code'),
+            verification_url=response.get('verification_url')
         ))
 
-        device_response['requested'] = time()
-        return device_response
+        response['requested'] = time()
+
+        return response
 
     def get_device_token(self, device_code, store=False):
         """

@@ -15,6 +15,9 @@ class Config:
         return exists(self.config_path)
 
     def load(self):
+        """
+        Load in trakt API auth data from CONFIG_PATH
+        """
         if not self.exists():
             return {}
 

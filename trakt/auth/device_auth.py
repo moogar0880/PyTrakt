@@ -2,7 +2,19 @@ import time
 
 
 class DeviceAuth:
-    def device_auth(client_id=None, client_secret=None, store=False):
+    def __init__(self, client_id=None, client_secret=None, store=False):
+        """
+        :param client_id: Your Trakt OAuth Application's Client ID
+        :param client_secret: Your Trakt OAuth Application's Client Secret
+        :param store: Boolean flag used to determine if your trakt api auth data
+            should be stored locally on the system. Default is :const:`False` for
+            the security conscious
+        """
+        self.client_id = client_id
+        self.client_secret = client_secret
+        self.store = store
+
+    def authenticate(self):
         """Process for authenticating using device authentication.
 
         The function will attempt getting the device_id, and provide
@@ -16,11 +28,6 @@ class DeviceAuth:
         Where poll_for_device_token will check if the "offline"
         authentication was successful.
 
-        :param client_id: Your Trakt OAuth Application's Client ID
-        :param client_secret: Your Trakt OAuth Application's Client Secret
-        :param store: Boolean flag used to determine if your trakt api auth data
-            should be stored locally on the system. Default is :const:`False` for
-            the security conscious
         :return: A dict with the authentication result.
         Or False of authentication failed.
         """
@@ -36,15 +43,13 @@ class DeviceAuth:
             "With access_token {access_token} and refresh_token {refresh_token}"
         )
 
-        response = get_device_code(client_id=client_id,
-                                   client_secret=client_secret)
+        response = self.get_device_code(client_id=self.client_id, client_secret=self.client_secret)
         device_code = response['device_code']
         interval = response['interval']
 
         # No need to check for expiration, the API will notify us.
         while True:
-            response = get_device_token(device_code, client_id, client_secret,
-                                        store)
+            response = self.get_device_token(device_code, self.client_id, self.client_secret, self.store)
 
             if response.status_code == 200:
                 print(success_message.format_map(response.json()))
@@ -61,7 +66,7 @@ class DeviceAuth:
 
         return response
 
-    def get_device_code(client_id=None, client_secret=None):
+    def get_device_code(self, client_id=None, client_secret=None):
         """Generate a device code, used for device oauth authentication.
 
         Trakt docs: https://trakt.docs.apiary.io/#reference/
@@ -91,7 +96,7 @@ class DeviceAuth:
         device_response['requested'] = time.time()
         return device_response
 
-    def get_device_token(device_code, client_id=None, client_secret=None,
+    def get_device_token(self, device_code, client_id=None, client_secret=None,
                          store=False):
         """
         Trakt docs: https://trakt.docs.apiary.io/#reference/

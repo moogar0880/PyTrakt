@@ -150,7 +150,6 @@ class TokenAuth(dict, AuthBase):
         """Request Trakt API for a new valid OAuth token using refresh_token"""
 
         self.logger.info("OAuth token has expired, refreshing now...")
-        url = urljoin(self['BASE_URL'], '/oauth/token')
         data = {
             'client_id': self['CLIENT_ID'],
             'client_secret': self['CLIENT_SECRET'],
@@ -160,7 +159,7 @@ class TokenAuth(dict, AuthBase):
         }
 
         try:
-            response = self.client.post(url, data)
+            response = self.client.post('/oauth/token', data)
         except OAuthException:
             self.logger.debug(
                 "Rejected - Unable to refresh expired OAuth token, "

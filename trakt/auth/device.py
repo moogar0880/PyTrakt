@@ -1,5 +1,7 @@
 import time
 
+from trakt.auth import get_client_info
+
 
 class DeviceAuth:
     def __init__(self, client_id=None, client_secret=None, store=False):
@@ -77,7 +79,7 @@ class DeviceAuth:
         """
         global CLIENT_ID, CLIENT_SECRET, OAUTH_TOKEN
         if client_id is None and client_secret is None:
-            client_id, client_secret = _get_client_info()
+            client_id, client_secret = get_client_info()
         CLIENT_ID, CLIENT_SECRET = client_id, client_secret
         HEADERS['trakt-api-key'] = CLIENT_ID
 
@@ -115,7 +117,7 @@ class DeviceAuth:
         """
         global CLIENT_ID, CLIENT_SECRET, OAUTH_TOKEN, OAUTH_REFRESH
         if client_id is None and client_secret is None:
-            client_id, client_secret = _get_client_info()
+            client_id, client_secret = get_client_info()
         CLIENT_ID, CLIENT_SECRET = client_id, client_secret
         HEADERS['trakt-api-key'] = CLIENT_ID
 

@@ -50,6 +50,9 @@ class HttpClient:
     def put(self, url: str, data):
         return self.request('put', url, data=data)
 
+    def set_headers(self, headers):
+        self.headers.update(headers)
+
     def request(self, method, url, data=None):
         """Handle actually talking out to the trakt API, logging out debug
         information, raising any relevant `TraktException` Exception types,
@@ -91,9 +94,6 @@ class HttpClient:
     def raise_if_needed(self, response):
         if response.status_code in self.error_map:
             raise self.error_map[response.status_code](response)
-
-    def set_headers(self, headers):
-        self.headers.update(headers)
 
 
 class TraktApiTokenAuth(dict):

@@ -21,11 +21,12 @@ def device_auth(*args, **kwargs):
 
 
 def init_auth(method: str, *args, **kwargs):
+    """Run the auth function specified by *AUTH_METHOD*"""
+
     methods = {
         PIN_AUTH: pin_auth,
         OAUTH_AUTH: oauth_auth,
         DEVICE_AUTH: device_auth,
     }
 
-    """Run the auth function specified by *AUTH_METHOD*"""
     return methods.get(method, PIN_AUTH)(*args, **kwargs)

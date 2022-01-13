@@ -3,7 +3,7 @@
 import json
 import logging
 from datetime import datetime, timedelta, timezone
-from functools import lru_cache
+from functools import lru_cache, partial
 
 from requests import Session
 from requests.auth import AuthBase
@@ -35,8 +35,8 @@ class HttpClient:
     def delete(self, url: str):
         self.request('delete', url)
 
-    def post(self, url: str, data):
-        return self.request('post', url, data=data)
+    def post(self, url: str, data, headers=None):
+        return self.request('post', url, data=data, headers=None)
 
     def put(self, url: str, data):
         return self.request('put', url, data=data)
@@ -44,7 +44,7 @@ class HttpClient:
     def set_auth(self, auth):
         self.auth = auth
 
-    def request(self, method, url, data=None):
+    def request(self, method, url, data=None, headers=None):
         """Handle actually talking out to the trakt API, logging out debug
         information, raising any relevant `TraktException` Exception types,
         and extracting and returning JSON data
@@ -53,6 +53,7 @@ class HttpClient:
             post, put, delete, get
         :param url: The fully qualified url to send our request to
         :param data: Optional data payload to send to the API
+        :param headers: Optional headers for this request only
         :return: The decoded JSON response from the Trakt API
         :raises TraktException: If any non-200 return code is encountered
         """
@@ -60,10 +61,14 @@ class HttpClient:
         url = self.base_url + url
         self.logger.debug('%s: %s', method, url)
         self.logger.debug('method, url :: %s, %s', method, url)
+
+        headers = self.headers.copy().update(headers) if headers else self.headers
+        request = partial(self.session.request, method, url, auth=self.auth, headers=headers)
+
         if method == 'get':  # GETs need to pass data as params, not body
-            response = self.session.request(method, url, headers=self.headers, auth=self.auth, params=data)
+            response = request(params=data)
         else:
-            response = self.session.request(method, url, headers=self.headers, auth=self.auth, data=json.dumps(data))
+            response = request(data=json.dumps(data))
         self.logger.debug('RESPONSE [%s] (%s): %s', method, url, str(response))
         if response.status_code == 204:  # HTTP no content
             return None
@@ -170,4 +175,3 @@ class TokenAuth(AuthBase):
             )
         )
         self.config.store()
-

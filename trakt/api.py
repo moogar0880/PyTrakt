@@ -168,13 +168,7 @@ class TokenAuth(AuthBase):
                 datetime.fromtimestamp(self.config.OAUTH_EXPIRES_AT, tz=timezone.utc)
             )
         )
-        self.config.store(
-            CLIENT_ID=self.config.CLIENT_ID,
-            CLIENT_SECRET=self.config.CLIENT_SECRET,
-            OAUTH_TOKEN=self.config.OAUTH_TOKEN,
-            OAUTH_REFRESH=self.config.OAUTH_REFRESH,
-            OAUTH_EXPIRES_AT=self.config.OAUTH_EXPIRES_AT,
-        )
+        self.config.store()
 
     def load_config(self):
         """Manually load config from json config file."""

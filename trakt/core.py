@@ -3,12 +3,10 @@
 trakt package
 """
 import os
-from dataclasses import dataclass
-from typing import Optional
-
-import requests
 from collections import namedtuple
 from functools import lru_cache
+
+import requests
 
 __author__ = 'Jon Nappi'
 __all__ = ['Airs', 'Alias', 'Comment', 'Genre',
@@ -82,8 +80,7 @@ def config():
 
 @lru_cache(maxsize=None)
 def api():
-    from trakt.api import HttpClient
-    from trakt.api import TokenAuth
+    from trakt.api import HttpClient, TokenAuth
 
     params = dict(
         CLIENT_ID=CLIENT_ID,

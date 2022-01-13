@@ -108,7 +108,6 @@ def api():
         OAUTH_EXPIRES_AT=OAUTH_EXPIRES_AT,
         OAUTH_REFRESH=OAUTH_REFRESH,
         OAUTH_TOKEN=OAUTH_TOKEN,
-        REDIRECT_URI=REDIRECT_URI,
         HEADERS=HEADERS,
     )
     client = HttpClient(BASE_URL, session)

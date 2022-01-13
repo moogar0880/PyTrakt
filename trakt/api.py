@@ -118,7 +118,7 @@ class TokenAuth(dict, AuthBase):
 
         self.load_config()
         # Check token validity and refresh token if needed
-        if not self.OAUTH_TOKEN_VALID and self['OAUTH_EXPIRES_AT'] is not None and self['OAUTH_REFRESH'] is not None:
+        if not self.OAUTH_TOKEN_VALID and self.config.OAUTH_EXPIRES_AT is not None and self.config.OAUTH_REFRESH is not None:
             self.validate_token()
 
         return [
@@ -130,7 +130,7 @@ class TokenAuth(dict, AuthBase):
         """Check if current OAuth token has not expired"""
 
         current = datetime.now(tz=timezone.utc)
-        expires_at = datetime.fromtimestamp(self['OAUTH_EXPIRES_AT'], tz=timezone.utc)
+        expires_at = datetime.fromtimestamp(self.config.OAUTH_EXPIRES_AT, tz=timezone.utc)
         if expires_at - current > timedelta(days=2):
             self.OAUTH_TOKEN_VALID = True
         else:
@@ -141,10 +141,10 @@ class TokenAuth(dict, AuthBase):
 
         self.logger.info("OAuth token has expired, refreshing now...")
         data = {
-            'client_id': self['CLIENT_ID'],
-            'client_secret': self['CLIENT_SECRET'],
-            'refresh_token': self['OAUTH_REFRESH'],
-            'redirect_uri': self['REDIRECT_URI'],
+            'client_id': self.config.CLIENT_ID,
+            'client_secret': self.config.CLIENT_SECRET,
+            'refresh_token': self.config.OAUTH_REFRESH,
+            'redirect_uri': self.config.REDIRECT_URI,
             'grant_type': 'refresh_token'
         }
 
@@ -157,9 +157,9 @@ class TokenAuth(dict, AuthBase):
             )
             return
 
-        self['OAUTH_TOKEN'] = response.get("access_token")
-        self['OAUTH_REFRESH'] = response.get("refresh_token")
-        self['OAUTH_EXPIRES_AT'] = response.get("created_at") + response.get("expires_in")
+        self.config.OAUTH_TOKEN = response.get("access_token")
+        self.config.OAUTH_REFRESH = response.get("refresh_token")
+        self.config.OAUTH_EXPIRES_AT = response.get("created_at") + response.get("expires_in")
         self.OAUTH_TOKEN_VALID = True
 
         self.logger.info(
@@ -168,15 +168,17 @@ class TokenAuth(dict, AuthBase):
             )
         )
         self.config.store(
-            CLIENT_ID=self['CLIENT_ID'], CLIENT_SECRET=self['CLIENT_SECRET'],
-            OAUTH_TOKEN=self['OAUTH_TOKEN'], OAUTH_REFRESH=self['OAUTH_REFRESH'],
-            OAUTH_EXPIRES_AT=self['OAUTH_EXPIRES_AT'],
+            CLIENT_ID=self.config.CLIENT_ID,
+            CLIENT_SECRET=self.config.CLIENT_SECRET,
+            OAUTH_TOKEN=self.config.OAUTH_TOKEN,
+            OAUTH_REFRESH=self.config.OAUTH_REFRESH,
+            OAUTH_EXPIRES_AT=self.config.OAUTH_EXPIRES_AT,
         )
 
     def load_config(self):
         """Manually load config from json config file."""
 
-        if self['CLIENT_ID'] is not None and self['CLIENT_SECRET'] is not None or not self.config.exists():
+        if self.config.CLIENT_ID is not None and self.config.CLIENT_SECRET is not None or not self.config.exists():
             return
 
         config_data = self.config.load()
@@ -191,7 +193,7 @@ class TokenAuth(dict, AuthBase):
         ]
 
         for key in keys:
-            if self[key] is not None:
+            if self.config.get(key) is not None:
                 continue
 
-            self[key] = config_data.get(key, None)
+            self.config.set(key, config_data.get(key, None))

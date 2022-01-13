@@ -245,9 +245,7 @@ class TVShow(object):
     @new_get
     def new_get(self):
         data = yield self.ext_full
-        data['first_aired'] = airs_date(data['first_aired'])
-        data['airs'] = Airs(**data['airs'])
-        self._build(data)
+        return data
 
     def _build(self, data):
         extract_ids(data)

@@ -156,9 +156,11 @@ class TokenAuth(AuthBase):
             )
             return
 
-        self.config.OAUTH_TOKEN = response.get("access_token")
-        self.config.OAUTH_REFRESH = response.get("refresh_token")
-        self.config.OAUTH_EXPIRES_AT = response.get("created_at") + response.get("expires_in")
+        self.config.update(
+            OAUTH_TOKEN=response.get("access_token"),
+            OAUTH_REFRESH=response.get("refresh_token"),
+            OAUTH_EXPIRES_AT=response.get("created_at") + response.get("expires_in"),
+        )
         self.OAUTH_TOKEN_VALID = True
 
         self.logger.info(

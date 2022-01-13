@@ -210,8 +210,8 @@ class TraktApi:
     with the Trakt.tv API
     """
 
-    def __init__(self, session: Session, params: TraktApiParameters):
-        self.client = HttpClient(params.BASE_URL, session)
+    def __init__(self, client: HttpClient, params: TraktApiParameters):
+        self.client = client
         self.token_auth = TraktApiTokenAuth(client=self.client, params=params)
         self.logger = logging.getLogger('trakt.api')
 

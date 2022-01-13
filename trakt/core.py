@@ -469,7 +469,7 @@ def api():
     params = get_config()
     client = HttpClient(BASE_URL, session)
     client.set_headers(params.HEADERS)
-    auth = TokenAuth(client=client, params=params)
+    auth = TokenAuth(client=client, config_path=CONFIG_PATH, params=params)
     client.set_auth(auth)
 
     return client

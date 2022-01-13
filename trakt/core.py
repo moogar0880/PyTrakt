@@ -74,15 +74,15 @@ APPLICATION_ID = None
 session = requests.Session()
 
 
-class TraktApiParameters(NamedTuple):
+class AuthConfig(NamedTuple):
     CLIENT_ID: Optional[str]
     CLIENT_SECRET: Optional[str]
     OAUTH_EXPIRES_AT: Optional[int]
     OAUTH_REFRESH: Optional[int]
     OAUTH_TOKEN: Optional[str]
     OAUTH_TOKEN_VALID: Optional[bool]
-    REDIRECT_URI: str
-    HEADERS: Optional[dict[str, str]]
+    HEADERS: Optional[dict[str, str]] = HEADERS
+    REDIRECT_URI: str = REDIRECT_URI
 
 
 def _store(**kwargs):
@@ -384,7 +384,7 @@ def get_config():
     global OAUTH_REFRESH, OAUTH_TOKEN
     global CLIENT_ID, CLIENT_SECRET
 
-    return TraktApiParameters(
+    return AuthConfig(
         CLIENT_ID=CLIENT_ID,
         CLIENT_SECRET=CLIENT_SECRET,
         OAUTH_EXPIRES_AT=OAUTH_EXPIRES_AT,

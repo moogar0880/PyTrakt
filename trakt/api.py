@@ -14,6 +14,7 @@ from requests import Session
 
 __author__ = 'Jon Nappi, Elan Ruusamäe'
 
+from trakt.config import Config
 from trakt.core import AuthConfig
 from trakt.errors import OAuthException
 
@@ -94,10 +95,10 @@ class HttpClient:
 class TokenAuth(dict, AuthBase):
     """Attaches Trakt.tv token Authentication to the given Request object."""
 
-    def __init__(self, client: HttpClient, config_path: str, params: AuthConfig):
+    def __init__(self, client: HttpClient, config: Config, params: AuthConfig):
         super().__init__()
+        self.config = config
         self.client = client
-        self.config_path = config_path
         self.update(**params._asdict())
         self.logger = logging.getLogger('trakt.api.oauth')
 
@@ -166,29 +167,19 @@ class TokenAuth(dict, AuthBase):
                 datetime.fromtimestamp(self['OAUTH_EXPIRES_AT'], tz=timezone.utc)
             )
         )
-        self.store_token(
+        self.config.store(
             CLIENT_ID=self['CLIENT_ID'], CLIENT_SECRET=self['CLIENT_SECRET'],
             OAUTH_TOKEN=self['OAUTH_TOKEN'], OAUTH_REFRESH=self['OAUTH_REFRESH'],
             OAUTH_EXPIRES_AT=self['OAUTH_EXPIRES_AT'],
         )
 
-    def store_token(self, **kwargs):
-        """Helper function used to store Trakt configurations at ``CONFIG_PATH``
-
-        :param kwargs: Keyword args to store at ``CONFIG_PATH``
-        """
-        with open(self.config_path, 'w') as config_file:
-            json.dump(kwargs, config_file)
-
     def load_config(self):
         """Manually load config from json config file."""
 
-        if self['CLIENT_ID'] is not None and self['CLIENT_SECRET'] is not None or not os.path.exists(self.config_path):
+        if self['CLIENT_ID'] is not None and self['CLIENT_SECRET'] is not None or not self.config.exists():
             return
 
-        # Load in trakt API auth data from CONFIG_PATH
-        with open(self.config_path) as config_file:
-            config_data = json.load(config_file)
+        config_data = self.config.load()
 
         keys = [
             'APPLICATION_ID',

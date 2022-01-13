@@ -1,3 +1,6 @@
+from trakt.auth import get_client_info
+
+
 class OAuth:
     def __init__(self, username, client_id=None, client_secret=None, store=False, oauth_cb=None):
         """
@@ -24,7 +27,7 @@ class OAuth:
         """
         global CLIENT_ID, CLIENT_SECRET, OAUTH_TOKEN
         if self.client_id is None and self.client_secret is None:
-            self.client_id, self.client_secret = _get_client_info()
+            self.client_id, self.client_secret = get_client_info()
         CLIENT_ID, CLIENT_SECRET = self.client_id, self.client_secret
         HEADERS['trakt-api-key'] = CLIENT_ID
 

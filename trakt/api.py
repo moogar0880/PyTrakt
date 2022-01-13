@@ -95,6 +95,9 @@ class HttpClient:
 class TokenAuth(dict, AuthBase):
     """Attaches Trakt.tv token Authentication to the given Request object."""
 
+    # OAuth token validity checked
+    OAUTH_TOKEN_VALID = None
+
     def __init__(self, client: HttpClient, config: Config, params: AuthConfig):
         super().__init__()
         self.config = config
@@ -117,8 +120,7 @@ class TokenAuth(dict, AuthBase):
 
         self.load_config()
         # Check token validity and refresh token if needed
-        if (not self['OAUTH_TOKEN_VALID'] and self['OAUTH_EXPIRES_AT'] is not None
-                and self['OAUTH_REFRESH'] is not None):
+        if not self.OAUTH_TOKEN_VALID and self['OAUTH_EXPIRES_AT'] is not None and self['OAUTH_REFRESH'] is not None:
             self.validate_token()
 
         return [
@@ -132,7 +134,7 @@ class TokenAuth(dict, AuthBase):
         current = datetime.now(tz=timezone.utc)
         expires_at = datetime.fromtimestamp(self['OAUTH_EXPIRES_AT'], tz=timezone.utc)
         if expires_at - current > timedelta(days=2):
-            self['OAUTH_TOKEN_VALID'] = True
+            self.OAUTH_TOKEN_VALID = True
         else:
             self.refresh_token()
 
@@ -160,7 +162,7 @@ class TokenAuth(dict, AuthBase):
         self['OAUTH_TOKEN'] = response.get("access_token")
         self['OAUTH_REFRESH'] = response.get("refresh_token")
         self['OAUTH_EXPIRES_AT'] = response.get("created_at") + response.get("expires_in")
-        self['OAUTH_TOKEN_VALID'] = True
+        self.OAUTH_TOKEN_VALID = True
 
         self.logger.info(
             "OAuth token successfully refreshed, valid until {}".format(

@@ -3,6 +3,17 @@
 
 __author__ = 'Elan Ruusamäe'
 
+import json
+
 
 class Config:
-    pass
+    def __init__(self, config_path: str):
+        self.config_path = config_path
+
+    def store(self, **kwargs):
+        """Helper function used to store Trakt configurations at ``CONFIG_PATH``
+
+        :param kwargs: Keyword args to store at ``CONFIG_PATH``
+        """
+        with open(self.config_path, 'w') as config_file:
+            json.dump(kwargs, config_file)

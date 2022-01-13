@@ -13,7 +13,7 @@ from functools import lru_cache
 __author__ = 'Jon Nappi'
 __all__ = ['Airs', 'Alias', 'Comment', 'Genre',
            'init', 'BASE_URL', 'CLIENT_ID', 'CLIENT_SECRET', 'DEVICE_AUTH',
-           'CONFIG_PATH', 'OAUTH_TOKEN',
+           'CONFIG_PATH', 'OAUTH_TOKEN', 'AuthConfig',
            'OAUTH_REFRESH', 'PIN_AUTH', 'OAUTH_AUTH', 'AUTH_METHOD', 'api', 'config',
            'APPLICATION_ID']
 

@@ -13,7 +13,7 @@ from requests import Session
 
 __author__ = 'Jon Nappi, Elan Ruusamäe'
 
-from trakt.errors import Errors, TraktException, OAuthException
+from trakt.errors import OAuthException
 
 
 class TraktApiParameters(NamedTuple):

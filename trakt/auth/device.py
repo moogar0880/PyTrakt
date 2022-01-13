@@ -1,4 +1,4 @@
-import time
+from time import sleep, time
 
 from trakt.api import HttpClient
 from trakt.auth import get_client_info
@@ -69,7 +69,7 @@ class DeviceAuth:
                 print(error_messages.get(response.status_code, response.reason))
                 break
 
-            time.sleep(interval)
+            sleep(interval)
 
         return response
 
@@ -89,7 +89,7 @@ class DeviceAuth:
             verification_url=device_response.get('verification_url')
         ))
 
-        device_response['requested'] = time.time()
+        device_response['requested'] = time()
         return device_response
 
     def get_device_token(self, device_code, store=False):

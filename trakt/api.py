@@ -126,9 +126,6 @@ class TokenAuth(dict, AuthBase):
         if (not self['OAUTH_TOKEN_VALID'] and self['OAUTH_EXPIRES_AT'] is not None
                 and self['OAUTH_REFRESH'] is not None):
             self.validate_token()
-        # For backwards compatibility with trakt<=2.3.0
-        # if api_key is not None and OAUTH_TOKEN is None:
-        #     OAUTH_TOKEN = api_key
 
         return [
             self['CLIENT_ID'],

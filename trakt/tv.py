@@ -245,7 +245,7 @@ class TVShow(object):
     @new_get
     def new_get(self):
         data = yield self.ext_full
-        return data
+        yield data
 
     def _build(self, data):
         extract_ids(data)

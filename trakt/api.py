@@ -14,7 +14,7 @@ from requests import Session
 
 __author__ = 'Jon Nappi, Elan Ruusamäe'
 
-from trakt.core import TraktApiParameters
+from trakt.core import AuthConfig
 from trakt.errors import OAuthException
 
 
@@ -94,7 +94,7 @@ class HttpClient:
 class TokenAuth(dict, AuthBase):
     """Attaches Trakt.tv token Authentication to the given Request object."""
 
-    def __init__(self, client: HttpClient, config_path: str, params: TraktApiParameters):
+    def __init__(self, client: HttpClient, config_path: str, params: AuthConfig):
         super().__init__()
         self.client = client
         self.config_path = config_path

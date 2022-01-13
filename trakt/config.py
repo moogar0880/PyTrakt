@@ -48,14 +48,27 @@ class AuthConfig:
         """
         Load in trakt API auth data from CONFIG_PATH
         """
-        if not self.exists():
-            return {}
+        if self.CLIENT_ID and self.CLIENT_SECRET or not self.exists():
+            return
 
         # Load in trakt API auth data from CONFIG_PATH
         with open(self.config_path) as config_file:
             config_data = json.load(config_file)
 
-        return config_data
+        keys = [
+            'APPLICATION_ID',
+            'CLIENT_ID',
+            'CLIENT_SECRET',
+            'OAUTH_EXPIRES_AT',
+            'OAUTH_REFRESH',
+            'OAUTH_TOKEN',
+        ]
+
+        for key in keys:
+            if self.get(key) is not None:
+                continue
+
+            self.set(key, config_data.get(key, None))
 
     def store(self):
         """Store Trakt configurations at ``CONFIG_PATH``

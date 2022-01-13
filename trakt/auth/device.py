@@ -1,10 +1,12 @@
 import time
 
-from trakt.auth import get_client_info, _store
+from trakt.api import HttpClient
+from trakt.auth import get_client_info
+from trakt.config import AuthConfig
 
 
 class DeviceAuth:
-    def __init__(self, client_id=None, client_secret=None, store=False):
+    def __init__(self, client: HttpClient, config: AuthConfig, client_id=None, client_secret=None, store=False):
         """
         :param client_id: Your Trakt OAuth Application's Client ID
         :param client_secret: Your Trakt OAuth Application's Client Secret
@@ -12,6 +14,8 @@ class DeviceAuth:
             should be stored locally on the system. Default is :const:`False` for
             the security conscious
         """
+        self.client = client
+        self.config = config
         self.client_id = client_id
         self.client_secret = client_secret
         self.store = store
@@ -77,10 +81,10 @@ class DeviceAuth:
         :param client_secret: Your Trakt OAuth Application's Client Secret
         :return: Your OAuth device code.
         """
-        global CLIENT_ID, CLIENT_SECRET, OAUTH_TOKEN
+
         if client_id is None and client_secret is None:
             client_id, client_secret = get_client_info()
-        CLIENT_ID, CLIENT_SECRET = client_id, client_secret
+        self.config.CLIENT_ID, self.config.CLIENT_SECRET = client_id, client_secret
         HEADERS['trakt-api-key'] = CLIENT_ID
 
         device_code_url = urljoin(BASE_URL, '/oauth/device/code')
@@ -115,16 +119,16 @@ class DeviceAuth:
         :return: Information regarding the authentication polling.
         :return type: dict
         """
-        global CLIENT_ID, CLIENT_SECRET, OAUTH_TOKEN, OAUTH_REFRESH
+
         if client_id is None and client_secret is None:
             client_id, client_secret = get_client_info()
-        CLIENT_ID, CLIENT_SECRET = client_id, client_secret
+        self.config.CLIENT_ID, self.config.CLIENT_SECRET = client_id, client_secret
         HEADERS['trakt-api-key'] = CLIENT_ID
 
         data = {
             "code": device_code,
-            "client_id": CLIENT_ID,
-            "client_secret": CLIENT_SECRET
+            "client_id": self.config.CLIENT_ID,
+            "client_secret": self.config.CLIENT_SECRET
         }
 
         response = session.post(
@@ -134,15 +138,17 @@ class DeviceAuth:
         # We only get json on success.
         if response.status_code == 200:
             data = response.json()
-            OAUTH_TOKEN = data.get('access_token')
-            OAUTH_REFRESH = data.get('refresh_token')
-            OAUTH_EXPIRES_AT = data.get("created_at") + data.get("expires_in")
+            self.config.OAUTH_TOKEN = data.get('access_token')
+            self.config.OAUTH_REFRESH = data.get('refresh_token')
+            self.config.OAUTH_EXPIRES_AT = data.get("created_at") + data.get("expires_in")
 
             if store:
                 _store(
-                    CLIENT_ID=CLIENT_ID, CLIENT_SECRET=CLIENT_SECRET,
-                    OAUTH_TOKEN=OAUTH_TOKEN, OAUTH_REFRESH=OAUTH_REFRESH,
-                    OAUTH_EXPIRES_AT=OAUTH_EXPIRES_AT
+                    CLIENT_ID=self.config.CLIENT_ID,
+                    CLIENT_SECRET=self.config.CLIENT_SECRET,
+                    OAUTH_TOKEN=self.config.OAUTH_TOKEN,
+                    OAUTH_REFRESH=self.config.OAUTH_REFRESH,
+                    OAUTH_EXPIRES_AT=self.config.OAUTH_EXPIRES_AT,
                 )
 
         return response

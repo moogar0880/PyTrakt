@@ -3,7 +3,7 @@
 
 __author__ = 'Jon Nappi, Elan Ruusamäe'
 
-from trakt import PIN_AUTH, OAUTH_AUTH, DEVICE_AUTH
+from trakt import PIN_AUTH, OAUTH_AUTH, DEVICE_AUTH, api
 
 
 def pin_auth(*args, **kwargs):
@@ -21,7 +21,7 @@ def oauth_auth(*args, **kwargs):
 def device_auth(*args, **kwargs):
     from trakt.auth.device import DeviceAuth
 
-    return DeviceAuth(*args, **kwargs).authenticate()
+    return DeviceAuth(*args, client=api(), **kwargs).authenticate()
 
 
 def get_client_info(app_id=False):

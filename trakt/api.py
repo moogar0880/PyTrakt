@@ -14,8 +14,7 @@ from requests import Session
 
 __author__ = 'Jon Nappi, Elan Ruusamäe'
 
-from trakt.config import Config
-from trakt.core import AuthConfig
+from trakt.config import AuthConfig
 from trakt.errors import OAuthException
 
 
@@ -97,7 +96,7 @@ class TokenAuth(AuthBase):
     # OAuth token validity checked
     OAUTH_TOKEN_VALID = None
 
-    def __init__(self, client: HttpClient, config: Config):
+    def __init__(self, client: HttpClient, config: AuthConfig):
         super().__init__()
         self.config = config
         self.client = client

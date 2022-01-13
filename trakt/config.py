@@ -24,12 +24,6 @@ class AuthConfig:
         # Check token validity and refresh token if needed
         return self.OAUTH_EXPIRES_AT is not None and self.OAUTH_REFRESH is not None
 
-    def update(self, **kwargs):
-        for name, value in kwargs.items():
-            self.__setattr__(name, value)
-
-        return self
-
     def get(self, name, default=None):
         try:
             return self.__getattribute__(name)
@@ -39,25 +33,11 @@ class AuthConfig:
     def set(self, name, value):
         self.__setattr__(name, value)
 
-    def exists(self):
-        return exists(self.config_path)
+    def update(self, **kwargs):
+        for name, value in kwargs.items():
+            self.__setattr__(name, value)
 
-    def load(self):
-        """
-        Load in trakt API auth data from CONFIG_PATH
-        """
-        if self.CLIENT_ID and self.CLIENT_SECRET or not self.exists():
-            return
-
-        # Load in trakt API auth data from CONFIG_PATH
-        with open(self.config_path) as config_file:
-            config_data = json.load(config_file)
-
-        for key in self.__annotations__.keys():
-            if self.get(key) is not None:
-                continue
-
-            self.set(key, config_data.get(key, None))
+        return self
 
     def all(self):
         result = {}
@@ -65,6 +45,24 @@ class AuthConfig:
             result[key] = self.get(key)
 
         return result
+
+    def load(self):
+        """
+        Load in trakt API auth data from CONFIG_PATH
+        """
+        if self.CLIENT_ID and self.CLIENT_SECRET or not exists(self.config_path):
+            return
+
+        with open(self.config_path) as config_file:
+            config_data = json.load(config_file)
+
+        for key in self.__annotations__.keys():
+            # Don't overwrite
+            if self.get(key) is not None:
+                continue
+
+            value = config_data.get(key, None)
+            self.set(key, value)
 
     def store(self):
         """Store Trakt configurations at ``CONFIG_PATH``

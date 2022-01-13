@@ -38,9 +38,6 @@ CONFIG_PATH = os.path.join(os.path.expanduser('~'), '.pytrakt.json')
 #: Your personal Trakt.tv OAUTH Bearer Token
 OAUTH_TOKEN = api_key = None
 
-# OAuth token validity checked
-OAUTH_TOKEN_VALID = None
-
 # Your OAUTH token expiration date
 OAUTH_EXPIRES_AT = None
 
@@ -72,7 +69,6 @@ class AuthConfig(NamedTuple):
     OAUTH_EXPIRES_AT: Optional[int]
     OAUTH_REFRESH: Optional[int]
     OAUTH_TOKEN: Optional[str]
-    OAUTH_TOKEN_VALID: Optional[bool]
     HEADERS: Optional[dict[str, str]] = HEADERS
     REDIRECT_URI: str = REDIRECT_URI
 
@@ -104,7 +100,7 @@ def api():
     from trakt.api import HttpClient
     from trakt.api import TokenAuth
 
-    global OAUTH_TOKEN_VALID, OAUTH_EXPIRES_AT
+    global OAUTH_EXPIRES_AT
     global OAUTH_REFRESH, OAUTH_TOKEN
     global CLIENT_ID, CLIENT_SECRET
 
@@ -114,7 +110,6 @@ def api():
         OAUTH_EXPIRES_AT=OAUTH_EXPIRES_AT,
         OAUTH_REFRESH=OAUTH_REFRESH,
         OAUTH_TOKEN=OAUTH_TOKEN,
-        OAUTH_TOKEN_VALID=OAUTH_TOKEN_VALID,
         REDIRECT_URI=REDIRECT_URI,
         HEADERS=HEADERS,
     )

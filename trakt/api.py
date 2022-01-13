@@ -91,7 +91,7 @@ class HttpClient:
         return {err.http_code: err for err in errs}
 
 
-class TokenAuth(dict, AuthBase):
+class TokenAuth(AuthBase):
     """Attaches Trakt.tv token Authentication to the given Request object."""
 
     # OAuth token validity checked

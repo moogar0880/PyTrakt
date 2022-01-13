@@ -38,6 +38,7 @@ class HttpClient:
         self.base_url = base_url
         self.session = session
         self.logger = logging.getLogger('trakt.http_client')
+        self.headers = {}
 
     def get(self, url: str):
         return self.request('get', url)
@@ -50,6 +51,9 @@ class HttpClient:
 
     def put(self, url: str, data):
         return self.request('put', url, data=data)
+
+    def set_headers(self, headers):
+        self.headers.update(headers)
 
     def set_auth(self, auth):
         self.auth = auth
@@ -71,9 +75,9 @@ class HttpClient:
         self.logger.debug('%s: %s', method, url)
         self.logger.debug('method, url :: %s, %s', method, url)
         if method == 'get':  # GETs need to pass data as params, not body
-            response = self.session.request(method, url, auth=self.auth, params=data)
+            response = self.session.request(method, url, headers=self.headers, auth=self.auth, params=data)
         else:
-            response = self.session.request(method, url, auth=self.auth, data=json.dumps(data))
+            response = self.session.request(method, url, headers=self.headers, auth=self.auth, data=json.dumps(data))
         self.logger.debug('RESPONSE [%s] (%s): %s', method, url, str(response))
         if response.status_code == 204:  # HTTP no content
             return None

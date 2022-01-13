@@ -56,12 +56,12 @@ class AuthConfig:
             config_data = json.load(config_file)
 
         keys = [
-            'APPLICATION_ID',
+            # 'APPLICATION_ID', # FIXME: never saved?
             'CLIENT_ID',
             'CLIENT_SECRET',
-            'OAUTH_EXPIRES_AT',
-            'OAUTH_REFRESH',
             'OAUTH_TOKEN',
+            'OAUTH_REFRESH',
+            'OAUTH_EXPIRES_AT',
         ]
 
         for key in keys:

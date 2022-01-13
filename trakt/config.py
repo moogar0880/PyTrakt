@@ -55,16 +55,7 @@ class AuthConfig:
         with open(self.config_path) as config_file:
             config_data = json.load(config_file)
 
-        keys = [
-            # 'APPLICATION_ID', # FIXME: never saved?
-            'CLIENT_ID',
-            'CLIENT_SECRET',
-            'OAUTH_TOKEN',
-            'OAUTH_REFRESH',
-            'OAUTH_EXPIRES_AT',
-        ]
-
-        for key in keys:
+        for key in self.__annotations__.keys():
             if self.get(key) is not None:
                 continue
 

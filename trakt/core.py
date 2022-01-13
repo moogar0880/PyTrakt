@@ -367,6 +367,25 @@ Comment = namedtuple('Comment', ['id', 'parent_id', 'created_at', 'comment',
                                  'updated_at', 'likes', 'user_rating'])
 
 
+def get_config():
+    global OAUTH_TOKEN_VALID, OAUTH_EXPIRES_AT
+    global OAUTH_REFRESH, OAUTH_TOKEN
+    global CLIENT_ID, CLIENT_SECRET
+
+    from trakt.api import TraktApiParameters
+    return TraktApiParameters(
+        BASE_URL=BASE_URL,
+        CLIENT_ID=CLIENT_ID,
+        CLIENT_SECRET=CLIENT_SECRET,
+        OAUTH_EXPIRES_AT=OAUTH_EXPIRES_AT,
+        OAUTH_REFRESH=OAUTH_REFRESH,
+        OAUTH_TOKEN=OAUTH_TOKEN,
+        OAUTH_TOKEN_VALID=OAUTH_TOKEN_VALID,
+        REDIRECT_URI=REDIRECT_URI,
+        HEADERS=HEADERS,
+    )
+
+
 def _validate_token(s):
     """Check if current OAuth token has not expired"""
     global OAUTH_TOKEN_VALID

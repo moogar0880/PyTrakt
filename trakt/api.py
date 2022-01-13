@@ -96,6 +96,9 @@ class TokenAuth(AuthBase):
     # OAuth token validity checked
     OAUTH_TOKEN_VALID = None
 
+    #: The OAuth2 Redirect URI for your OAuth Application
+    REDIRECT_URI: str = 'urn:ietf:wg:oauth:2.0:oob'
+
     def __init__(self, client: HttpClient, config: AuthConfig):
         super().__init__()
         self.config = config
@@ -143,7 +146,7 @@ class TokenAuth(AuthBase):
             'client_id': self.config.CLIENT_ID,
             'client_secret': self.config.CLIENT_SECRET,
             'refresh_token': self.config.OAUTH_REFRESH,
-            'redirect_uri': self.config.REDIRECT_URI,
+            'redirect_uri': self.REDIRECT_URI,
             'grant_type': 'refresh_token'
         }
 

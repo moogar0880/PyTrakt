@@ -16,8 +16,6 @@ class AuthConfig:
     OAUTH_EXPIRES_AT: Optional[int]
     OAUTH_REFRESH: Optional[int]
     OAUTH_TOKEN: Optional[str]
-    #: The OAuth2 Redirect URI for your OAuth Application
-    REDIRECT_URI: str = 'urn:ietf:wg:oauth:2.0:oob'
 
     def __init__(self, config_path):
         self.config_path = config_path
@@ -66,7 +64,6 @@ class AuthConfig:
         for key in self.__annotations__.keys():
             result[key] = self.get(key)
 
-        del result['REDIRECT_URI']  # FIXME. remove
         return result
 
     def store(self):

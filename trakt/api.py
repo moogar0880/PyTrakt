@@ -7,6 +7,7 @@ from datetime import datetime, timezone, timedelta
 from functools import lru_cache, wraps
 from typing import NamedTuple, List, Optional
 from urllib.parse import urljoin
+from requests.auth import AuthBase
 
 from trakt import errors
 from requests import Session
@@ -95,6 +96,123 @@ class HttpClient:
                 if att != 'TraktException']
 
         return {err.http_code: err for err in errs}
+
+
+class TokenAuth(dict, AuthBase):
+    """Attaches Trakt.tv token Authentication to the given Request object."""
+
+    def __init__(self, client: HttpClient, params: TraktApiParameters):
+        super().__init__()
+        self.client = client
+        self.CONFIG_PATH = None
+        self.update(**params._asdict())
+        self.logger = logging.getLogger('trakt.api.oauth')
+
+    def __call__(self, r):
+        [client_id, client_token] = self.get_token()
+
+        r.headers.update({
+            'trakt-api-key': client_id,
+            'Authorization': f'Bearer {client_token}',
+        })
+        return r
+
+    def get_token(self):
+        """Return client_id, client_token pair needed for Trakt.tv authentication
+        """
+
+        self.load_config()
+        # Check token validity and refresh token if needed
+        if (not self['OAUTH_TOKEN_VALID'] and self['OAUTH_EXPIRES_AT'] is not None
+                and self['OAUTH_REFRESH'] is not None):
+            self.validate_token()
+        # For backwards compatibility with trakt<=2.3.0
+        # if api_key is not None and OAUTH_TOKEN is None:
+        #     OAUTH_TOKEN = api_key
+
+        return [
+            self['CLIENT_ID'],
+            self['OAUTH_TOKEN'],
+        ]
+
+    def validate_token(self):
+        """Check if current OAuth token has not expired"""
+
+        current = datetime.now(tz=timezone.utc)
+        expires_at = datetime.fromtimestamp(self['OAUTH_EXPIRES_AT'], tz=timezone.utc)
+        if expires_at - current > timedelta(days=2):
+            self['OAUTH_TOKEN_VALID'] = True
+        else:
+            self.refresh_token()
+
+    def refresh_token(self):
+        """Request Trakt API for a new valid OAuth token using refresh_token"""
+
+        self.logger.info("OAuth token has expired, refreshing now...")
+        url = urljoin(self['BASE_URL'], '/oauth/token')
+        data = {
+            'client_id': self['CLIENT_ID'],
+            'client_secret': self['CLIENT_SECRET'],
+            'refresh_token': self['OAUTH_REFRESH'],
+            'redirect_uri': self['REDIRECT_URI'],
+            'grant_type': 'refresh_token'
+        }
+
+        try:
+            response = self.client.post(url, data)
+        except OAuthException:
+            self.logger.debug(
+                "Rejected - Unable to refresh expired OAuth token, "
+                "refresh_token is invalid"
+            )
+            return
+
+        self['OAUTH_TOKEN'] = response.get("access_token")
+        self['OAUTH_REFRESH'] = response.get("refresh_token")
+        self['OAUTH_EXPIRES_AT'] = response.get("created_at") + response.get("expires_in")
+        self['OAUTH_TOKEN_VALID'] = True
+
+        self.logger.info(
+            "OAuth token successfully refreshed, valid until {}".format(
+                datetime.fromtimestamp(self['OAUTH_EXPIRES_AT'], tz=timezone.utc)
+            )
+        )
+        self.store_token(
+            CLIENT_ID=self['CLIENT_ID'], CLIENT_SECRET=self['CLIENT_SECRET'],
+            OAUTH_TOKEN=self['OAUTH_TOKEN'], OAUTH_REFRESH=self['OAUTH_REFRESH'],
+            OAUTH_EXPIRES_AT=self['OAUTH_EXPIRES_AT'],
+        )
+
+    def store_token(self, **kwargs):
+        """Helper function used to store Trakt configurations at ``CONFIG_PATH``
+
+        :param kwargs: Keyword args to store at ``CONFIG_PATH``
+        """
+        with open(self.CONFIG_PATH, 'w') as config_file:
+            json.dump(kwargs, config_file)
+
+    def load_config(self):
+        """Manually load config from json config file."""
+        # global CLIENT_ID, CLIENT_SECRET, OAUTH_TOKEN, OAUTH_EXPIRES_AT
+        # global OAUTH_REFRESH, APPLICATION_ID, CONFIG_PATH
+        if (self['CLIENT_ID'] is None or self['CLIENT_SECRET'] is None) and \
+                os.path.exists(self.CONFIG_PATH):
+            # Load in trakt API auth data from CONFIG_PATH
+            with open(self.CONFIG_PATH) as config_file:
+                config_data = json.load(config_file)
+
+            if self['CLIENT_ID'] is None:
+                self['CLIENT_ID'] = config_data.get('CLIENT_ID', None)
+            if self['CLIENT_SECRET'] is None:
+                self['CLIENT_SECRET'] = config_data.get('CLIENT_SECRET', None)
+            if self['OAUTH_TOKEN'] is None:
+                self['OAUTH_TOKEN'] = config_data.get('OAUTH_TOKEN', None)
+            if self['OAUTH_EXPIRES_AT'] is None:
+                self['OAUTH_EXPIRES_AT'] = config_data.get('OAUTH_EXPIRES_AT', None)
+            if self['OAUTH_REFRESH'] is None:
+                self['OAUTH_REFRESH'] = config_data.get('OAUTH_REFRESH', None)
+            if self['APPLICATION_ID'] is None:
+                self['APPLICATION_ID'] = config_data.get('APPLICATION_ID', None)
 
 
 class TraktApiTokenAuth(dict):

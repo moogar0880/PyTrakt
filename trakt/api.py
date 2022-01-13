@@ -115,7 +115,7 @@ class TokenAuth(AuthBase):
         """Return client_id, client_token pair needed for Trakt.tv authentication
         """
 
-        self.load_config()
+        self.config.load()
         # Check token validity and refresh token if needed
         if not self.OAUTH_TOKEN_VALID and self.config.have_refresh_token():
             self.validate_token()
@@ -170,25 +170,3 @@ class TokenAuth(AuthBase):
         )
         self.config.store()
 
-    def load_config(self):
-        """Manually load config from json config file."""
-
-        if self.config.CLIENT_ID is not None and self.config.CLIENT_SECRET is not None or not self.config.exists():
-            return
-
-        config_data = self.config.load()
-
-        keys = [
-            'APPLICATION_ID',
-            'CLIENT_ID',
-            'CLIENT_SECRET',
-            'OAUTH_EXPIRES_AT',
-            'OAUTH_REFRESH',
-            'OAUTH_TOKEN',
-        ]
-
-        for key in keys:
-            if self.config.get(key) is not None:
-                continue
-
-            self.config.set(key, config_data.get(key, None))

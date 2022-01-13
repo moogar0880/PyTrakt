@@ -2,7 +2,8 @@
 """Interfaces to all of the TV objects offered by the Trakt.tv API"""
 from collections import namedtuple
 from datetime import datetime, timedelta
-from trakt.core import Airs, Alias, Comment, Genre, delete, get
+from trakt.core import Airs, Alias, Comment, Genre
+from trakt.decorators import get, delete
 from trakt.errors import NotFoundException
 from trakt.sync import (Scrobbler, rate, comment, add_to_collection,
                         add_to_watchlist, add_to_history, remove_from_history,

@@ -194,21 +194,22 @@ class TokenAuth(dict, AuthBase):
     def load_config(self):
         """Manually load config from json config file."""
 
-        if (self['CLIENT_ID'] is None or self['CLIENT_SECRET'] is None) and \
-                os.path.exists(self.CONFIG_PATH):
-            # Load in trakt API auth data from CONFIG_PATH
-            with open(self.CONFIG_PATH) as config_file:
-                config_data = json.load(config_file)
+        if self['CLIENT_ID'] is not None and self['CLIENT_SECRET'] is not None or not os.path.exists(self.CONFIG_PATH):
+            return
 
-            if self['CLIENT_ID'] is None:
-                self['CLIENT_ID'] = config_data.get('CLIENT_ID', None)
-            if self['CLIENT_SECRET'] is None:
-                self['CLIENT_SECRET'] = config_data.get('CLIENT_SECRET', None)
-            if self['OAUTH_TOKEN'] is None:
-                self['OAUTH_TOKEN'] = config_data.get('OAUTH_TOKEN', None)
-            if self['OAUTH_EXPIRES_AT'] is None:
-                self['OAUTH_EXPIRES_AT'] = config_data.get('OAUTH_EXPIRES_AT', None)
-            if self['OAUTH_REFRESH'] is None:
-                self['OAUTH_REFRESH'] = config_data.get('OAUTH_REFRESH', None)
-            if self['APPLICATION_ID'] is None:
-                self['APPLICATION_ID'] = config_data.get('APPLICATION_ID', None)
+        # Load in trakt API auth data from CONFIG_PATH
+        with open(self.CONFIG_PATH) as config_file:
+            config_data = json.load(config_file)
+
+        if self['CLIENT_ID'] is None:
+            self['CLIENT_ID'] = config_data.get('CLIENT_ID', None)
+        if self['CLIENT_SECRET'] is None:
+            self['CLIENT_SECRET'] = config_data.get('CLIENT_SECRET', None)
+        if self['OAUTH_TOKEN'] is None:
+            self['OAUTH_TOKEN'] = config_data.get('OAUTH_TOKEN', None)
+        if self['OAUTH_EXPIRES_AT'] is None:
+            self['OAUTH_EXPIRES_AT'] = config_data.get('OAUTH_EXPIRES_AT', None)
+        if self['OAUTH_REFRESH'] is None:
+            self['OAUTH_REFRESH'] = config_data.get('OAUTH_REFRESH', None)
+        if self['APPLICATION_ID'] is None:
+            self['APPLICATION_ID'] = config_data.get('APPLICATION_ID', None)

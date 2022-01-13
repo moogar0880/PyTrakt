@@ -110,17 +110,12 @@ class DeviceAuth:
         :return type: dict
         """
 
-        HEADERS['trakt-api-key'] = CLIENT_ID
-
         data = {
             "code": device_code,
             "client_id": self.config.CLIENT_ID,
             "client_secret": self.config.CLIENT_SECRET
         }
-
-        response = session.post(
-            urljoin(BASE_URL, '/oauth/device/token'), json=data
-        )
+        response = self.client.post('/oauth/device/token', data=data)
 
         # We only get json on success.
         if response.status_code == 200:

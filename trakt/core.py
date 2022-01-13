@@ -74,6 +74,12 @@ class AuthConfig:
 
         return self
 
+    def get(self, name):
+        return self.__getattribute__(name)
+
+    def set(self, name, value):
+        self.__setattr__(name, value)
+
 
 def init(*args, **kwargs):
     """Run the auth function specified by *AUTH_METHOD*"""

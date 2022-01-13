@@ -635,13 +635,15 @@ def get_config():
 
 @lru_cache(maxsize=None)
 def api():
-    from trakt.api import HttpClient, TraktApi
+    from trakt.api import HttpClient
+    from trakt.api import TokenAuth
 
     params = get_config()
     client = HttpClient(BASE_URL, session)
-    api = TraktApi(client, params)
+    auth = TokenAuth(client=client, params=params)
+    client.set_auth(auth)
 
-    return api
+    return client
 
 # Here we can simplify the code in each module by exporting these instance
 # method decorators as if they were simple functions.

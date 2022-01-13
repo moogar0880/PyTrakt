@@ -12,4 +12,4 @@ def test_api():
     show = TVShow('Game of Thrones')
     assert show.title == 'Game of Thrones'
 
-    show.new_get()
+    print(show.new_get())

@@ -3,7 +3,6 @@
 from collections import namedtuple
 from datetime import datetime, timedelta
 from trakt.core import Airs, Alias, Comment, Genre, delete, get
-from trakt.decorators import get as new_get
 from trakt.errors import NotFoundException
 from trakt.sync import (Scrobbler, rate, comment, add_to_collection,
                         add_to_watchlist, add_to_history, remove_from_history,
@@ -241,11 +240,6 @@ class TVShow(object):
         data['first_aired'] = airs_date(data['first_aired'])
         data['airs'] = Airs(**data['airs'])
         self._build(data)
-
-    @new_get
-    def new_get(self):
-        data = yield self.ext_full
-        yield data
 
     def _build(self, data):
         extract_ids(data)

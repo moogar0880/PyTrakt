@@ -23,9 +23,6 @@ class DeviceAuthAdapter:
         """
         :param client_id: Your Trakt OAuth Application's Client ID
         :param client_secret: Your Trakt OAuth Application's Client Secret
-        :param store: Boolean flag used to determine if your trakt api auth data
-            should be stored locally on the system. Default is :const:`False` for
-            the security conscious
         """
         self.client = client
         self.config = config

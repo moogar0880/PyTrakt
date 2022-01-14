@@ -16,9 +16,6 @@ class PinAuthAdapter:
         :param client_id: The oauth client_id for authenticating to the trakt API.
         :param client_secret: The oauth client_secret for authenticating to the
             trakt API.
-        :param store: Boolean flag used to determine if your trakt api auth data
-            should be stored locally on the system. Default is :const:`False` for
-            the security conscious
         """
         self.pin = pin
         self.client = client

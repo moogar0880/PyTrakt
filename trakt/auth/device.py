@@ -1,7 +1,6 @@
 from time import sleep, time
 
 from trakt.api import HttpClient
-from trakt.auth import get_client_info
 from trakt.config import AuthConfig
 from trakt.errors import TraktException, RateLimitException, BadRequestException
 

@@ -1,0 +1,2 @@
+class BaseAdapter:
+    pass

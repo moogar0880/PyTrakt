@@ -1,10 +1,11 @@
 import sys
 
 from trakt.api import HttpClient
+from trakt.auth.base import BaseAdapter
 from trakt.config import AuthConfig
 
 
-class PinAuthAdapter:
+class PinAuthAdapter(BaseAdapter):
     #: The OAuth2 Redirect URI for your OAuth Application
     REDIRECT_URI: str = 'urn:ietf:wg:oauth:2.0:oob'
 

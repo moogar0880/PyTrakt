@@ -1,11 +1,12 @@
 from time import sleep, time
 
 from trakt.api import HttpClient
+from trakt.auth.base import BaseAdapter
 from trakt.config import AuthConfig
 from trakt.errors import TraktException, RateLimitException, BadRequestException
 
 
-class DeviceAuthAdapter:
+class DeviceAuthAdapter(BaseAdapter):
     error_messages = {
         404: 'Invalid device_code',
         409: 'You already approved this code',

@@ -3,11 +3,12 @@ from urllib.parse import urljoin
 from requests_oauthlib import OAuth2Session
 
 from trakt.api import HttpClient
+from trakt.auth.base import BaseAdapter
 
 from trakt.config import AuthConfig
 
 
-class OAuthAdapter:
+class OAuthAdapter(BaseAdapter):
     #: The OAuth2 Redirect URI for your OAuth Application
     REDIRECT_URI: str = 'urn:ietf:wg:oauth:2.0:oob'
 

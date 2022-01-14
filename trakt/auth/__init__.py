@@ -69,8 +69,7 @@ def init_auth(method: str, client_id=None, client_secret=None, store=False, *arg
     config.CLIENT_ID, config.CLIENT_SECRET = client_id, client_secret
 
     adapter = methods.get(method, PIN_AUTH)
-    result = adapter(*args, config=config, **kwargs)
+    adapter(*args, config=config, **kwargs)
+
     if store:
         config.store()
-
-    return result

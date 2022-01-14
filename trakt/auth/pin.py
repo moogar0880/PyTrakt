@@ -19,8 +19,6 @@ class PinAuthAdapter:
 
     def authenticate(self):
         """Generate an access_token from a Trakt API PIN code.
-
-        :return: Your OAuth access token
         """
 
         if self.pin is None and self.config.APPLICATION_ID is None:
@@ -45,5 +43,3 @@ class PinAuthAdapter:
 
         response = self.client.post('/oauth/token', data)
         self.config.OAUTH_TOKEN = response.get('access_token', None)
-
-        return self.config.OAUTH_TOKEN

@@ -35,9 +35,6 @@ class DeviceAuthAdapter:
         get_device_code and get_device_token.
         Where poll_for_device_token will check if the "offline"
         authentication was successful.
-
-        :return: A dict with the authentication result.
-        Or False of authentication failed.
         """
 
         response = self.get_device_code()
@@ -115,5 +112,3 @@ class DeviceAuthAdapter:
             OAUTH_REFRESH=response.get('refresh_token'),
             OAUTH_EXPIRES_AT=response.get("created_at") + response.get("expires_in"),
         )
-
-        return response

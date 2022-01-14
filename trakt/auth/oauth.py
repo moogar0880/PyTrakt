@@ -24,8 +24,6 @@ class OAuthAdapter:
     def authenticate(self):
         """Generate an access_token to allow your application to authenticate via
         OAuth
-
-        :return: Your OAuth access token
         """
 
         base_url = self.client.base_url
@@ -48,8 +46,6 @@ class OAuthAdapter:
             OAUTH_REFRESH=oauth.token['refresh_token'],
             OAUTH_EXPIRES_AT=oauth.token["created_at"] + oauth.token["expires_in"],
         )
-
-        return self.config.OAUTH_TOKEN
 
     @staticmethod
     def terminal_oauth_pin(authorization_url):

@@ -1,8 +1,16 @@
-from trakt.auth import _store
+import sys
+
+from trakt.api import HttpClient
+from trakt.auth import get_client_info
+from trakt.config import AuthConfig
 
 
 class PinAuth:
-    def __init__(self, pin=None, client_id=None, client_secret=None, store=False):
+    #: The OAuth2 Redirect URI for your OAuth Application
+    REDIRECT_URI: str = 'urn:ietf:wg:oauth:2.0:oob'
+
+    def __init__(self, client: HttpClient, config: AuthConfig, pin=None, client_id=None, client_secret=None,
+                 store=False):
         """
         :param pin: Optional Trakt API PIN code. If one is not specified, you will
             be prompted to go generate one
@@ -14,6 +22,8 @@ class PinAuth:
             the security conscious
         """
         self.pin = pin
+        self.client = client
+        self.config = config
         self.client_id = client_id
         self.client_secret = client_secret
         self.store = store
@@ -24,10 +34,8 @@ class PinAuth:
         :return: Your OAuth access token
         """
 
-        global OAUTH_TOKEN, CLIENT_ID, CLIENT_SECRET
-        CLIENT_ID, CLIENT_SECRET = self.client_id, self.client_secret
-        if self.client_id is None and self.client_secret is None:
-            CLIENT_ID, CLIENT_SECRET = _get_client_info(app_id=True)
+        self.update_tokens()
+
         if self.pin is None and APPLICATION_ID is None:
             print('You must set the APPLICATION_ID of the Trakt application you '
                   'wish to use. You can find this ID by visiting the following '
@@ -40,16 +48,33 @@ class PinAuth:
             pin_url = 'https://trakt.tv/pin/{id}'.format(id=APPLICATION_ID)
             print(pin_url)
             self.pin = input('Please enter your PIN: ')
-        args = {'code': self.pin,
-                'redirect_uri': REDIRECT_URI,
-                'grant_type': 'authorization_code',
-                'client_id': CLIENT_ID,
-                'client_secret': CLIENT_SECRET}
+        data = {
+            'code': self.pin,
+            'redirect_uri': self.REDIRECT_URI,
+            'grant_type': 'authorization_code',
+            'client_id': self.config.CLIENT_ID,
+            'client_secret': self.config.CLIENT_SECRET,
+        }
 
-        response = session.post(''.join([BASE_URL, '/oauth/token']), data=args)
-        OAUTH_TOKEN = response.json().get('access_token', None)
+        response = self.client.post('/oauth/token', data)
+        self.config.OAUTH_TOKEN = response.get('access_token', None)
+
+        # self.config.update(
+        #     CLIENT_ID=CLIENT_ID,
+        #     CLIENT_SECRET=CLIENT_SECRET,
+        #     OAUTH_TOKEN=OAUTH_TOKEN,
+        #     APPLICATION_ID=APPLICATION_ID
+        # )
 
         if self.store:
-            _store(CLIENT_ID=CLIENT_ID, CLIENT_SECRET=CLIENT_SECRET,
-                   OAUTH_TOKEN=OAUTH_TOKEN, APPLICATION_ID=APPLICATION_ID)
-        return OAUTH_TOKEN
+            self.config.store()
+
+        return self.config.OAUTH_TOKEN
+
+    def update_tokens(self):
+        """
+        Update client_id, client_secret from input or ask them interactively
+        """
+        if self.client_id is None and self.client_secret is None:
+            self.client_id, self.client_secret = get_client_info()
+        self.config.CLIENT_ID, self.config.CLIENT_SECRET = self.client_id, self.client_secret

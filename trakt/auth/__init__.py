@@ -9,7 +9,7 @@ from trakt import PIN_AUTH, OAUTH_AUTH, DEVICE_AUTH, api, config
 def pin_auth(*args, **kwargs):
     from trakt.auth.pin import PinAuth
 
-    return PinAuth(*args, **kwargs).authenticate()
+    return PinAuth(*args, client=api(), config=config(), **kwargs).authenticate()
 
 
 def oauth_auth(*args, **kwargs):

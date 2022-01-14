@@ -46,8 +46,8 @@ class DeviceAuthAdapter(BaseAdapter):
         while True:
             try:
                 response = self.get_device_token(device_code)
-                print(self.success_message.format_map(response.json()))
-                return response
+                print(self.success_message.format_map(response))
+                break
             except RateLimitException:
                 # slow down
                 interval *= 2
@@ -110,3 +110,5 @@ class DeviceAuthAdapter(BaseAdapter):
             OAUTH_REFRESH=response.get('refresh_token'),
             OAUTH_EXPIRES_AT=response.get("created_at") + response.get("expires_in"),
         )
+
+        return response

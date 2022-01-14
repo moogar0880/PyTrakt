@@ -15,7 +15,7 @@ def pin_auth(*args, **kwargs):
 def oauth_auth(*args, **kwargs):
     from trakt.auth.oauth import OAuth
 
-    return OAuth(*args, **kwargs).authenticate()
+    return OAuth(*args, client=api(), config=config(), **kwargs).authenticate()
 
 
 def device_auth(*args, **kwargs):

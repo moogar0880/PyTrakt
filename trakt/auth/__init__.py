@@ -60,6 +60,7 @@ def init_auth(method: str, *args, client_id=None, client_secret=None, store=Fals
     }
 
     config = config_factory()
+    adapter = methods.get(method, PIN_AUTH)
 
     """
     Update client_id, client_secret from input or ask them interactively
@@ -68,7 +69,6 @@ def init_auth(method: str, *args, client_id=None, client_secret=None, store=Fals
         client_id, client_secret = get_client_info()
     config.CLIENT_ID, config.CLIENT_SECRET = client_id, client_secret
 
-    adapter = methods.get(method, PIN_AUTH)
     adapter(*args, config=config, **kwargs)
 
     if store:

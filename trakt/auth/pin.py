@@ -6,6 +6,8 @@ from trakt.config import AuthConfig
 
 
 class PinAuthAdapter(BaseAdapter):
+    NEEDS_APPLICATION_ID = True
+
     def __init__(self, client: HttpClient, config: AuthConfig, pin=None):
         """
         :param pin: Optional Trakt API PIN code. If one is not specified, you will

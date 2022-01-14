@@ -86,8 +86,6 @@ Should you choose to store your credentials in another way and not to set the
 `store` flag, you will need to ensure that your application applies the
 following settings before attempting to interact with Trakt
 
-* `trakt.core.api_key`
-  * Note: api_key is deprecated in favor of OAUTH_TOKEN and will go away with the next major release
 * `trakt.core.OAUTH_TOKEN`
 * `trakt.core.CLIENT_ID`
 * `trakt.core.CLIENT_SECRET`

@@ -3,25 +3,25 @@
 
 __author__ = 'Jon Nappi, Elan Ruusamäe'
 
-from trakt import PIN_AUTH, OAUTH_AUTH, DEVICE_AUTH, api, config
+from trakt import PIN_AUTH, OAUTH_AUTH, DEVICE_AUTH, api, config as config_factory
 
 
-def pin_auth(*args, **kwargs):
+def pin_auth(*args, config, **kwargs):
     from trakt.auth.pin import PinAuthAdapter
 
-    return PinAuthAdapter(*args, client=api(), config=config(), **kwargs).authenticate()
+    return PinAuthAdapter(*args, client=api(), config=config, **kwargs).authenticate()
 
 
-def oauth_auth(*args, **kwargs):
+def oauth_auth(*args, config, **kwargs):
     from trakt.auth.oauth import OAuthAdapter
 
-    return OAuthAdapter(*args, client=api(), config=config(), **kwargs).authenticate()
+    return OAuthAdapter(*args, client=api(), config=config, **kwargs).authenticate()
 
 
-def device_auth(*args, **kwargs):
+def device_auth(*args, config, **kwargs):
     from trakt.auth.device import DeviceAuthAdapter
 
-    return DeviceAuthAdapter(*args, client=api(), config=config(), **kwargs).authenticate()
+    return DeviceAuthAdapter(*args, client=api(), config=config, **kwargs).authenticate()
 
 
 def get_client_info(app_id=False):
@@ -45,7 +45,7 @@ def get_client_info(app_id=False):
     return client_id, client_secret
 
 
-def init_auth(method: str, store=False, *args, **kwargs):
+def init_auth(method: str, client_id=None, client_secret=None, store=False, *args, **kwargs):
     """Run the auth function specified by *AUTH_METHOD*
 
     :param store: Boolean flag used to determine if your trakt api auth data
@@ -59,8 +59,18 @@ def init_auth(method: str, store=False, *args, **kwargs):
         DEVICE_AUTH: device_auth,
     }
 
-    result = methods.get(method, PIN_AUTH)(*args, **kwargs)
+    config = config_factory()
+
+    """
+    Update client_id, client_secret from input or ask them interactively
+    """
+    if client_id is None and client_secret is None:
+        client_id, client_secret = get_client_info()
+    config.CLIENT_ID, config.CLIENT_SECRET = client_id, client_secret
+
+    adapter = methods.get(method, PIN_AUTH)
+    result = adapter(*args, config=config, **kwargs)
     if store:
-        config().store()
+        config.store()
 
     return result

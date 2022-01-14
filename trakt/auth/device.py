@@ -19,15 +19,9 @@ class DeviceAuthAdapter:
         "With access_token {access_token} and refresh_token {refresh_token}"
     )
 
-    def __init__(self, client: HttpClient, config: AuthConfig, client_id=None, client_secret=None):
-        """
-        :param client_id: Your Trakt OAuth Application's Client ID
-        :param client_secret: Your Trakt OAuth Application's Client Secret
-        """
+    def __init__(self, client: HttpClient, config: AuthConfig):
         self.client = client
         self.config = config
-        self.client_id = client_id
-        self.client_secret = client_secret
 
     def authenticate(self):
         """Process for authenticating using device authentication.
@@ -47,7 +41,6 @@ class DeviceAuthAdapter:
         Or False of authentication failed.
         """
 
-        self.update_tokens()
         response = self.get_device_code()
         device_code = response['device_code']
         interval = response['interval']
@@ -125,11 +118,3 @@ class DeviceAuthAdapter:
         )
 
         return response
-
-    def update_tokens(self):
-        """
-        Update client_id, client_secret from input or ask them interactively
-        """
-        if self.client_id is None and self.client_secret is None:
-            self.client_id, self.client_secret = get_client_info()
-        self.config.CLIENT_ID, self.config.CLIENT_SECRET = self.client_id, self.client_secret

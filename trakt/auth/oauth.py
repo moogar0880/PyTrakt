@@ -11,20 +11,15 @@ class OAuthAdapter:
     #: The OAuth2 Redirect URI for your OAuth Application
     REDIRECT_URI: str = 'urn:ietf:wg:oauth:2.0:oob'
 
-    def __init__(self, username, client: HttpClient, config: AuthConfig, client_id=None, client_secret=None,
-                 oauth_cb=None):
+    def __init__(self, username, client: HttpClient, config: AuthConfig, oauth_cb=None):
         """
         :param username: Your trakt.tv username
-        :param client_id: Your Trakt OAuth Application's Client ID
-        :param client_secret: Your Trakt OAuth Application's Client Secret
         :param oauth_cb: Callback function to handle the retrieving of the OAuth
             PIN. Default function `_terminal_oauth_pin` for terminal auth
         """
         self.username = username
         self.client = client
         self.config = config
-        self.client_id = client_id
-        self.client_secret = client_secret
         self.oauth_cb = self.terminal_oauth_pin if oauth_cb is None else oauth_cb
 
     def authenticate(self):
@@ -33,8 +28,6 @@ class OAuthAdapter:
 
         :return: Your OAuth access token
         """
-
-        self.update_tokens()
 
         base_url = self.client.base_url
         authorization_base_url = urljoin(base_url, '/oauth/authorize')
@@ -58,14 +51,6 @@ class OAuthAdapter:
         )
 
         return self.config.OAUTH_TOKEN
-
-    def update_tokens(self):
-        """
-        Update client_id, client_secret from input or ask them interactively
-        """
-        if self.client_id is None and self.client_secret is None:
-            self.client_id, self.client_secret = get_client_info()
-        self.config.CLIENT_ID, self.config.CLIENT_SECRET = self.client_id, self.client_secret
 
     @staticmethod
     def terminal_oauth_pin(authorization_url):

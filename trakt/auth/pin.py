@@ -9,27 +9,20 @@ class PinAuthAdapter:
     #: The OAuth2 Redirect URI for your OAuth Application
     REDIRECT_URI: str = 'urn:ietf:wg:oauth:2.0:oob'
 
-    def __init__(self, client: HttpClient, config: AuthConfig, pin=None, client_id=None, client_secret=None):
+    def __init__(self, client: HttpClient, config: AuthConfig, pin=None):
         """
         :param pin: Optional Trakt API PIN code. If one is not specified, you will
             be prompted to go generate one
-        :param client_id: The oauth client_id for authenticating to the trakt API.
-        :param client_secret: The oauth client_secret for authenticating to the
-            trakt API.
         """
         self.pin = pin
         self.client = client
         self.config = config
-        self.client_id = client_id
-        self.client_secret = client_secret
 
     def authenticate(self):
         """Generate an access_token from a Trakt API PIN code.
 
         :return: Your OAuth access token
         """
-
-        self.update_tokens()
 
         if self.pin is None and APPLICATION_ID is None:
             print('You must set the APPLICATION_ID of the Trakt application you '
@@ -62,11 +55,3 @@ class PinAuthAdapter:
         # )
 
         return self.config.OAUTH_TOKEN
-
-    def update_tokens(self):
-        """
-        Update client_id, client_secret from input or ask them interactively
-        """
-        if self.client_id is None and self.client_secret is None:
-            self.client_id, self.client_secret = get_client_info()
-        self.config.CLIENT_ID, self.config.CLIENT_SECRET = self.client_id, self.client_secret

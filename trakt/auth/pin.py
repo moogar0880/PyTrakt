@@ -46,11 +46,4 @@ class PinAuthAdapter:
         response = self.client.post('/oauth/token', data)
         self.config.OAUTH_TOKEN = response.get('access_token', None)
 
-        # self.config.update(
-        #     CLIENT_ID=CLIENT_ID,
-        #     CLIENT_SECRET=CLIENT_SECRET,
-        #     OAUTH_TOKEN=OAUTH_TOKEN,
-        #     APPLICATION_ID=APPLICATION_ID
-        # )
-
         return self.config.OAUTH_TOKEN

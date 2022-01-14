@@ -18,10 +18,10 @@ def oauth_auth(*args, config, **kwargs):
     return OAuthAdapter(*args, client=api(), config=config, **kwargs).authenticate()
 
 
-def device_auth(*args, config, **kwargs):
+def device_auth(config):
     from trakt.auth.device import DeviceAuthAdapter
 
-    return DeviceAuthAdapter(*args, client=api(), config=config, **kwargs).authenticate()
+    return DeviceAuthAdapter(client=api(), config=config).authenticate()
 
 
 def get_client_info(app_id=False):

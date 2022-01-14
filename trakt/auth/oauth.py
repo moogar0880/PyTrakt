@@ -3,6 +3,7 @@ from urllib.parse import urljoin
 from requests_oauthlib import OAuth2Session
 
 from trakt.api import HttpClient
+
 from trakt.config import AuthConfig
 
 

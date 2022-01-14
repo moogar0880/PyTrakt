@@ -45,7 +45,7 @@ def get_client_info(app_id=False):
     return client_id, client_secret
 
 
-def init_auth(method: str, client_id=None, client_secret=None, store=False, *args, **kwargs):
+def init_auth(method: str, *args, client_id=None, client_secret=None, store=False, **kwargs):
     """Run the auth function specified by *AUTH_METHOD*
 
     :param store: Boolean flag used to determine if your trakt api auth data

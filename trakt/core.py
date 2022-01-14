@@ -76,6 +76,7 @@ def config():
     from trakt.config import AuthConfig
 
     return AuthConfig(CONFIG_PATH).update(
+        APPLICATION_ID=APPLICATION_ID,
         CLIENT_ID=CLIENT_ID,
         CLIENT_SECRET=CLIENT_SECRET,
         OAUTH_EXPIRES_AT=OAUTH_EXPIRES_AT,

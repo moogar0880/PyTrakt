@@ -109,6 +109,10 @@ class TokenAuth(AuthBase):
         self.logger = logging.getLogger('trakt.api.token_auth')
 
     def __call__(self, r):
+        # Skip oauth requests
+        if r.url.startswith(f'{self.client.base_url}/oauth/'):
+            return r
+
         [client_id, client_token] = self.get_token()
 
         r.headers.update({

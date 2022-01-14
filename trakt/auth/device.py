@@ -51,12 +51,9 @@ class DeviceAuthAdapter(BaseAdapter):
             except RateLimitException:
                 # slow down
                 interval *= 2
-            except BadRequestException as e:
-                # XXX? what now?
-                # # elif response.status_code != 400:  # not pending
-                # raise e
-                print(e)
-                return None
+            except BadRequestException:
+                # not pending
+                pass
             except TraktException as e:
                 print(self.error_messages.get(e.http_code, response.response))
 

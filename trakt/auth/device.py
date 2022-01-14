@@ -6,7 +6,7 @@ from trakt.config import AuthConfig
 from trakt.errors import TraktException, RateLimitException, BadRequestException
 
 
-class DeviceAuth:
+class DeviceAuthAdapter:
     error_messages = {
         404: 'Invalid device_code',
         409: 'You already approved this code',

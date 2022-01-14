@@ -7,7 +7,7 @@ from trakt.auth import get_client_info
 from trakt.config import AuthConfig
 
 
-class OAuth:
+class OAuthAdapter:
     #: The OAuth2 Redirect URI for your OAuth Application
     REDIRECT_URI: str = 'urn:ietf:wg:oauth:2.0:oob'
 

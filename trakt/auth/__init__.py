@@ -7,21 +7,21 @@ from trakt import PIN_AUTH, OAUTH_AUTH, DEVICE_AUTH, api, config
 
 
 def pin_auth(*args, **kwargs):
-    from trakt.auth.pin import PinAuth
+    from trakt.auth.pin import PinAuthAdapter
 
-    return PinAuth(*args, client=api(), config=config(), **kwargs).authenticate()
+    return PinAuthAdapter(*args, client=api(), config=config(), **kwargs).authenticate()
 
 
 def oauth_auth(*args, **kwargs):
-    from trakt.auth.oauth import OAuth
+    from trakt.auth.oauth import OAuthAdapter
 
-    return OAuth(*args, client=api(), config=config(), **kwargs).authenticate()
+    return OAuthAdapter(*args, client=api(), config=config(), **kwargs).authenticate()
 
 
 def device_auth(*args, **kwargs):
-    from trakt.auth.device import DeviceAuth
+    from trakt.auth.device import DeviceAuthAdapter
 
-    return DeviceAuth(*args, client=api(), config=config(), **kwargs).authenticate()
+    return DeviceAuthAdapter(*args, client=api(), config=config(), **kwargs).authenticate()
 
 
 def get_client_info(app_id=False):

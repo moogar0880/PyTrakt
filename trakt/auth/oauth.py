@@ -9,9 +9,6 @@ from trakt.config import AuthConfig
 
 
 class OAuthAdapter(BaseAdapter):
-    #: The OAuth2 Redirect URI for your OAuth Application
-    REDIRECT_URI: str = 'urn:ietf:wg:oauth:2.0:oob'
-
     def __init__(self, username, client: HttpClient, config: AuthConfig, oauth_cb=None):
         """
         :param username: Your trakt.tv username

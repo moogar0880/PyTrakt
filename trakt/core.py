@@ -9,6 +9,7 @@ from functools import lru_cache
 import requests
 
 __author__ = 'Jon Nappi'
+# XXX: drop?
 __all__ = ['Airs', 'Alias', 'Comment', 'Genre',
            'init', 'BASE_URL', 'CLIENT_ID', 'CLIENT_SECRET', 'DEVICE_AUTH',
            'CONFIG_PATH', 'OAUTH_TOKEN',
@@ -29,12 +30,14 @@ CLIENT_SECRET = None
 CONFIG_PATH = os.path.join(os.path.expanduser('~'), '.pytrakt.json')
 
 #: Your personal Trakt.tv OAUTH Bearer Token
-OAUTH_TOKEN = api_key = None
+OAUTH_TOKEN = None
 
 # Your OAUTH token expiration date
+# XXX: drop?
 OAUTH_EXPIRES_AT = None
 
 # Your OAUTH refresh token
+# XXX: drop?
 OAUTH_REFRESH = None
 
 #: Flag used to enable Trakt PIN authentication

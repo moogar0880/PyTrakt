@@ -4,6 +4,7 @@
 __author__ = 'Jon Nappi, Elan Ruusamäe'
 
 from trakt import PIN_AUTH, OAUTH_AUTH, DEVICE_AUTH, api, config as config_factory
+from trakt.config import AuthConfig
 
 
 def pin_auth(*args, config, **kwargs):
@@ -24,24 +25,22 @@ def device_auth(config):
     return DeviceAuthAdapter(client=api(), config=config).authenticate()
 
 
-def get_client_info(app_id=False):
+def get_client_info(app_id: bool, config: AuthConfig):
     """Helper function to poll the user for Client ID and Client Secret
     strings
 
     :return: A 2-tuple of client_id, client_secret
     """
-    global APPLICATION_ID
     print('If you do not have a client ID and secret. Please visit the '
           'following url to create them.')
     print('http://trakt.tv/oauth/applications')
     client_id = input('Please enter your client id: ')
     client_secret = input('Please enter your client secret: ')
     if app_id:
-        msg = 'Please enter your application ID ({default}): '.format(
-            default=APPLICATION_ID)
+        msg = f'Please enter your application ID ({config.APPLICATION_ID}): '
         user_input = input(msg)
         if user_input:
-            APPLICATION_ID = user_input
+            config.APPLICATION_ID = user_input
     return client_id, client_secret
 
 
@@ -66,7 +65,7 @@ def init_auth(method: str, *args, client_id=None, client_secret=None, store=Fals
     Update client_id, client_secret from input or ask them interactively
     """
     if client_id is None and client_secret is None:
-        client_id, client_secret = get_client_info()
+        client_id, client_secret = get_client_info(adapter.NEEDS_APPLICATION_ID, config)
     config.CLIENT_ID, config.CLIENT_SECRET = client_id, client_secret
 
     adapter(*args, config=config, **kwargs)

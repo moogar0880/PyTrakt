@@ -45,14 +45,13 @@ def get_client_info(app_id=False):
     return client_id, client_secret
 
 
-def _store(**kwargs):
-    from trakt.core import config
+def init_auth(method: str, store=False, *args, **kwargs):
+    """Run the auth function specified by *AUTH_METHOD*
 
-    config().store(**kwargs)
-
-
-def init_auth(method: str, *args, **kwargs):
-    """Run the auth function specified by *AUTH_METHOD*"""
+    :param store: Boolean flag used to determine if your trakt api auth data
+    should be stored locally on the system. Default is :const:`False` for
+    the security conscious
+    """
 
     methods = {
         PIN_AUTH: pin_auth,
@@ -60,4 +59,8 @@ def init_auth(method: str, *args, **kwargs):
         DEVICE_AUTH: device_auth,
     }
 
-    return methods.get(method, PIN_AUTH)(*args, **kwargs)
+    result = methods.get(method, PIN_AUTH)(*args, **kwargs)
+    if store:
+        config().store()
+
+    return result

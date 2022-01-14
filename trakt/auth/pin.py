@@ -9,8 +9,7 @@ class PinAuth:
     #: The OAuth2 Redirect URI for your OAuth Application
     REDIRECT_URI: str = 'urn:ietf:wg:oauth:2.0:oob'
 
-    def __init__(self, client: HttpClient, config: AuthConfig, pin=None, client_id=None, client_secret=None,
-                 store=False):
+    def __init__(self, client: HttpClient, config: AuthConfig, pin=None, client_id=None, client_secret=None):
         """
         :param pin: Optional Trakt API PIN code. If one is not specified, you will
             be prompted to go generate one
@@ -26,7 +25,6 @@ class PinAuth:
         self.config = config
         self.client_id = client_id
         self.client_secret = client_secret
-        self.store = store
 
     def authenticate(self):
         """Generate an access_token from a Trakt API PIN code.
@@ -65,9 +63,6 @@ class PinAuth:
         #     OAUTH_TOKEN=OAUTH_TOKEN,
         #     APPLICATION_ID=APPLICATION_ID
         # )
-
-        if self.store:
-            self.config.store()
 
         return self.config.OAUTH_TOKEN
 

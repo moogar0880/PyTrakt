@@ -19,7 +19,7 @@ class DeviceAuth:
         "With access_token {access_token} and refresh_token {refresh_token}"
     )
 
-    def __init__(self, client: HttpClient, config: AuthConfig, client_id=None, client_secret=None, store=False):
+    def __init__(self, client: HttpClient, config: AuthConfig, client_id=None, client_secret=None):
         """
         :param client_id: Your Trakt OAuth Application's Client ID
         :param client_secret: Your Trakt OAuth Application's Client Secret
@@ -31,7 +31,6 @@ class DeviceAuth:
         self.config = config
         self.client_id = client_id
         self.client_secret = client_secret
-        self.store = store
 
     def authenticate(self):
         """Process for authenticating using device authentication.
@@ -59,7 +58,7 @@ class DeviceAuth:
         # No need to check for expiration, the API will notify us.
         while True:
             try:
-                response = self.get_device_token(device_code, self.store)
+                response = self.get_device_token(device_code)
                 print(self.success_message.format_map(response.json()))
                 return response
             except RateLimitException:
@@ -96,7 +95,7 @@ class DeviceAuth:
 
         return response
 
-    def get_device_token(self, device_code, store=False):
+    def get_device_token(self, device_code):
         """
         Trakt docs: https://trakt.docs.apiary.io/#reference/
         authentication-devices/get-token
@@ -127,9 +126,6 @@ class DeviceAuth:
             OAUTH_REFRESH=response.get('refresh_token'),
             OAUTH_EXPIRES_AT=response.get("created_at") + response.get("expires_in"),
         )
-
-        if store:
-            self.config.store()
 
         return response
 

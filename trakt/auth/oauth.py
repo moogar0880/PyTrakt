@@ -12,14 +12,11 @@ class OAuth:
     REDIRECT_URI: str = 'urn:ietf:wg:oauth:2.0:oob'
 
     def __init__(self, username, client: HttpClient, config: AuthConfig, client_id=None, client_secret=None,
-                 store=False, oauth_cb=None):
+                 oauth_cb=None):
         """
         :param username: Your trakt.tv username
         :param client_id: Your Trakt OAuth Application's Client ID
         :param client_secret: Your Trakt OAuth Application's Client Secret
-        :param store: Boolean flag used to determine if your trakt api auth data
-            should be stored locally on the system. Default is :const:`False` for
-            the security conscious
         :param oauth_cb: Callback function to handle the retrieving of the OAuth
             PIN. Default function `_terminal_oauth_pin` for terminal auth
         """
@@ -28,7 +25,6 @@ class OAuth:
         self.config = config
         self.client_id = client_id
         self.client_secret = client_secret
-        self.store = store
         self.oauth_cb = self.terminal_oauth_pin if oauth_cb is None else oauth_cb
 
     def authenticate(self):
@@ -60,9 +56,6 @@ class OAuth:
             OAUTH_REFRESH=oauth.token['refresh_token'],
             OAUTH_EXPIRES_AT=oauth.token["created_at"] + oauth.token["expires_in"],
         )
-
-        if self.store:
-            self.config.store()
 
         return self.config.OAUTH_TOKEN
 

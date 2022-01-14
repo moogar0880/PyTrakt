@@ -107,11 +107,10 @@ class TokenAuth(AuthBase):
         self.config = config
         self.client = client
         self.logger = logging.getLogger('trakt.api.token_auth')
-        self.base_url = f'{self.client.base_url.rstrip("/")}/oauth/'
 
     def __call__(self, r):
         # Skip oauth requests
-        if r.url.startswith(self.base_url):
+        if r.path_url.startswith('/oauth/'):
             return r
 
         [client_id, client_token] = self.get_token()

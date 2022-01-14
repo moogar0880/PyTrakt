@@ -23,7 +23,7 @@ class PinAuthAdapter:
         :return: Your OAuth access token
         """
 
-        if self.pin is None and APPLICATION_ID is None:
+        if self.pin is None and self.config.APPLICATION_ID is None:
             print('You must set the APPLICATION_ID of the Trakt application you '
                   'wish to use. You can find this ID by visiting the following '
                   'URL.')
@@ -32,7 +32,7 @@ class PinAuthAdapter:
         if self.pin is None:
             print('If you do not have a Trakt.tv PIN, please visit the following '
                   'url and log in to generate one.')
-            pin_url = 'https://trakt.tv/pin/{id}'.format(id=APPLICATION_ID)
+            pin_url = 'https://trakt.tv/pin/{id}'.format(id=self.config.APPLICATION_ID)
             print(pin_url)
             self.pin = input('Please enter your PIN: ')
         data = {

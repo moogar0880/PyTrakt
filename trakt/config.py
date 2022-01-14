@@ -11,6 +11,7 @@ from typing import Optional
 
 @dataclass
 class AuthConfig:
+    APPLICATION_ID: Optional[str]
     CLIENT_ID: Optional[str]
     CLIENT_SECRET: Optional[str]
     OAUTH_EXPIRES_AT: Optional[int]

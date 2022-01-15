@@ -5,12 +5,12 @@ trakt package
 import json
 import logging
 import os
+from typing import NamedTuple
 from urllib.parse import urljoin
 
 import requests
 import sys
 import time
-from collections import namedtuple
 from functools import wraps
 from requests_oauthlib import OAuth2Session
 from datetime import datetime, timedelta, timezone
@@ -359,12 +359,34 @@ def init(*args, **kwargs):
     return auth_method.get(AUTH_METHOD, PIN_AUTH)(*args, **kwargs)
 
 
-Airs = namedtuple('Airs', ['day', 'time', 'timezone'])
-Alias = namedtuple('Alias', ['title', 'country'])
-Genre = namedtuple('Genre', ['name', 'slug'])
-Comment = namedtuple('Comment', ['id', 'parent_id', 'created_at', 'comment',
-                                 'spoiler', 'review', 'replies', 'user',
-                                 'updated_at', 'likes', 'user_rating'])
+class Airs(NamedTuple):
+    day: str
+    time: str
+    timezone: str
+
+
+class Alias(NamedTuple):
+    title: str
+    country: str
+
+
+class Genre(NamedTuple):
+    name: str
+    slug: str
+
+
+class Comment(NamedTuple):
+    id: str
+    parent_id: str
+    created_at: str
+    comment: str
+    spoiler: str
+    review: str
+    replies: str
+    user: str
+    updated_at: str
+    likes: str
+    user_rating: str
 
 
 def _validate_token(s):

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Interfaces to all of the User objects offered by the Trakt.tv API"""
-from collections import namedtuple
+from typing import NamedTuple
+
 from trakt.core import get, post, delete
 from trakt.movies import Movie
 from trakt.people import Person
@@ -12,8 +13,10 @@ __all__ = ['User', 'UserList', 'Request', 'follow', 'get_all_requests',
            'get_user_settings', 'unfollow']
 
 
-class Request(namedtuple('Request', ['id', 'requested_at', 'user'])):
-    __slots__ = ()
+class Request(NamedTuple):
+    id: int
+    user: str
+    requested_at: str
 
     @post
     def approve(self):
@@ -60,12 +63,24 @@ def unfollow(user_name):
     yield 'users/{username}/follow'.format(username=slugify(user_name))
 
 
-class UserList(namedtuple('UserList', ['name', 'description', 'privacy',
-                                       'display_numbers', 'allow_comments',
-                                       'sort_by', 'sort_how', 'created_at',
-                                       'updated_at', 'item_count',
-                                       'comment_count', 'likes', 'trakt',
-                                       'slug', 'user', 'creator'])):
+class UserList(NamedTuple):
+    name: str
+    description: str
+    privacy: str
+    display_numbers: str
+    allow_comments: str
+    sort_by: str
+    sort_how: str
+    created_at: str
+    updated_at: str
+    item_count: str
+    comment_count: str
+    likes: str
+    trakt: str
+    slug: str
+    user: str
+    creator: str
+
     """A list created by a Trakt.tv :class:`User`"""
 
     def __init__(self, *args, **kwargs):

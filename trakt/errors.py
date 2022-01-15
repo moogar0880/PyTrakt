@@ -6,7 +6,13 @@ guaranteed to have the application/json MIME type set.
 
 __author__ = 'Jon Nappi'
 __all__ = [
+    # Base Exception
     'TraktException',
+
+    # Errors for use by PyTrakt
+    'BadResponseException',
+
+    # Exceptions by HTTP status code
     'BadRequestException',
     'OAuthException',
     'ForbiddenException',
@@ -30,6 +36,12 @@ class TraktException(Exception):
 
     def __str__(self):
         return self.message
+
+
+class BadResponseException(TraktException):
+    """TraktException type to be raised when json could not be decoded"""
+    http_code = -1
+    message = "Bad Response - Response could not be parsed"
 
 
 class BadRequestException(TraktException):

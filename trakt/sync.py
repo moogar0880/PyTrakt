@@ -2,7 +2,7 @@
 """This module contains Trakt.tv sync endpoint support functions"""
 from datetime import datetime, timezone
 
-from trakt.core import get, post, delete
+from trakt.decorators import get, post, delete
 from trakt.utils import slugify, extract_ids, timestamp
 
 

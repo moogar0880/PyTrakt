@@ -15,6 +15,7 @@ class Person(object):
         super(Person, self).__init__()
         self.name = name
         self.biography = self.birthplace = self.tmdb_id = self.birthday = None
+        self.death = self.homepage = None
         self.job = self.character = self._images = self._movie_credits = None
         self._tv_credits = None
         self.slug = slug or slugify(self.name)

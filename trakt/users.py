@@ -72,9 +72,9 @@ class UserList(namedtuple('UserList', ['name', 'description', 'privacy',
         super(UserList, self).__init__()
         self._items = list()
 
-    def __iter__(self, *args, **kwargs):
+    def __iter__(self):
         """Iterate over the items in this user list"""
-        return self._items.__iter__(*args, **kwargs)
+        return self._items.__iter__()
 
     @classmethod
     @post

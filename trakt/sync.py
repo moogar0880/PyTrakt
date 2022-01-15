@@ -2,6 +2,8 @@
 """This module contains Trakt.tv sync endpoint support functions"""
 from datetime import datetime, timezone
 
+from deprecated import deprecated
+
 from trakt.core import get, post, delete
 from trakt.utils import slugify, extract_ids, timestamp
 
@@ -345,12 +347,14 @@ def get_watchlist(list_type=None, sort=None):
 
 
 @get
-def get_watched(list_type=None, extended=None):
-    """Return all movies or shows a user has watched sorted by most plays.
+def watchlist(list_type=None, extended=None):
+    """Returns all items in a user's watchlist filtered by type.
 
     :param list_type: Optional Filter by a specific type.
         Possible values: movies, shows, seasons or episodes.
     :param extended: Optional value for requesting extended information.
+
+    https://trakt.docs.apiary.io/#reference/sync/get-watchlist/get-watchlist
     """
     valid_type = ('movies', 'shows', 'seasons', 'episodes')
 
@@ -375,6 +379,14 @@ def get_watched(list_type=None, extended=None):
             results.append(TVShow(**d.pop('show')))
 
     yield results
+
+
+@deprecated("Use watchlist instead")
+def get_watched(list_type=None, extended=None):
+    return watchlist(list_type, extended)
+
+
+get_watched.__doc__ = watchlist.__doc__
 
 
 @get

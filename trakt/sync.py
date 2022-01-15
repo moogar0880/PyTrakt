@@ -2,6 +2,8 @@
 """This module contains Trakt.tv sync endpoint support functions"""
 from datetime import datetime, timezone
 
+from deprecated import deprecated
+
 from trakt.core import get, post, delete
 from trakt.utils import slugify, extract_ids, timestamp
 
@@ -302,13 +304,18 @@ def search_by_id(query, id_type='imdb', media_type=None, slugify_query=False):
 @get
 def get_watchlist(list_type=None, sort=None):
     """
-    Get a watchlist.
-
+    Returns all items in a user's watchlist filtered by type.
     optionally with a filter for a specific item type.
+
+    The watchlist should not be used as a list
+    of what the user is actively watching.
+
     :param list_type: Optional Filter by a specific type.
         Possible values: movies, shows, seasons or episodes.
     :param sort: Optional sort. Only if the type is also sent.
         Possible values: rank, added, released or title.
+
+    https://trakt.docs.apiary.io/#reference/sync/get-watchlist/get-watchlist
     """
     valid_type = ('movies', 'shows', 'seasons', 'episodes')
     valid_sort = ('rank', 'added', 'released', 'title')
@@ -344,6 +351,8 @@ def get_watchlist(list_type=None, sort=None):
     yield results
 
 
+@deprecated("This method returns watchlist, not watched list. "
+            "This will be fixed in PyTrakt 4.x to return watched list")
 @get
 def get_watched(list_type=None, extended=None):
     """Return all movies or shows a user has watched sorted by most plays.

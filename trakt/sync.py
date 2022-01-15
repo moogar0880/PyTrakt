@@ -431,7 +431,7 @@ def delete_checkin():
     yield "checkin"
 
 
-class Scrobbler(object):
+class Scrobbler:
     """Scrobbling is a seemless and automated way to track what you're watching
         in a media center. This class allows the media center to easily send
         events that correspond to starting, pausing, stopping or finishing
@@ -504,7 +504,7 @@ class Scrobbler(object):
         self.finish()
 
 
-class SearchResult(object):
+class SearchResult:
     """A SearchResult is an individual result item from the trakt.tv search
     API. It wraps a single media entity whose type is indicated by the type
     field.

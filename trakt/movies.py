@@ -81,7 +81,7 @@ Release = namedtuple('Release', ['country', 'certification', 'release_date',
                                  'note', 'release_type'])
 
 
-class Movie(object):
+class Movie:
     """A Class representing a Movie object"""
     def __init__(self, title, year=None, slug=None, **kwargs):
         super(Movie, self).__init__()

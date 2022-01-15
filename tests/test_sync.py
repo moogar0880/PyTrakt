@@ -10,7 +10,7 @@ from trakt.sync import (comment, rate, add_to_history, add_to_watchlist,
 
 
 
-class FakeMedia(object):
+class FakeMedia:
     """Mock media type object to use with mock sync requests"""
     media_type = 'fake'
 

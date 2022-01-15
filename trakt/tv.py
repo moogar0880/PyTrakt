@@ -384,7 +384,6 @@ class TVShow(object):
             data = yield self.ext + '/seasons?extended=full'
             self._seasons = []
             for season in data:
-                extract_ids(season)
                 self._seasons.append(TVSeason(self.title,
                                               season['number'], **season))
         yield self._seasons
@@ -500,11 +499,11 @@ class TVShow(object):
     __repr__ = __str__
 
 
-class TVSeason(object):
+class TVSeason(IdsMixin):
     """Container for TV Seasons"""
 
     def __init__(self, show, season=1, slug=None, **kwargs):
-        super(TVSeason, self).__init__()
+        super().__init__()
         self.show = show
         self.season = season
         self.slug = slug or slugify(show)

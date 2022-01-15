@@ -2,13 +2,14 @@
 """Interfaces to all of the Movie objects offered by the Trakt.tv API"""
 from collections import namedtuple
 from trakt.core import Alias, Comment, Genre, get, delete
+from trakt.mixins import IdsMixin
 from trakt.sync import (Scrobbler, comment, rate, add_to_history,
                         remove_from_history, add_to_watchlist,
                         remove_from_watchlist, add_to_collection,
                         remove_from_collection, search, checkin_media,
                         delete_checkin)
 from trakt.people import Person
-from trakt.utils import slugify, now, extract_ids
+from trakt.utils import slugify, now
 
 __author__ = 'Jon Nappi'
 __all__ = ['dismiss_recommendation', 'get_recommended_movies', 'genres',
@@ -36,7 +37,6 @@ def get_recommended_movies():
     data = yield 'recommendations/movies'
     movies = []
     for movie in data:
-        extract_ids(movie)
         movies.append(Movie(**movie))
     yield movies
 
@@ -71,7 +71,6 @@ def updated_movies(timestamp=None):
     to_ret = []
     for movie in data:
         mov = movie.pop('movie')
-        extract_ids(mov)
         mov.update({'updated_at': movie.pop('updated_at')})
         to_ret.append(Movie(**mov))
     yield to_ret
@@ -81,10 +80,10 @@ Release = namedtuple('Release', ['country', 'certification', 'release_date',
                                  'note', 'release_type'])
 
 
-class Movie(object):
+class Movie(IdsMixin):
     """A Class representing a Movie object"""
     def __init__(self, title, year=None, slug=None, **kwargs):
-        super(Movie, self).__init__()
+        super().__init__()
         self.media_type = 'movies'
         self.title = title
         self.year = int(year) if year is not None else year
@@ -93,13 +92,15 @@ class Movie(object):
         else:
             self.slug = slug or slugify(self.title)
 
-        self.released = self.tmdb_id = self.imdb_id = self.duration = None
-        self.trakt_id = self.tagline = self.overview = self.runtime = None
+        self.released = self.duration = None
+        self.tagline = self.overview = self.runtime = None
         self.updated_at = self.trailer = self.homepage = self.rating = None
         self.votes = self.language = self.available_translations = None
         self.genres = self.certification = None
         self._comments = self._images = self._aliases = self._people = None
         self._ratings = self._releases = self._translations = None
+        self.tmdb_id = self.imdb_id = None  # @deprecated: unused
+        self.trakt_id = None  # @deprecated: unused
 
         if len(kwargs) > 0:
             self._build(kwargs)
@@ -125,7 +126,6 @@ class Movie(object):
 
     def _build(self, data):
         """Build this :class:`Movie` object with the data in *data*"""
-        extract_ids(data)
         for key, val in data.items():
             if hasattr(self, '_' + key):
                 setattr(self, '_' + key, val)
@@ -185,14 +185,6 @@ class Movie(object):
     def crew(self):
         """All of the crew members that worked on this :class:`Movie`"""
         return [p for p in self.people if getattr(p, 'job')]
-
-    @property
-    def ids(self):
-        """Accessor to the trakt, imdb, and tmdb ids, as well as the trakt.tv
-        slug
-        """
-        return {'ids': {'trakt': self.trakt, 'slug': self.slug,
-                        'imdb': self.imdb, 'tmdb': self.tmdb}}
 
     @property
     @get

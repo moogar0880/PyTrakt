@@ -130,9 +130,8 @@ class UserList(namedtuple('UserList', ['name', 'description', 'privacy',
             item_type = item['type']
             item_data = item.pop(item_type)
             if item_type == 'movie':
-                extract_ids(item_data)
                 self._items.append(Movie(item_data['title'], item_data['year'],
-                                         item_data['slug']))
+                                         item_data['ids']['slug']))
             elif item_type == 'show':
                 extract_ids(item_data)
                 self._items.append(TVShow(item_data['title'],
@@ -336,7 +335,6 @@ class User(object):
             self._movie_watchlist = []
             for movie in data:
                 mov = movie.pop('movie')
-                extract_ids(mov)
                 self._movie_watchlist.append(Movie(**mov))
             yield self._movie_watchlist
         yield self._movie_watchlist
@@ -354,7 +352,6 @@ class User(object):
             self._movie_collection = []
             for movie in data:
                 mov = movie.pop('movie')
-                extract_ids(mov)
                 self._movie_collection.append(Movie(**mov))
         yield self._movie_collection
 
@@ -391,7 +388,6 @@ class User(object):
             self._watched_movies = []
             for movie in data:
                 movie_data = movie.pop('movie')
-                extract_ids(movie_data)
                 movie_data.update(movie)
                 self._watched_movies.append(Movie(**movie_data))
         yield self._watched_movies
@@ -432,7 +428,6 @@ class User(object):
         media_type = data.pop('type')
         if media_type == 'movie':
             movie_data = data.pop('movie')
-            extract_ids(movie_data)
             movie_data.update(data)
             yield Movie(**movie_data)
         else:  # media_type == 'episode'

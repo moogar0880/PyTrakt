@@ -212,7 +212,6 @@ def get_search_results(query, search_type=None, slugify_query=False):
         result = SearchResult(media_item['type'], media_item['score'])
         if media_item['type'] == 'movie':
             from trakt.movies import Movie
-            extract_ids(media_item)
             result.media = Movie(**media_item.pop('movie'))
         elif media_item['type'] == 'show':
             from trakt.tv import TVShow

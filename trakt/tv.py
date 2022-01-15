@@ -2,6 +2,9 @@
 """Interfaces to all of the TV objects offered by the Trakt.tv API"""
 from collections import namedtuple
 from datetime import datetime, timedelta
+
+from deprecated import deprecated
+
 from trakt.core import Airs, Alias, Comment, Genre, delete, get
 from trakt.errors import NotFoundException
 from trakt.sync import (Scrobbler, rate, comment, add_to_collection,
@@ -650,6 +653,7 @@ class TVEpisode(object):
         self.number = number
         self.overview = self.title = self.year = self.number_abs = None
         self.first_aired = self.last_updated = None
+        self.runtime = None
         self.trakt = self.tmdb = self.tvdb = self.imdb = None
         self.tvrage = self._stats = self._images = self._comments = None
         self._translations = self._ratings = None
@@ -657,7 +661,7 @@ class TVEpisode(object):
             self._build(kwargs)
         else:
             self._get()
-        self.episode = self.number  # Backwards compatability
+        self.episode = self.number  # @deprecated Backwards compatability
 
     @get
     def _get(self):
@@ -787,6 +791,7 @@ class TVEpisode(object):
             users.append(User(**user))
         yield users
 
+    @deprecated("To be dropped in 4.x")
     def get_description(self):
         """backwards compatible function that returns this :class:`TVEpisode`'s
         overview

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Interfaces to all of the User objects offered by the Trakt.tv API"""
 from collections import namedtuple
+from typing import Any, NamedTuple
 
 from trakt.core import delete, get, post
 from trakt.mixins import IdsMixin
@@ -14,8 +15,10 @@ __all__ = ['User', 'UserList', 'Request', 'follow', 'get_all_requests',
            'get_user_settings', 'unfollow']
 
 
-class Request(namedtuple('Request', ['id', 'requested_at', 'user'])):
-    __slots__ = ()
+class Request(NamedTuple):
+    id: int
+    user: Any
+    requested_at: str
 
     @post
     def approve(self):
@@ -62,13 +65,20 @@ def unfollow(user_name):
     yield 'users/{username}/follow'.format(username=slugify(user_name))
 
 
-class UserList(namedtuple('UserList', ['name', 'description', 'privacy',
-                                       'share_link', 'type', 'display_numbers',
-                                       'allow_comments', 'sort_by',
-                                       'sort_how', 'created_at',
-                                       'updated_at', 'item_count',
-                                       'comment_count', 'likes', 'ids',
-                                       'user', 'creator']), IdsMixin):
+UserListFields = [
+    'name', 'description', 'privacy',
+    'share_link', 'type', 'display_numbers',
+    'allow_comments', 'sort_by',
+    'sort_how', 'created_at',
+    'updated_at', 'item_count',
+    'comment_count', 'likes', 'ids',
+    'user', 'creator',
+]
+# Can't have NamedTuple and __init__, so this stays as namedtuple()
+UserListTuple = namedtuple('UserList', UserListFields)
+
+
+class UserList(UserListTuple, IdsMixin):
     """A list created by a Trakt.tv :class:`User`"""
 
     def __init__(self, *args, ids=None, **kwargs):

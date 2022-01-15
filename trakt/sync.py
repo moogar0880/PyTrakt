@@ -226,7 +226,6 @@ def get_search_results(query, search_type=None, slugify_query=False):
                                      **media_item.pop('episode'))
         elif media_item['type'] == 'person':
             from trakt.people import Person
-            extract_ids(media_item)
             result.media = Person(**media_item.pop('person'))
         results.append(result)
 

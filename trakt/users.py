@@ -150,9 +150,8 @@ class UserList(namedtuple('UserList', ['name', 'description', 'privacy',
                                     item_data['number'])
                 self._items.append(episode)
             elif item_type == 'person':
-                extract_ids(item_data)
                 self._items.append(Person(item_data['name'],
-                                          item_data['slug']))
+                                          item_data['ids']['slug']))
 
         yield self._items
 

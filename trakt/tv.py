@@ -650,6 +650,7 @@ class TVEpisode(object):
         self.number = number
         self.overview = self.title = self.year = self.number_abs = None
         self.first_aired = self.last_updated = None
+        self.runtime = None
         self.trakt = self.tmdb = self.tvdb = self.imdb = None
         self.tvrage = self._stats = self._images = self._comments = None
         self._translations = self._ratings = None

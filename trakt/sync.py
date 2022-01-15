@@ -215,7 +215,6 @@ def get_search_results(query, search_type=None, slugify_query=False):
             result.media = Movie(**media_item.pop('movie'))
         elif media_item['type'] == 'show':
             from trakt.tv import TVShow
-            extract_ids(media_item)
             result.media = TVShow(**media_item.pop('show'))
         elif media_item['type'] == 'episode':
             from trakt.tv import TVEpisode

@@ -9,7 +9,7 @@ from trakt.sync import (Scrobbler, rate, comment, add_to_collection,
                         add_to_watchlist, add_to_history, remove_from_history,
                         remove_from_collection, remove_from_watchlist, search,
                         checkin_media, delete_checkin)
-from trakt.utils import slugify, extract_ids, airs_date
+from trakt.utils import slugify, airs_date
 from trakt.people import Person
 
 __author__ = 'Jon Nappi'
@@ -196,15 +196,15 @@ def anticipated_shows(page=1, limit=10, extended=None):
     yield [TVShow(**show['show']) for show in data]
 
 
-class TVShow(object):
+class TVShow(IdsMixin):
     """A Class representing a TV Show object."""
 
     def __init__(self, title='', slug=None, **kwargs):
-        super(TVShow, self).__init__()
+        super().__init__()
         self.media_type = 'shows'
-        self.top_watchers = self.top_episodes = self.year = self.tvdb = None
-        self.imdb = self.genres = self.certification = self.network = None
-        self.trakt = self.tmdb = self._aliases = self._comments = None
+        self.top_watchers = self.top_episodes = self.year = None
+        self.genres = self.certification = self.network = None
+        self._aliases = self._comments = None
         self._images = self._people = self._ratings = self._translations = None
         self._seasons = None
         self._last_episode = self._next_episode = None
@@ -218,6 +218,9 @@ class TVShow(object):
 
     @property
     def slug(self):
+        if self._ids.get('slug', None) is not None:
+            return self._ids['slug']
+
         if self._slug is not None:
             return self._slug
 
@@ -243,7 +246,6 @@ class TVShow(object):
         self._build(data)
 
     def _build(self, data):
-        extract_ids(data)
         for key, val in data.items():
             if hasattr(self, '_' + key):
                 setattr(self, '_' + key, val)
@@ -312,16 +314,6 @@ class TVShow(object):
     def crew(self):
         """All of the crew members that worked on this :class:`TVShow`"""
         return [p for p in self.people if getattr(p, 'job')]
-
-    @property
-    def ids(self):
-        """Accessor to the trakt, imdb, and tmdb ids, as well as the trakt.tv
-        slug
-        """
-        return {'ids': {
-            'trakt': self.trakt, 'slug': self.slug, 'imdb': self.imdb,
-            'tmdb': self.tmdb, 'tvdb': self.tvdb
-        }}
 
     @property
     @get

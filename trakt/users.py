@@ -5,7 +5,7 @@ from trakt.core import get, post, delete
 from trakt.movies import Movie
 from trakt.people import Person
 from trakt.tv import TVShow, TVSeason, TVEpisode
-from trakt.utils import slugify, extract_ids
+from trakt.utils import slugify
 
 __author__ = 'Jon Nappi'
 __all__ = ['User', 'UserList', 'Request', 'follow', 'get_all_requests',
@@ -133,9 +133,8 @@ class UserList(namedtuple('UserList', ['name', 'description', 'privacy',
                 self._items.append(Movie(item_data['title'], item_data['year'],
                                          item_data['ids']['slug']))
             elif item_type == 'show':
-                extract_ids(item_data)
                 self._items.append(TVShow(item_data['title'],
-                                          item_data['slug']))
+                                          item_data['ids']['slug']))
             elif item_type == 'season':
                 show_data = item.pop('show')
                 season = TVSeason(show_data['title'], item_data['number'],
@@ -315,7 +314,6 @@ class User(object):
             self._show_watchlist = []
             for show in data:
                 show_data = show.pop('show')
-                extract_ids(show_data)
                 show_data.update(show)
                 self._show_watchlist.append(TVShow(**show_data))
             yield self._show_watchlist
@@ -366,7 +364,6 @@ class User(object):
             self._show_collection = []
             for show in data:
                 s = show.pop('show')
-                extract_ids(s)
                 sh = TVShow(**s)
                 sh._seasons = [TVSeason(show=sh.title, **sea)
                                for sea in show.pop('seasons')]
@@ -403,7 +400,6 @@ class User(object):
             self._watched_shows = []
             for show in data:
                 show_data = show.pop('show')
-                extract_ids(show_data)
                 show_data.update(show)
                 self._watched_shows.append(TVShow(**show_data))
         yield self._watched_shows

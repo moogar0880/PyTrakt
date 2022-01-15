@@ -4,7 +4,7 @@ from pprint import pformat
 from trakt.core import get
 from trakt.movies import Movie
 from trakt.tv import TVEpisode, TVShow
-from trakt.utils import extract_ids, now, airs_date
+from trakt.utils import now, airs_date
 
 __author__ = 'Jon Nappi'
 __all__ = ['Calendar', 'PremiereCalendar', 'MyPremiereCalendar',
@@ -72,7 +72,6 @@ class Calendar(object):
             first_aired = cal_item.get('first_aired')
             season = episode.get('season')
             ep_num = episode.get('number')
-            extract_ids(show_data)
             show_data.update(show_data)
             e_data = {
                 'airs_at': airs_date(first_aired),

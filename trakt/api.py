@@ -59,7 +59,6 @@ class HttpClient:
 
         url = self.base_url + url
         self.logger.debug('%s: %s', method, url)
-        self.logger.debug('method, url :: %s, %s', method, url)
         if method == 'get':  # GETs need to pass data as params, not body
             response = self.session.request(method, url, headers=self.headers, auth=self.auth, params=data)
         else:

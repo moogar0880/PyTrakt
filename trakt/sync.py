@@ -302,13 +302,18 @@ def search_by_id(query, id_type='imdb', media_type=None, slugify_query=False):
 @get
 def get_watchlist(list_type=None, sort=None):
     """
-    Get a watchlist.
-
+    Returns all items in a user's watchlist filtered by type.
     optionally with a filter for a specific item type.
+
+    The watchlist should not be used as a list
+    of what the user is actively watching.
+
     :param list_type: Optional Filter by a specific type.
         Possible values: movies, shows, seasons or episodes.
     :param sort: Optional sort. Only if the type is also sent.
         Possible values: rank, added, released or title.
+
+    https://trakt.docs.apiary.io/#reference/sync/get-watchlist/get-watchlist
     """
     valid_type = ('movies', 'shows', 'seasons', 'episodes')
     valid_sort = ('rank', 'added', 'released', 'title')
@@ -346,18 +351,23 @@ def get_watchlist(list_type=None, sort=None):
 
 @get
 def get_watched(list_type=None, extended=None):
-    """Return all movies or shows a user has watched sorted by most plays.
+    """Returns all movies or shows a user has watched sorted by most plays.
+
+    If type is set to shows and you add ?extended=noseasons to the URL,
+    it won't return season or episode info.
 
     :param list_type: Optional Filter by a specific type.
-        Possible values: movies, shows, seasons or episodes.
+        Possible values: movies, shows.
     :param extended: Optional value for requesting extended information.
+
+    https://trakt.docs.apiary.io/#reference/sync/get-watched/get-watched
     """
-    valid_type = ('movies', 'shows', 'seasons', 'episodes')
+    valid_type = ('movies', 'shows')
 
     if list_type and list_type not in valid_type:
         raise ValueError('list_type must be one of {}'.format(valid_type))
 
-    uri = 'sync/watchlist'
+    uri = 'sync/watched'
     if list_type:
         uri += '/{}'.format(list_type)
 

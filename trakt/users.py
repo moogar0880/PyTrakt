@@ -144,7 +144,6 @@ class UserList(namedtuple('UserList', ['name', 'description', 'privacy',
                 self._items.append(season)
             elif item_type == 'episode':
                 show_data = item.pop('show')
-                extract_ids(show_data)
                 episode = TVEpisode(show_data['title'], item_data['season'],
                                     item_data['number'])
                 self._items.append(episode)
@@ -432,7 +431,6 @@ class User(object):
             yield Movie(**movie_data)
         else:  # media_type == 'episode'
             ep_data = data.pop('episode')
-            extract_ids(ep_data)
             sh_data = data.pop('show')
             ep_data.update(data, show=sh_data.get('title'))
             yield TVEpisode(**ep_data)

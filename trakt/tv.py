@@ -4,6 +4,7 @@ from collections import namedtuple
 from datetime import datetime, timedelta
 from trakt.core import Airs, Alias, Comment, Genre, delete, get
 from trakt.errors import NotFoundException
+from trakt.mixins import IdsMixin
 from trakt.sync import (Scrobbler, rate, comment, add_to_collection,
                         add_to_watchlist, add_to_history, remove_from_history,
                         remove_from_collection, remove_from_watchlist, search,
@@ -639,19 +640,19 @@ class TVSeason(object):
     __repr__ = __str__
 
 
-class TVEpisode(object):
+class TVEpisode(IdsMixin):
     """Container for TV Episodes"""
 
     def __init__(self, show, season, number=-1, **kwargs):
-        super(TVEpisode, self).__init__()
+        super().__init__()
         self.media_type = 'episodes'
         self.show = show
         self.season = season
         self.number = number
         self.overview = self.title = self.year = self.number_abs = None
         self.first_aired = self.last_updated = None
-        self.trakt = self.tmdb = self.tvdb = self.imdb = None
-        self.tvrage = self._stats = self._images = self._comments = None
+        self.runtime = None
+        self._stats = self._images = self._comments = None
         self._translations = self._ratings = None
         if len(kwargs) > 0:
             self._build(kwargs)
@@ -669,7 +670,6 @@ class TVEpisode(object):
 
     def _build(self, data):
         """Build this :class:`TVEpisode` object with the data in *data*"""
-        extract_ids(data)
         for key, val in data.items():
             if hasattr(self, '_' + key):
                 setattr(self, '_' + key, val)
@@ -715,15 +715,6 @@ class TVEpisode(object):
         :param year: Optional year to limit results to
         """
         return search(title, search_type='episode', year=year)
-
-    @property
-    def ids(self):
-        """Accessor to the trakt, imdb, and tmdb ids, as well as the trakt.tv
-        slug
-        """
-        return {'ids': {
-            'trakt': self.trakt, 'imdb': self.imdb, 'tmdb': self.tmdb
-        }}
 
     @property
     @get

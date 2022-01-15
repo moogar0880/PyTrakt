@@ -4,6 +4,7 @@ import json
 import logging
 from datetime import datetime, timedelta, timezone
 from functools import lru_cache
+from json import JSONDecodeError
 
 from requests import Session
 from requests.auth import AuthBase
@@ -13,7 +14,7 @@ from trakt import errors
 __author__ = 'Jon Nappi, Elan Ruusamäe'
 
 from trakt.config import AuthConfig
-from trakt.errors import OAuthException
+from trakt.errors import OAuthException, BadResponseException
 
 
 class HttpClient:
@@ -64,11 +65,19 @@ class HttpClient:
         else:
             response = self.session.request(method, url, headers=self.headers, auth=self.auth, data=json.dumps(data))
         self.logger.debug('RESPONSE [%s] (%s): %s', method, url, str(response))
+
         if response.status_code == 204:  # HTTP no content
             return None
         self.raise_if_needed(response)
-        json_data = json.loads(response.content.decode('UTF-8', 'ignore'))
-        return json_data
+
+        return self.decode_response(response)
+
+    @staticmethod
+    def decode_response(response):
+        try:
+            return json.loads(response.content.decode('UTF-8', 'ignore'))
+        except JSONDecodeError as e:
+            raise BadResponseException(f"Unable to parse JSON: {e}")
 
     def raise_if_needed(self, response):
         if response.status_code in self.error_map:

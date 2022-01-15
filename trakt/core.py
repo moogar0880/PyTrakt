@@ -5,6 +5,7 @@ trakt package
 import json
 import logging
 import os
+from json import JSONDecodeError
 from urllib.parse import urljoin
 
 import requests
@@ -529,7 +530,12 @@ class Core(object):
             raise self.error_map[response.status_code](response)
         elif response.status_code == 204:  # HTTP no content
             return None
-        json_data = json.loads(response.content.decode('UTF-8', 'ignore'))
+
+        try:
+            json_data = json.loads(response.content.decode('UTF-8', 'ignore'))
+        except JSONDecodeError:
+            raise errors.BadResponseException(response)
+
         return json_data
 
     def get(self, f):

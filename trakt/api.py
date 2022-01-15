@@ -15,6 +15,7 @@ from trakt.errors import BadResponseException, OAuthException
 
 __author__ = 'Jon Nappi, Elan Ruusamäe'
 
+
 class HttpClient:
     """Class for abstracting HTTP requests
     """

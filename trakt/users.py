@@ -2,6 +2,7 @@
 """Interfaces to all of the User objects offered by the Trakt.tv API"""
 from collections import namedtuple
 from trakt.core import get, post, delete
+from trakt.mixins import IdsMixin
 from trakt.movies import Movie
 from trakt.people import Person
 from trakt.tv import TVShow, TVSeason, TVEpisode
@@ -64,17 +65,22 @@ class UserList(namedtuple('UserList', ['name', 'description', 'privacy',
                                        'display_numbers', 'allow_comments',
                                        'sort_by', 'sort_how', 'created_at',
                                        'updated_at', 'item_count',
-                                       'comment_count', 'likes', 'trakt',
-                                       'slug', 'user', 'creator'])):
+                                       'comment_count', 'likes', 'ids',
+                                       'user', 'creator']), IdsMixin):
     """A list created by a Trakt.tv :class:`User`"""
 
-    def __init__(self, *args, **kwargs):
-        super(UserList, self).__init__()
+    def __init__(self, *args, ids=None, **kwargs):
+        super().__init__()
+        self._ids = ids
         self._items = list()
 
     def __iter__(self, *args, **kwargs):
         """Iterate over the items in this user list"""
         return self._items.__iter__(*args, **kwargs)
+
+    @property
+    def slug(self):
+        return self._ids.get('slug', None)
 
     @classmethod
     @post
@@ -95,7 +101,6 @@ class UserList(namedtuple('UserList', ['name', 'description', 'privacy',
         if description is not None:
             args['description'] = description
         data = yield 'users/{user}/lists'.format(user=slugify(creator)), args
-        extract_ids(data)
         yield UserList(creator=creator, user=creator, **data)
 
     @classmethod
@@ -107,7 +112,6 @@ class UserList(namedtuple('UserList', ['name', 'description', 'privacy',
         """
         data = yield 'users/{user}/lists/{id}'.format(user=slugify(creator),
                                                       id=slugify(title))
-        extract_ids(data)
         ulist = UserList(creator=creator, **data)
         ulist.get_items()
 
@@ -299,7 +303,7 @@ class User(object):
                     # user will be replaced with the self User object
                     del ul["user"]
             self._lists = [UserList(creator=slugify(self.username), user=self,
-                           **extract_ids(ul)) for ul in data]
+                           **ul) for ul in data]
         yield self._lists
 
     @property

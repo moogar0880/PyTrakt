@@ -43,6 +43,10 @@ class BadResponseException(TraktException):
     http_code = -1
     message = "Bad Response - Response could not be parsed"
 
+    def __init__(self, response=None, details=None):
+        super().__init__(response)
+        self.details = details
+
 
 class BadRequestException(TraktException):
     """TraktException type to be raised when a 400 return code is received"""

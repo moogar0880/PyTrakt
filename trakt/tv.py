@@ -2,6 +2,9 @@
 """Interfaces to all of the TV objects offered by the Trakt.tv API"""
 from collections import namedtuple
 from datetime import datetime, timedelta
+
+from deprecated import deprecated
+
 from trakt.core import Airs, Alias, Comment, Genre, delete, get
 from trakt.errors import NotFoundException
 from trakt.sync import (Scrobbler, rate, comment, add_to_collection,
@@ -788,6 +791,7 @@ class TVEpisode(object):
             users.append(User(**user))
         yield users
 
+    @deprecated("To be dropped in 4.x")
     def get_description(self):
         """backwards compatible function that returns this :class:`TVEpisode`'s
         overview

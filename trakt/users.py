@@ -129,11 +129,12 @@ class UserList(namedtuple('UserList', ['name', 'description', 'privacy',
                 continue
             item_type = item['type']
             item_data = item.pop(item_type)
-            extract_ids(item_data)
             if item_type == 'movie':
+                extract_ids(item_data)
                 self._items.append(Movie(item_data['title'], item_data['year'],
                                          item_data['slug']))
             elif item_type == 'show':
+                extract_ids(item_data)
                 self._items.append(TVShow(item_data['title'],
                                           item_data['slug']))
             elif item_type == 'season':
@@ -149,6 +150,7 @@ class UserList(namedtuple('UserList', ['name', 'description', 'privacy',
                                     item_data['number'])
                 self._items.append(episode)
             elif item_type == 'person':
+                extract_ids(item_data)
                 self._items.append(Person(item_data['name'],
                                           item_data['slug']))
 

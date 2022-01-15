@@ -17,6 +17,184 @@
             {"number":4,"ids":{"trakt":5,"tvdb":522882,"tmdb":3628,"tvrage":null}}
         ]
     },
+    "shows/the-flash-2014/seasons?extended=episodes": {
+        "GET": [
+            {
+                "number": 0,
+                "ids": { "trakt": 126556, "tvdb": 578365, "tmdb": 79954, "tvrage": null },
+                "episodes": [
+                    {
+                        "season": 0,
+                        "number": 1,
+                        "title": "Chronicles Of Cisco (1)",
+                        "ids": { "trakt": 2221945, "tvdb": 7444560, "imdb": "tt5656730", "tmdb": 1220887, "tvrage": null }
+                    },
+                    {
+                        "season": 0,
+                        "number": 2,
+                        "title": "Chronicles Of Cisco (2)",
+                        "ids": { "trakt": 2221946, "tvdb": 7444566, "imdb": "tt5666962", "tmdb": 1220888, "tvrage": null }
+                    }
+                ]
+            },
+            {
+                "number": 1,
+                "ids": { "trakt": 61430, "tvdb": 578373, "tmdb": 60523, "tvrage": 36939 },
+                "episodes": [
+                    {
+                        "season": 1,
+                        "number": 1,
+                        "title": "Pilot",
+                        "ids": { "trakt": 962074, "tvdb": 4812524, "imdb": "tt3187092", "tmdb": 977122, "tvrage": 1065564472 }
+                    },
+                    {
+                        "season": 1,
+                        "number": 2,
+                        "title": "Fastest Man Alive",
+                        "ids": { "trakt": 962075, "tvdb": 4929322, "imdb": "tt3819518", "tmdb": 1005650, "tvrage": 1065603573 }
+                    },
+                    {
+                        "season": 1,
+                        "number": 3,
+                        "title": "Things You Can't Outrun",
+                        "ids": { "trakt": 962076, "tvdb": 4929325, "imdb": "tt3826166", "tmdb": 1005651, "tvrage": 1065603574 }
+                    },
+                    {
+                        "season": 1,
+                        "number": 4,
+                        "title": "Going Rogue",
+                        "ids": { "trakt": 962077, "tvdb": 4936770, "imdb": "tt3881958", "tmdb": 1005652, "tvrage": 1065609025 }
+                    },
+                    {
+                        "season": 1,
+                        "number": 5,
+                        "title": "Plastique",
+                        "ids": { "trakt": 999423, "tvdb": 5025023, "imdb": "tt3887830", "tmdb": 1010677, "tvrage": 1065625291 }
+                    },
+                    {
+                        "season": 1,
+                        "number": 6,
+                        "title": "The Flash is Born",
+                        "ids": { "trakt": 999424, "tvdb": 5028737, "imdb": "tt3920288", "tmdb": 1010678, "tvrage": 1065702880 }
+                    },
+                    {
+                        "season": 1,
+                        "number": 7,
+                        "title": "Power Outage",
+                        "ids": { "trakt": 999426, "tvdb": 5028738, "imdb": "tt3922506", "tmdb": 1010679, "tvrage": 1065709260 }
+                    },
+                    {
+                        "season": 1,
+                        "number": 8,
+                        "title": "Flash vs. Arrow (I)",
+                        "ids": { "trakt": 999428, "tvdb": 5028739, "imdb": "tt3899320", "tmdb": 1010680, "tvrage": 1065710605 }
+                    },
+                    {
+                        "season": 1,
+                        "number": 9,
+                        "title": "The Man in the Yellow Suit",
+                        "ids": { "trakt": 999429, "tvdb": 5042818, "imdb": "tt4017786", "tmdb": 1018354, "tvrage": 1065711822 }
+                    },
+                    {
+                        "season": 1,
+                        "number": 10,
+                        "title": "Revenge of the Rogues",
+                        "ids": { "trakt": 999431, "tvdb": 5052260, "imdb": "tt4016102", "tmdb": 1018355, "tvrage": 1065644215 }
+                    },
+                    {
+                        "season": 1,
+                        "number": 11,
+                        "title": "The Sound and the Fury",
+                        "ids": { "trakt": 1701689, "tvdb": 5073549, "imdb": "tt4111294", "tmdb": 1037712, "tvrage": 1065735300 }
+                    },
+                    {
+                        "season": 1,
+                        "number": 12,
+                        "title": "Crazy for You",
+                        "ids": { "trakt": 1701690, "tvdb": 5073556, "imdb": "tt4105618", "tmdb": 1037713, "tvrage": 1065683600 }
+                    },
+                    {
+                        "season": 1,
+                        "number": 13,
+                        "title": "The Nuclear Man",
+                        "ids": { "trakt": 1701691, "tvdb": 5088525, "imdb": "tt4138324", "tmdb": 1037714, "tvrage": 1065735301 }
+                    },
+                    {
+                        "season": 1,
+                        "number": 14,
+                        "title": "Fallout",
+                        "ids": { "trakt": 1718914, "tvdb": 5104336, "imdb": "tt4138326", "tmdb": 1039988, "tvrage": 1065738929 }
+                    },
+                    {
+                        "season": 1,
+                        "number": 15,
+                        "title": "Out of Time",
+                        "ids": { "trakt": 1718915, "tvdb": 5104337, "imdb": "tt4138338", "tmdb": 1039989, "tvrage": 1065738930 }
+                    },
+                    {
+                        "season": 1,
+                        "number": 16,
+                        "title": "Rogue Time",
+                        "ids": { "trakt": 1718916, "tvdb": 5104338, "imdb": "tt4138340", "tmdb": 1039990, "tvrage": 1065738931 }
+                    },
+                    {
+                        "season": 1,
+                        "number": 17,
+                        "title": "Tricksters",
+                        "ids": { "trakt": 1718917, "tvdb": 5104339, "imdb": "tt4138344", "tmdb": 1039991, "tvrage": 1065728023 }
+                    },
+                    {
+                        "season": 1,
+                        "number": 18,
+                        "title": "All-Star Team Up",
+                        "ids": { "trakt": 1725151, "tvdb": 5110414, "imdb": "tt4138352", "tmdb": 1047470, "tvrage": 1065747417 }
+                    },
+                    {
+                        "season": 1,
+                        "number": 19,
+                        "title": "Who Is Harrison Wells?",
+                        "ids": { "trakt": 1765383, "tvdb": 5166508, "imdb": "tt4138350", "tmdb": 1051229, "tvrage": null }
+                    },
+                    {
+                        "season": 1,
+                        "number": 20,
+                        "title": "The Trap",
+                        "ids": { "trakt": 1765384, "tvdb": 5166509, "imdb": "tt4138356", "tmdb": 1051230, "tvrage": null }
+                    },
+                    {
+                        "season": 1,
+                        "number": 21,
+                        "title": "Grodd Lives",
+                        "ids": { "trakt": 1765385, "tvdb": 5166510, "imdb": "tt4138376", "tmdb": 1051231, "tvrage": null }
+                    },
+                    {
+                        "season": 1,
+                        "number": 22,
+                        "title": "Rogue Air",
+                        "ids": { "trakt": 1765386, "tvdb": 5163053, "imdb": "tt4138378", "tmdb": 1051232, "tvrage": null }
+                    },
+                    {
+                        "season": 1,
+                        "number": 23,
+                        "title": "Fast Enough",
+                        "ids": { "trakt": 1798337, "tvdb": 5166511, "imdb": "tt4146568", "tmdb": 1051233, "tvrage": null }
+                    }
+                ]
+            },
+            {
+                "number": 2,
+                "ids": { "trakt": 110984, "tvdb": 626964, "tmdb": 66922, "tvrage": null },
+                "episodes": [
+                    {
+                        "season": 2,
+                        "number": 1,
+                        "title": "The Man Who Saved Central City",
+                        "ids": { "trakt": 1866102, "tvdb": 5260562, "imdb": "tt4346792", "tmdb": 1063859, "tvrage": null }
+                    }
+                ]
+            }
+        ]
+    },
     "shows/game-of-thrones/seasons?extended=images": {
         "GET": [
             {"number":0,"ids":{"trakt":1,"tvdb":137481,"tmdb":3627,"tvrage":null},"images":{"poster":{"full":"https://walter.trakt.us/images/seasons/000/002/145/posters/original/41221f3712.jpg?1409351965","medium":"https://walter.trakt.us/images/seasons/000/002/145/posters/medium/41221f3712.jpg?1409351965","thumb":"https://walter.trakt.us/images/seasons/000/002/145/posters/thumb/41221f3712.jpg?1409351965"},"thumb":{"full":"https://walter.trakt.us/images/seasons/000/002/145/thumbs/original/c41b46dd09.jpg?1409351965"}}},

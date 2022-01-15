@@ -8,6 +8,10 @@ from trakt.users import User
 def test_get_seasons():
     got = TVShow('Game of Thrones')
     assert all([isinstance(s, TVSeason) for s in got.seasons])
+    season = got.seasons[1]
+    assert season.season == 1
+    assert len(season.episodes) == 10
+    assert all([isinstance(episode, TVEpisode) for episode in season.episodes])
 
 
 def test_get_seasons_with_year():

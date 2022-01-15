@@ -12,7 +12,7 @@ __all__ = ['Calendar', 'PremiereCalendar', 'MyPremiereCalendar',
            'MySeasonCalendar', 'MovieCalendar', 'MyMovieCalendar']
 
 
-class Calendar(object):
+class Calendar:
     """Base :class:`Calendar` type serves as a foundation for other Calendar
     types
     """

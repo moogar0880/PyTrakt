@@ -392,7 +392,8 @@ class TVShow(object):
                     episodes.append(episode)
                 season['episodes'] = episodes
 
-                season = TVSeason(self.title, season['number'], **season)
+                number = season.pop('number')
+                season = TVSeason(self.title, number, **season)
                 self._seasons.append(season)
         yield self._seasons
 

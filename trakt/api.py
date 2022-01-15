@@ -10,12 +10,10 @@ from requests import Session
 from requests.auth import AuthBase
 
 from trakt import errors
+from trakt.config import AuthConfig
+from trakt.errors import BadResponseException, OAuthException
 
 __author__ = 'Jon Nappi, Elan Ruusamäe'
-
-from trakt.config import AuthConfig
-from trakt.errors import OAuthException, BadResponseException
-
 
 class HttpClient:
     """Class for abstracting HTTP requests

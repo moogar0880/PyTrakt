@@ -16,6 +16,7 @@ from functools import wraps
 from requests_oauthlib import OAuth2Session
 from datetime import datetime, timedelta, timezone
 from trakt import errors
+from trakt.errors import BadResponseException
 
 __author__ = 'Jon Nappi'
 __all__ = ['Airs', 'Alias', 'Comment', 'Genre', 'get', 'delete', 'post', 'put',
@@ -533,8 +534,8 @@ class Core(object):
 
         try:
             json_data = json.loads(response.content.decode('UTF-8', 'ignore'))
-        except JSONDecodeError:
-            raise errors.BadResponseException(response)
+        except JSONDecodeError as e:
+            raise BadResponseException(response, f"Unable to parse JSON: {e}")
 
         return json_data
 

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Interfaces to all of the Movie objects offered by the Trakt.tv API"""
-from collections import namedtuple
+from typing import NamedTuple
+
 from trakt.core import Alias, Comment, Genre, get, delete
 from trakt.sync import (Scrobbler, comment, rate, add_to_history,
                         remove_from_history, add_to_watchlist,
@@ -15,8 +16,13 @@ __all__ = ['dismiss_recommendation', 'get_recommended_movies', 'genres',
            'trending_movies', 'updated_movies', 'Release', 'Movie',
            'Translation']
 
-Translation = namedtuple('Translation', ['title', 'overview', 'tagline',
-                                         'language'])
+
+# FIXME: same symbol in tv module
+class Translation(NamedTuple):
+    title: str
+    overview: str
+    tagline: str
+    language: str
 
 
 @delete
@@ -77,8 +83,12 @@ def updated_movies(timestamp=None):
     yield to_ret
 
 
-Release = namedtuple('Release', ['country', 'certification', 'release_date',
-                                 'note', 'release_type'])
+class Release(NamedTuple):
+    country: str
+    certification: str
+    release_date: str
+    note: str
+    release_type: str
 
 
 class Movie(object):

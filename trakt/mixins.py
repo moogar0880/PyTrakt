@@ -12,15 +12,10 @@ class IdsMixin:
     This is replacement for extract_ids() utility method.
     """
 
+    __ids = ['imdb', 'slug', 'tmdb', 'trakt']
+
     def __init__(self):
-        self._ids = {
-            'tmdb': None,
-            'trakt': None,
-            'tvdb': None,
-            'slug': None,
-            'tvrage': None,
-        }
-        self.slug = None
+        self._ids = {}
 
     @property
     def ids(self):
@@ -28,13 +23,9 @@ class IdsMixin:
         Accessor to the trakt, imdb, and tmdb ids,
         as well as the trakt.tv slug
         """
+        ids = {k: getattr(self, k, None) for k in self.__ids}
         return {
-            'ids': {
-                'imdb': self.imdb,
-                'slug': self.slug,
-                'tmdb': self.tmdb,
-                'trakt': self.trakt,
-            }
+            'ids': ids
         }
 
     @property

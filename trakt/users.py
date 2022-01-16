@@ -100,7 +100,7 @@ class UserList(namedtuple('UserList', ['name', 'description', 'privacy',
 
     @classmethod
     @get
-    def _get(cls, title, creator):
+    def get(cls, title, creator):
         """Returns a single custom :class:`UserList`
 
         :param title: Name of the list.
@@ -494,5 +494,5 @@ class User(object):
     __repr__ = __str__
 
 
-# get decorator issue workaround - "It's a little hacky"
-UserList.get = UserList._get
+# @deprecated remove in 4.0
+UserList._get = UserList.get

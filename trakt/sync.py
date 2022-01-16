@@ -3,7 +3,7 @@
 from datetime import datetime, timezone
 
 from trakt.core import get, post, delete
-from trakt.utils import slugify, extract_ids, timestamp
+from trakt.utils import slugify, timestamp
 
 
 __author__ = 'Jon Nappi'
@@ -209,7 +209,6 @@ def get_search_results(query, search_type=None, slugify_query=False):
     # need to import Scrobblers
     results = []
     for media_item in data:
-        extract_ids(media_item)
         result = SearchResult(media_item['type'], media_item['score'])
         if media_item['type'] == 'movie':
             from trakt.movies import Movie
@@ -277,15 +276,11 @@ def search_by_id(query, id_type='imdb', media_type=None, slugify_query=False):
             query=query, source=source, media_type=media_type)
     data = yield uri
 
-    for media_item in data:
-        extract_ids(media_item)
-
     results = []
     for d in data:
         if 'episode' in d:
             from trakt.tv import TVEpisode
             show = d.pop('show')
-            extract_ids(d['episode'])
             results.append(TVEpisode(show.get('title', None), **d['episode']))
         elif 'movie' in d:
             from trakt.movies import Movie
@@ -332,7 +327,6 @@ def get_watchlist(list_type=None, sort=None):
         if 'episode' in d:
             from trakt.tv import TVEpisode
             show = d.pop('show')
-            extract_ids(d['episode'])
             results.append(TVEpisode(show.get('title', None), **d['episode']))
         elif 'movie' in d:
             from trakt.movies import Movie

@@ -2,10 +2,11 @@
 """Interfaces to all of the User objects offered by the Trakt.tv API"""
 from collections import namedtuple
 from trakt.core import get, post, delete
+from trakt.mixins import IdsMixin
 from trakt.movies import Movie
 from trakt.people import Person
 from trakt.tv import TVShow, TVSeason, TVEpisode
-from trakt.utils import slugify, extract_ids
+from trakt.utils import slugify
 
 __author__ = 'Jon Nappi'
 __all__ = ['User', 'UserList', 'Request', 'follow', 'get_all_requests',
@@ -64,17 +65,22 @@ class UserList(namedtuple('UserList', ['name', 'description', 'privacy',
                                        'display_numbers', 'allow_comments',
                                        'sort_by', 'sort_how', 'created_at',
                                        'updated_at', 'item_count',
-                                       'comment_count', 'likes', 'trakt',
-                                       'slug', 'user', 'creator'])):
+                                       'comment_count', 'likes', 'ids',
+                                       'user', 'creator']), IdsMixin):
     """A list created by a Trakt.tv :class:`User`"""
 
-    def __init__(self, *args, **kwargs):
-        super(UserList, self).__init__()
+    def __init__(self, *args, ids=None, **kwargs):
+        super().__init__()
+        self._ids = ids
         self._items = list()
 
     def __iter__(self, *args, **kwargs):
         """Iterate over the items in this user list"""
         return self._items.__iter__(*args, **kwargs)
+
+    @property
+    def slug(self):
+        return self._ids.get('slug', None)
 
     @classmethod
     @post
@@ -95,7 +101,6 @@ class UserList(namedtuple('UserList', ['name', 'description', 'privacy',
         if description is not None:
             args['description'] = description
         data = yield 'users/{user}/lists'.format(user=slugify(creator)), args
-        extract_ids(data)
         yield UserList(creator=creator, user=creator, **data)
 
     @classmethod
@@ -107,7 +112,6 @@ class UserList(namedtuple('UserList', ['name', 'description', 'privacy',
         """
         data = yield 'users/{user}/lists/{id}'.format(user=slugify(creator),
                                                       id=slugify(title))
-        extract_ids(data)
         ulist = UserList(creator=creator, **data)
         ulist.get_items()
 
@@ -129,28 +133,25 @@ class UserList(namedtuple('UserList', ['name', 'description', 'privacy',
                 continue
             item_type = item['type']
             item_data = item.pop(item_type)
-            extract_ids(item_data)
             if item_type == 'movie':
                 self._items.append(Movie(item_data['title'], item_data['year'],
-                                         item_data['slug']))
+                                         item_data['ids']['slug']))
             elif item_type == 'show':
                 self._items.append(TVShow(item_data['title'],
-                                          item_data['slug']))
+                                          item_data['ids']['slug']))
             elif item_type == 'season':
                 show_data = item.pop('show')
-                extract_ids(show_data)
                 season = TVSeason(show_data['title'], item_data['number'],
-                                  show_data['slug'])
+                                  show_data['ids']['slug'])
                 self._items.append(season)
             elif item_type == 'episode':
                 show_data = item.pop('show')
-                extract_ids(show_data)
                 episode = TVEpisode(show_data['title'], item_data['season'],
                                     item_data['number'])
                 self._items.append(episode)
             elif item_type == 'person':
                 self._items.append(Person(item_data['name'],
-                                          item_data['slug']))
+                                          item_data['ids']['slug']))
 
         yield self._items
 
@@ -302,7 +303,7 @@ class User(object):
                     # user will be replaced with the self User object
                     del ul["user"]
             self._lists = [UserList(creator=slugify(self.username), user=self,
-                           **extract_ids(ul)) for ul in data]
+                           **ul) for ul in data]
         yield self._lists
 
     @property
@@ -317,7 +318,6 @@ class User(object):
             self._show_watchlist = []
             for show in data:
                 show_data = show.pop('show')
-                extract_ids(show_data)
                 show_data.update(show)
                 self._show_watchlist.append(TVShow(**show_data))
             yield self._show_watchlist
@@ -335,7 +335,6 @@ class User(object):
             self._movie_watchlist = []
             for movie in data:
                 mov = movie.pop('movie')
-                extract_ids(mov)
                 self._movie_watchlist.append(Movie(**mov))
             yield self._movie_watchlist
         yield self._movie_watchlist
@@ -353,7 +352,6 @@ class User(object):
             self._movie_collection = []
             for movie in data:
                 mov = movie.pop('movie')
-                extract_ids(mov)
                 self._movie_collection.append(Movie(**mov))
         yield self._movie_collection
 
@@ -370,7 +368,6 @@ class User(object):
             self._show_collection = []
             for show in data:
                 s = show.pop('show')
-                extract_ids(s)
                 sh = TVShow(**s)
                 sh._seasons = [TVSeason(show=sh.title, **sea)
                                for sea in show.pop('seasons')]
@@ -390,7 +387,6 @@ class User(object):
             self._watched_movies = []
             for movie in data:
                 movie_data = movie.pop('movie')
-                extract_ids(movie_data)
                 movie_data.update(movie)
                 self._watched_movies.append(Movie(**movie_data))
         yield self._watched_movies
@@ -408,7 +404,6 @@ class User(object):
             self._watched_shows = []
             for show in data:
                 show_data = show.pop('show')
-                extract_ids(show_data)
                 show_data.update(show)
                 self._watched_shows.append(TVShow(**show_data))
         yield self._watched_shows
@@ -431,12 +426,10 @@ class User(object):
         media_type = data.pop('type')
         if media_type == 'movie':
             movie_data = data.pop('movie')
-            extract_ids(movie_data)
             movie_data.update(data)
             yield Movie(**movie_data)
         else:  # media_type == 'episode'
             ep_data = data.pop('episode')
-            extract_ids(ep_data)
             sh_data = data.pop('show')
             ep_data.update(data, show=sh_data.get('title'))
             yield TVEpisode(**ep_data)

@@ -3,7 +3,7 @@
 from datetime import datetime, timezone
 
 from trakt.core import get, post, delete
-from trakt.utils import slugify, extract_ids, timestamp
+from trakt.utils import slugify, timestamp
 
 
 __author__ = 'Jon Nappi'
@@ -275,9 +275,6 @@ def search_by_id(query, id_type='imdb', media_type=None, slugify_query=False):
         uri = 'search/{source}/{query}?type={media_type}'.format(
             query=query, source=source, media_type=media_type)
     data = yield uri
-
-    for media_item in data:
-        extract_ids(media_item)
 
     results = []
     for d in data:

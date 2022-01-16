@@ -15,8 +15,7 @@ block the specified movie from being shown in your recommended movies.
 ::
 
     >>> from trakt.movies import dismiss_recommendation
-    >>> dismiss_recommendation(imdb_id='tt3139072', title='Son of Batman',
-    ...                        year=2014)
+    >>> dismiss_recommendation('Son of Batman')
 
 
 This code snippet would prevent Son of Batman from appearing in your recommended

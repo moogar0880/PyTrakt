@@ -199,7 +199,7 @@ class TVShow(object):
     """A Class representing a TV Show object."""
 
     def __init__(self, title='', slug=None, **kwargs):
-        super(TVShow, self).__init__()
+        super().__init__()
         self.media_type = 'shows'
         self.top_watchers = self.top_episodes = self.year = self.tvdb = None
         self.imdb = self.genres = self.certification = self.network = None
@@ -503,7 +503,7 @@ class TVSeason(object):
     """Container for TV Seasons"""
 
     def __init__(self, show, season=1, slug=None, **kwargs):
-        super(TVSeason, self).__init__()
+        super().__init__()
         self.show = show
         self.season = season
         self.slug = slug or slugify(show)
@@ -643,7 +643,7 @@ class TVEpisode(object):
     """Container for TV Episodes"""
 
     def __init__(self, show, season, number=-1, **kwargs):
-        super(TVEpisode, self).__init__()
+        super().__init__()
         self.media_type = 'episodes'
         self.show = show
         self.season = season

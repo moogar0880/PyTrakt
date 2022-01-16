@@ -69,7 +69,7 @@ class UserList(namedtuple('UserList', ['name', 'description', 'privacy',
     """A list created by a Trakt.tv :class:`User`"""
 
     def __init__(self, *args, **kwargs):
-        super(UserList, self).__init__()
+        super().__init__()
         self._items = list()
 
     def __iter__(self, *args, **kwargs):
@@ -203,7 +203,7 @@ class UserList(namedtuple('UserList', ['name', 'description', 'privacy',
 class User(object):
     """A Trakt.tv User"""
     def __init__(self, username, **kwargs):
-        super(User, self).__init__()
+        super().__init__()
         self.username = username
         self._calendar = self._last_activity = self._watching = None
         self._movies = self._movie_collection = self._movies_watched = None

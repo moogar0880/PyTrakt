@@ -12,6 +12,8 @@ def test_slugify():
         (' LOOK AT MY WHITESPACE   ', 'look-at-my-whitespace'),
         ("Marvel's Agents of S.H.I.E.L.D.", 'marvel-s-agents-of-s-h-i-e-l-d'),
         ('Naruto Shippūden', 'naruto-shippuden'),
+        ('Re:ZERO -Starting Life in Another World-', 're-zero-starting-life-in-another-world'),
+        ('So I’m a Spider, So What?', 'so-i-m-a-spider-so-what'),
     ]
 
     for inp, expected in test_data:

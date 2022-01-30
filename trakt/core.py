@@ -516,7 +516,6 @@ class Core(object):
         self.logger.debug('%s: %s', method, url)
         HEADERS['trakt-api-key'] = CLIENT_ID
         HEADERS['Authorization'] = 'Bearer {0}'.format(OAUTH_TOKEN)
-        self.logger.debug('headers: %s', str(HEADERS))
         self.logger.debug('method, url :: %s, %s', method, url)
         if method == 'get':  # GETs need to pass data as params, not body
             response = session.request(method, url, headers=HEADERS,

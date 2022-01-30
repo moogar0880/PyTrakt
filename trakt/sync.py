@@ -456,15 +456,15 @@ class Scrobbler(object):
 
     def start(self):
         """Start scrobbling this :class:`Scrobbler`'s *media* object"""
-        self._post('scrobble/start')
+        return self._post('scrobble/start')
 
     def pause(self):
         """Pause the scrobbling of this :class:`Scrobbler`'s *media* object"""
-        self._post('scrobble/pause')
+        return self._post('scrobble/pause')
 
     def stop(self):
         """Stop the scrobbling of this :class:`Scrobbler`'s *media* object"""
-        self._post('scrobble/stop')
+        return self._post('scrobble/stop')
 
     def finish(self):
         """Complete the scrobbling this :class:`Scrobbler`'s *media* object"""
@@ -477,7 +477,7 @@ class Scrobbler(object):
         object
         """
         self.progress = progress
-        self.start()
+        return self.start()
 
     @post
     def _post(self, uri):
@@ -488,7 +488,8 @@ class Scrobbler(object):
         payload = dict(progress=self.progress, app_version=self.version,
                        date=self.date)
         payload.update(self.media.to_json_singular())
-        yield uri, payload
+        response = yield uri, payload
+        yield response
 
     def __enter__(self):
         """Context manager support for `with Scrobbler` syntax. Begins

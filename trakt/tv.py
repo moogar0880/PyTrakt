@@ -4,10 +4,11 @@ from collections import namedtuple
 from datetime import datetime, timedelta
 from trakt.core import Airs, Alias, Comment, Genre, delete, get
 from trakt.errors import NotFoundException
-from trakt.sync import (Scrobbler, rate, comment, add_to_collection,
-                        add_to_watchlist, add_to_history, remove_from_history,
-                        remove_from_collection, remove_from_watchlist, search,
-                        checkin_media, delete_checkin)
+from trakt.sync import (Scrobbler, rate, remove_rating, comment,
+                        add_to_collection, add_to_watchlist, add_to_history,
+                        remove_from_history, remove_from_collection,
+                        remove_from_watchlist, search, checkin_media,
+                        delete_checkin)
 from trakt.utils import slugify, extract_ids, airs_date
 from trakt.people import Person
 
@@ -473,6 +474,13 @@ class TVShow(object):
         """
         return rate(self, rating)
 
+    def remove_rating(self):
+        """Remove rating for this :class:`TVShow` on trakt. Depending on the
+        current users settings, this may also send out social updates to
+        facebook, twitter, tumblr, and path.
+        """
+        return remove_rating(self)
+
     def remove_from_library(self):
         """Remove this :class:`TVShow` from your library."""
         return remove_from_collection(self)
@@ -799,6 +807,13 @@ class TVEpisode(object):
         tumblr, and path.
         """
         rate(self, rating)
+
+    def remove_rating(self):
+        """Remove rating for this :class:`TVEpisode` on trakt. Depending on the
+        current users settings, this may also send out social updates to
+        facebook, twitter, tumblr, and path.
+        """
+        remove_rating(self)
 
     def add_to_library(self):
         """Add this :class:`TVEpisode` to your Trakt.tv library"""

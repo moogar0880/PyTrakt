@@ -2,8 +2,8 @@
 """Interfaces to all of the Movie objects offered by the Trakt.tv API"""
 from collections import namedtuple
 from trakt.core import Alias, Comment, Genre, get, delete
-from trakt.sync import (Scrobbler, comment, rate, add_to_history,
-                        remove_from_history, add_to_watchlist,
+from trakt.sync import (Scrobbler, comment, rate, remove_rating,
+                        add_to_history, remove_from_history, add_to_watchlist,
                         remove_from_watchlist, add_to_collection,
                         remove_from_collection, search, checkin_media,
                         delete_checkin)
@@ -319,6 +319,13 @@ class Movie(object):
         tumblr, and path.
         """
         rate(self, rating)
+
+    def remove_rating(self):
+        """Remove rating for this :class:`Movie` on trakt. Depending on the
+        current users settings, this may also send out social updates to
+        facebook, twitter, tumblr, and path.
+        """
+        remove_rating(self)
 
     def remove_from_library(self):
         """Remove this :class:`Movie` from your library."""

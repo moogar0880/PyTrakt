@@ -7,11 +7,11 @@ from trakt.utils import slugify, extract_ids, timestamp
 
 
 __author__ = 'Jon Nappi'
-__all__ = ['Scrobbler', 'comment', 'rate', 'add_to_history', 'get_collection',
-           'get_watchlist', 'add_to_watchlist', 'remove_from_history',
-           'remove_from_watchlist', 'add_to_collection',
-           'remove_from_collection', 'search', 'search_by_id', 'checkin_media',
-           'delete_checkin']
+__all__ = ['Scrobbler', 'comment', 'rate', 'remove_rating',
+           'add_to_history', 'get_collection', 'get_watchlist',
+           'add_to_watchlist', 'remove_from_history', 'remove_from_watchlist',
+           'add_to_collection', 'remove_from_collection', 'search',
+           'search_by_id', 'checkin_media', 'delete_checkin']
 
 
 @post
@@ -52,6 +52,18 @@ def rate(media, rating, rated_at=None):
     data = dict(rating=rating, rated_at=timestamp(rated_at))
     data.update(media.ids)
     result = yield 'sync/ratings', {media.media_type: [data]}
+    yield result
+
+
+@post
+def remove_rating(media):
+    """Remove rating from :class:`Movie`, :class:`TVShow`, or
+        :class:`TVEpisode`.
+
+    :param media: The media object to remove rating from"""
+    data = dict()
+    data.update(media.ids)
+    result = yield 'sync/ratings/remove', {media.media_type: [data]}
     yield result
 
 

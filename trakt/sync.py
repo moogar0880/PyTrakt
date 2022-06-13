@@ -357,7 +357,7 @@ def get_watched(list_type=None, extended=None):
     if list_type and list_type not in valid_type:
         raise ValueError('list_type must be one of {}'.format(valid_type))
 
-    uri = 'sync/watchlist'
+    uri = 'sync/watched'
     if list_type:
         uri += '/{}'.format(list_type)
 
@@ -394,7 +394,7 @@ def get_collection(list_type=None, extended=None):
     if list_type and list_type not in valid_type:
         raise ValueError('list_type must be one of {}'.format(valid_type))
 
-    uri = 'sync/watchlist'
+    uri = 'sync/collection'
     if list_type:
         uri += '/{}'.format(list_type)
 

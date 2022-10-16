@@ -5,6 +5,7 @@ trakt package
 import json
 import logging
 import os
+from json import JSONDecodeError
 from urllib.parse import urljoin
 
 import requests
@@ -15,6 +16,7 @@ from functools import wraps
 from requests_oauthlib import OAuth2Session
 from datetime import datetime, timedelta, timezone
 from trakt import errors
+from trakt.errors import BadResponseException
 
 __author__ = 'Jon Nappi'
 __all__ = ['Airs', 'Alias', 'Comment', 'Genre', 'get', 'delete', 'post', 'put',
@@ -529,7 +531,12 @@ class Core(object):
             raise self.error_map[response.status_code](response)
         elif response.status_code == 204:  # HTTP no content
             return None
-        json_data = json.loads(response.content.decode('UTF-8', 'ignore'))
+
+        try:
+            json_data = json.loads(response.content.decode('UTF-8', 'ignore'))
+        except JSONDecodeError as e:
+            raise BadResponseException(response, f"Unable to parse JSON: {e}")
+
         return json_data
 
     def get(self, f):

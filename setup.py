@@ -2,7 +2,7 @@ from setuptools import setup
 
 import trakt
 
-__author__ = 'Jon Nappi'
+__author__ = 'Elan Ruusamäe, Jon Nappi'
 
 with open('README.rst') as f:
     readme = f.read()
@@ -16,13 +16,13 @@ description = ('Pythonic abstraction layer for easier scripting of the '
                'Trakt.tv REST API.')
 
 setup(
-    name='trakt',
+    name='pytrakt',
     version=trakt.__version__,
     description=description,
     long_description='\n'.join([readme, history]),
-    author='Jonathan Nappi',
-    author_email='moogar0880@gmail.com',
-    url='https://github.com/moogar0880/PyTrakt',
+    author='Elan Ruusamäe',
+    author_email='glen@pld-linux.org',
+    url='https://github.com/glensc/python-pytrakt',
     packages=packages,
     install_requires=requires,
     license='Apache 2.0',

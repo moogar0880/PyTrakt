@@ -221,6 +221,7 @@ def get_search_results(query, search_type=None, slugify_query=False):
             from trakt.tv import TVEpisode
             show = media_item.pop('show')
             result.media = TVEpisode(show.get('title', None),
+                                     show_id=show['ids'].get('trakt'),
                                      **media_item.pop('episode'))
         elif media_item['type'] == 'person':
             from trakt.people import Person
@@ -286,7 +287,9 @@ def search_by_id(query, id_type='imdb', media_type=None, slugify_query=False):
             from trakt.tv import TVEpisode
             show = d.pop('show')
             extract_ids(d['episode'])
-            results.append(TVEpisode(show.get('title', None), **d['episode']))
+            results.append(TVEpisode(show.get('title', None),
+                                     show_id=show['ids'].get('trakt'),
+                                     **d.pop('episode')))
         elif 'movie' in d:
             from trakt.movies import Movie
             results.append(Movie(**d.pop('movie')))

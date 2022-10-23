@@ -30,7 +30,7 @@ Install Via Pip
 ^^^^^^^^^^^^^^^
 To install with `pip <http://www.pip-installer.org/>`_, just run this in your terminal::
 
-    $ pip install trakt
+    $ pip install pytrakt
 
 Get the code
 ^^^^^^^^^^^^

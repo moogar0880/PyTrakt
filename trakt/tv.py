@@ -703,8 +703,11 @@ class TVEpisode(object):
 
     @property
     def ext(self):
+        show_id = getattr(self, "show_id", None)
+        if not show_id:
+            show_id = slugify(self.show)
         return 'shows/{id}/seasons/{season}/episodes/{episode}'.format(
-            id=slugify(self.show), season=self.season, episode=self.number
+            id=show_id, season=self.season, episode=self.number
         )
 
     @property

@@ -381,7 +381,7 @@ class User(object):
     @property
     @get
     def watched_movies(self):
-        """Watched profess for all :class:`Movie`'s in this :class:`User`'s
+        """Watched progress for all :class:`Movie`'s in this :class:`User`'s
         collection.
         """
         if self._watched_movies is None:
@@ -399,7 +399,7 @@ class User(object):
     @property
     @get
     def watched_shows(self):
-        """Watched profess for all :class:`TVShow`'s in this :class:`User`'s
+        """Watched progress for all :class:`TVShow`'s in this :class:`User`'s
         collection.
         """
         if self._watched_shows is None:

@@ -2,6 +2,8 @@
 """Interfaces to all of the TV objects offered by the Trakt.tv API"""
 from collections import namedtuple
 from datetime import datetime, timedelta
+from urllib.parse import urlencode
+
 from trakt.core import Airs, Alias, Comment, Genre, delete, get
 from trakt.errors import NotFoundException
 from trakt.sync import (Scrobbler, rate, comment, add_to_collection,
@@ -295,6 +297,24 @@ class TVShow(object):
             self._comments.append(Comment(user=user, **com))
         yield self._comments
 
+    def _progress(self, progress_type,
+                  specials=False, count_specials=False, hidden=False):
+        uri = f'{self.ext}/progress/{progress_type}'
+        params = {}
+        if specials:
+            params['specials'] = 'true'
+        if count_specials:
+            params['count_specials'] = 'true'
+        if hidden:
+            params['hidden'] = 'true'
+
+        if params:
+            uri += '?' + urlencode(params)
+
+        data = yield uri
+
+        yield data
+
     @property
     @get
     def progress(self):
@@ -305,7 +325,38 @@ class TVShow(object):
         The next_episode will be the next episode the user should collect,
         if there are no upcoming episodes it will be set to null.
         """
-        yield (self.ext + '/progress/collection')
+        return self._progress('collection')
+
+    @get
+    def collection_progress(self, **kwargs):
+        """
+        collection progress for a show including details on all aired
+        seasons and episodes.
+
+        The next_episode will be the next episode the user should collect,
+        if there are no upcoming episodes it will be set to null.
+
+        specials: include specials as season 0. Default: false.
+        count_specials: count specials in the overall stats. Default: false.
+        hidden: include any hidden seasons. Default: false.
+
+        https://trakt.docs.apiary.io/#reference/shows/collection-progress/get-show-collection-progress
+        """
+        return self._progress('collection', **kwargs)
+
+    @get
+    def watched_progress(self, **kwargs):
+        """
+        watched progress for a show including details on all aired seasons
+        and episodes.
+
+        specials: include specials as season 0. Default: false.
+        count_specials: count specials in the overall stats. Default: false.
+        hidden: include any hidden seasons. Default: false.
+
+        https://trakt.docs.apiary.io/#reference/shows/watched-progress/get-show-collection-progress
+        """
+        return self._progress('watched', **kwargs)
 
     @property
     def crew(self):

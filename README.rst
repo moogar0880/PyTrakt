@@ -34,19 +34,19 @@ To install with `pip <http://www.pip-installer.org/>`_, just run this in your te
 
 Get the code
 ^^^^^^^^^^^^
-trakt is available on `GitHub <https://github.com/moogar0880/PyTrakt>`_.
+trakt is available on `GitHub <https://github.com/glensc/python-pytrakt>`_.
 
 You can either clone the public repository::
 
-    $ git clone git://github.com/moogar0880/PyTrakt.git
+    $ git clone git://github.com/glensc/python-pytrakt.git
 
-Download the `tarball <https://github.com/moogar0880/PyTrakt/tarball/master>`_::
+Download the `tarball <https://github.com/glensc/python-pytrakt/tarball/master>`_::
 
-    $ curl -OL https://github.com/moogar0880/PyTrakt/tarball/master
+    $ curl -OL https://github.com/glensc/python-pytrakt/tarball/master
 
-Or, download the `zipball <https://github.com/moogar0880/PyTrakt/zipball/master>`_::
+Or, download the `zipball <https://github.com/glensc/python-pytrakt/zipball/main>`_::
 
-    $ curl -OL https://github.com/moogar0880/PyTrakt/zipball/master
+    $ curl -OL https://github.com/glensc/python-pytrakt/zipball/main
 
 Once you have a copy of the source, you can embed it in your Python package,
 or install it into your site-packages easily::
@@ -58,7 +58,7 @@ Contributing
 Pull requests are graciously accepted. Any pull request should not break any tests
 and should pass `flake8` style checks (unless otherwise warranted). Additionally
 the user opening the Pull Request should ensure that their username and a link to
-their GitHub page appears in `CONTRIBUTORS.md <https://github.com/moogar0880/PyTrakt/blob/master/CONTRIBUTORS.md>`_.
+their GitHub page appears in `CONTRIBUTORS.md <https://github.com/glensc/python-pytrakt/blob/master/CONTRIBUTORS.md>`_.
 
 
 TODO

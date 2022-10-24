@@ -1,15 +1,16 @@
 PyTrakt
 =======
-.. image:: https://circleci.com/gh/moogar0880/PyTrakt/tree/master.svg?style=svg
-    :target: https://circleci.com/gh/moogar0880/PyTrakt/tree/master
-    :alt: CircleCI Status
 
-.. image:: https://img.shields.io/pypi/dm/trakt.svg
-    :target: https://pypi.python.org/pypi/trakt
+.. image:: https://github.com/glensc/python-pytrakt/actions/workflows/test.yml/badge.svg
+    :target: https://github.com/glensc/python-pytrakt/actions
+    :alt: CI Status
+
+.. image:: https://img.shields.io/pypi/dm/pytrakt.svg
+    :target: https://pypi.org/project/pytrakt/
     :alt: Downloads
 
-.. image:: https://img.shields.io/pypi/l/trakt.svg
-    :target: https://pypi.python.org/pypi/trakt/
+.. image:: https://img.shields.io/pypi/l/pytrakt.svg
+    :target: https://pypi.org/project/pytrakt/
     :alt: License
 
 This module is designed to be a Pythonic interface to the `Trakt.tv <http://trakt.tv>`_.
@@ -40,9 +41,9 @@ You can either clone the public repository::
 
     $ git clone git://github.com/glensc/python-pytrakt.git
 
-Download the `tarball <https://github.com/glensc/python-pytrakt/tarball/master>`_::
+Download the `tarball <https://github.com/glensc/python-pytrakt/tarball/main>`_::
 
-    $ curl -OL https://github.com/glensc/python-pytrakt/tarball/master
+    $ curl -OL https://github.com/glensc/python-pytrakt/tarball/main
 
 Or, download the `zipball <https://github.com/glensc/python-pytrakt/zipball/main>`_::
 
@@ -58,7 +59,7 @@ Contributing
 Pull requests are graciously accepted. Any pull request should not break any tests
 and should pass `flake8` style checks (unless otherwise warranted). Additionally
 the user opening the Pull Request should ensure that their username and a link to
-their GitHub page appears in `CONTRIBUTORS.md <https://github.com/glensc/python-pytrakt/blob/master/CONTRIBUTORS.md>`_.
+their GitHub page appears in `CONTRIBUTORS.md <https://github.com/glensc/python-pytrakt/blob/main/CONTRIBUTORS.md>`_.
 
 
 TODO

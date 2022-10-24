@@ -34,7 +34,7 @@ You can either clone the public repository::
 
     $ git clone git://github.com/glensc/python-pytrakt.git
 
-Download the `tarball <https://github.com/glensc/python-pytrakt/tarball/master>`_::
+Download the `tarball <https://github.com/glensc/python-pytrakt/tarball/main>`_::
 
     $ curl -OL https://github.com/glensc/python-pytrakt/tarball/master
 

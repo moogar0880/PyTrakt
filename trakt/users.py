@@ -97,7 +97,7 @@ class UserList(namedtuple('UserList', ['name', 'description', 'privacy',
             args['description'] = description
         data = yield 'users/{user}/lists'.format(user=slugify(creator)), args
         extract_ids(data)
-        yield UserList(creator=creator, user=creator, **data)
+        yield cls(creator=creator, user=creator, **data)
 
     @classmethod
     @get
@@ -109,7 +109,7 @@ class UserList(namedtuple('UserList', ['name', 'description', 'privacy',
         data = yield 'users/{user}/lists/{id}'.format(user=slugify(creator),
                                                       id=slugify(title))
         extract_ids(data)
-        ulist = UserList(creator=creator, **data)
+        ulist = cls(creator=creator, **data)
         ulist.get_items()
 
         yield ulist

@@ -27,7 +27,7 @@ MOCK_DATA_FILES = [
 
 class MockCore(trakt.core.Core):
     def __init__(self, *args, **kwargs):
-        super(MockCore, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.mock_data = {}
         for mock_file in MOCK_DATA_FILES:
             with open(mock_file, encoding='utf-8') as f:

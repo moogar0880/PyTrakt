@@ -24,8 +24,8 @@ class Person(object):
         else:
             self._get()
 
-    @classmethod
-    def search(cls, name, year=None):
+    @staticmethod
+    def search(name, year=None):
         """Perform a search for an episode with a title matching *title*
 
         :param name: The name of the person to search for

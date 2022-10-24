@@ -106,8 +106,8 @@ class Movie(object):
         else:
             self._get()
 
-    @classmethod
-    def search(cls, title, year=None):
+    @staticmethod
+    def search(title, year=None):
         """Perform a search for a movie with a title matching *title*
 
         :param title: The title to search for

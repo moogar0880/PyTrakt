@@ -23,6 +23,7 @@ __all__ = [
     'LockedUserAccountException',
     'RateLimitException',
     'TraktInternalException',
+    'TraktBadGateway',
     'TraktUnavailable',
 ]
 
@@ -106,6 +107,12 @@ class TraktInternalException(TraktException):
     """TraktException type to be raised when a 500 error is raised"""
     http_code = 500
     message = 'Internal Server Error'
+
+
+class TraktBadGateway(TraktException):
+    """TraktException type to be raised when a 502 error is raised"""
+    http_code = 502
+    message = 'Trakt Unavailable - Bad Gateway'
 
 
 class TraktUnavailable(TraktException):

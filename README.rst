@@ -1,8 +1,9 @@
 PyTrakt
 =======
-.. image:: https://circleci.com/gh/moogar0880/PyTrakt/tree/master.svg?style=svg
-    :target: https://circleci.com/gh/moogar0880/PyTrakt/tree/master
-    :alt: CircleCI Status
+
+.. image:: https://github.com/glensc/python-pytrakt/actions/workflows/test.yml/badge.svg
+    :target: https://github.com/glensc/python-pytrakt/actions
+    :alt: CI Status
 
 .. image:: https://img.shields.io/pypi/dm/pytrakt.svg
     :target: https://pypi.org/project/pytrakt/

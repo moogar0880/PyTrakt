@@ -41,9 +41,9 @@ You can either clone the public repository::
 
     $ git clone git://github.com/glensc/python-pytrakt.git
 
-Download the `tarball <https://github.com/glensc/python-pytrakt/tarball/master>`_::
+Download the `tarball <https://github.com/glensc/python-pytrakt/tarball/main>`_::
 
-    $ curl -OL https://github.com/glensc/python-pytrakt/tarball/master
+    $ curl -OL https://github.com/glensc/python-pytrakt/tarball/main
 
 Or, download the `zipball <https://github.com/glensc/python-pytrakt/zipball/main>`_::
 
@@ -59,7 +59,7 @@ Contributing
 Pull requests are graciously accepted. Any pull request should not break any tests
 and should pass `flake8` style checks (unless otherwise warranted). Additionally
 the user opening the Pull Request should ensure that their username and a link to
-their GitHub page appears in `CONTRIBUTORS.md <https://github.com/glensc/python-pytrakt/blob/master/CONTRIBUTORS.md>`_.
+their GitHub page appears in `CONTRIBUTORS.md <https://github.com/glensc/python-pytrakt/blob/main/CONTRIBUTORS.md>`_.
 
 
 TODO

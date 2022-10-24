@@ -4,12 +4,12 @@ PyTrakt
     :target: https://circleci.com/gh/moogar0880/PyTrakt/tree/master
     :alt: CircleCI Status
 
-.. image:: https://img.shields.io/pypi/dm/trakt.svg
-    :target: https://pypi.python.org/pypi/trakt
+.. image:: https://img.shields.io/pypi/dm/pytrakt.svg
+    :target: https://pypi.org/project/pytrakt/
     :alt: Downloads
 
-.. image:: https://img.shields.io/pypi/l/trakt.svg
-    :target: https://pypi.python.org/pypi/trakt/
+.. image:: https://img.shields.io/pypi/l/pytrakt.svg
+    :target: https://pypi.org/project/pytrakt/
     :alt: License
 
 This module is designed to be a Pythonic interface to the `Trakt.tv <http://trakt.tv>`_.

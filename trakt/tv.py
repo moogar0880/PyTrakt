@@ -227,8 +227,8 @@ class TVShow(object):
 
         return slugify(self.title + ' ' + str(self.year))
 
-    @classmethod
-    def search(cls, title, year=None):
+    @staticmethod
+    def search(title, year=None):
         """Perform a search for the specified *title*.
 
         :param title: The title to search for
@@ -770,8 +770,8 @@ class TVEpisode(object):
         """Uri to retrieve additional image information"""
         return self.ext + '?extended=images'
 
-    @classmethod
-    def search(cls, title, year=None):
+    @staticmethod
+    def search(title, year=None):
         """Perform a search for an episode with a title matching *title*
 
         :param title: The title to search for

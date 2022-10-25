@@ -336,7 +336,9 @@ def get_watchlist(list_type=None, sort=None):
             from trakt.tv import TVEpisode
             show = d.pop('show')
             extract_ids(d['episode'])
-            results.append(TVEpisode(show.get('title', None), **d['episode']))
+            results.append(TVEpisode(show.get('title', None),
+                                     show_id=show.get('trakt', None),
+                                     **d['episode']))
         elif 'movie' in d:
             from trakt.movies import Movie
             results.append(Movie(**d.pop('movie')))

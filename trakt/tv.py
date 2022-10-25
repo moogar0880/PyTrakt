@@ -439,7 +439,8 @@ class TVShow(object):
                 # Prepare episodes
                 episodes = []
                 for ep in season.pop('episodes', []):
-                    episode = TVEpisode(show=self.title, **ep)
+                    episode = TVEpisode(show=self.title,
+                                        show_id=self.trakt, **ep)
                     episodes.append(episode)
                 season['episodes'] = episodes
 
@@ -456,7 +457,8 @@ class TVShow(object):
         """
         if self._last_episode is None:
             data = yield self.ext + '/last_episode?extended=full'
-            self._last_episode = data and TVEpisode(show=self.title, **data)
+            self._last_episode = data and TVEpisode(show=self.title,
+                                                    show_id=self.trakt, **data)
         yield self._last_episode
 
     @property
@@ -467,7 +469,8 @@ class TVShow(object):
         """
         if self._next_episode is None:
             data = yield self.ext + '/next_episode?extended=full'
-            self._next_episode = data and TVEpisode(show=self.title, **data)
+            self._next_episode = data and TVEpisode(show=self.title,
+                                                    show_id=self.trakt, **data)
         yield self._next_episode
 
     @property

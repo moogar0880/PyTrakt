@@ -459,16 +459,22 @@ class Scrobbler(object):
         if self.progress > 0:
             self.start()
 
-    def start(self):
+    def start(self, progress=None):
         """Start scrobbling this :class:`Scrobbler`'s *media* object"""
+        if progress is not None:
+            self.progress = progress
         return self._post('scrobble/start')
 
-    def pause(self):
+    def pause(self, progress=None):
         """Pause the scrobbling of this :class:`Scrobbler`'s *media* object"""
+        if progress is not None:
+            self.progress = progress
         return self._post('scrobble/pause')
 
-    def stop(self):
+    def stop(self, progress=None):
         """Stop the scrobbling of this :class:`Scrobbler`'s *media* object"""
+        if progress is not None:
+            self.progress = progress
         return self._post('scrobble/stop')
 
     def finish(self):

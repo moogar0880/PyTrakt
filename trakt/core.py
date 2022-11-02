@@ -45,7 +45,7 @@ HEADERS = {'Content-Type': 'application/json', 'trakt-api-version': '2'}
 CONFIG_PATH = os.path.join(os.path.expanduser('~'), '.pytrakt.json')
 
 #: Your personal Trakt.tv OAUTH Bearer Token
-OAUTH_TOKEN = api_key = None
+OAUTH_TOKEN = None
 
 # OAuth token validity checked
 OAUTH_TOKEN_VALID = None
@@ -478,9 +478,6 @@ class Core(object):
         if (not OAUTH_TOKEN_VALID and OAUTH_EXPIRES_AT is not None
                 and OAUTH_REFRESH is not None):
             _validate_token(self)
-        # For backwards compatibility with trakt<=2.3.0
-        if api_key is not None and OAUTH_TOKEN is None:
-            OAUTH_TOKEN = api_key
 
     @staticmethod
     def _get_first(f, *args, **kwargs):

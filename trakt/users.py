@@ -202,7 +202,7 @@ class UserList(namedtuple('UserList', ['name', 'description', 'privacy',
         yield uri.format(username=slugify(self.creator), id=self.trakt)
 
 
-class User(object):
+class User:
     """A Trakt.tv User"""
     def __init__(self, username, **kwargs):
         super().__init__()

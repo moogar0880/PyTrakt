@@ -197,7 +197,7 @@ def anticipated_shows(page=1, limit=10, extended=None):
     yield [TVShow(**show['show']) for show in data]
 
 
-class TVShow(object):
+class TVShow:
     """A Class representing a TV Show object."""
 
     def __init__(self, title='', slug=None, **kwargs):
@@ -562,7 +562,7 @@ class TVShow(object):
     __repr__ = __str__
 
 
-class TVSeason(object):
+class TVSeason:
     """Container for TV Seasons"""
 
     def __init__(self, show, season=1, slug=None, **kwargs):
@@ -702,7 +702,7 @@ class TVSeason(object):
     __repr__ = __str__
 
 
-class TVEpisode(object):
+class TVEpisode:
     """Container for TV Episodes"""
 
     def __init__(self, show, season, number=-1, **kwargs):

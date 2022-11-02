@@ -9,7 +9,7 @@ __all__ = ['Person', 'ActingCredit', 'CrewCredit', 'Credits', 'MovieCredits',
            'TVCredits']
 
 
-class Person(object):
+class Person:
     """A Class representing a trakt.tv Person such as an Actor or Director"""
     def __init__(self, name, slug=None, **kwargs):
         super().__init__()
@@ -112,7 +112,7 @@ class Person(object):
     __repr__ = __str__
 
 
-class ActingCredit(object):
+class ActingCredit:
     """An individual credit for a :class:`Person` who played a character in a
     Movie or TV Show
     """
@@ -130,7 +130,7 @@ class ActingCredit(object):
     __repr__ = __str__
 
 
-class CrewCredit(object):
+class CrewCredit:
     """An individual crew credit for a :class:`Person` who had an off-screen
     job on a Movie or a TV Show
     """
@@ -148,7 +148,7 @@ class CrewCredit(object):
     __repr__ = __str__
 
 
-class Credits(object):
+class Credits:
     """A base type representing a :class:`Person`'s credits for Movies or TV
     Shows
     """

@@ -443,7 +443,7 @@ def load_config():
             APPLICATION_ID = config_data.get('APPLICATION_ID', None)
 
 
-class Core(object):
+class Core:
     """This class contains all of the functionality required for interfacing
     with the Trakt.tv API
     """

@@ -74,13 +74,13 @@ def test_oneliners():
                  e1.remove_from_collection, e1.remove_from_watchlist]
     for fn in functions:
         r = fn()
-        assert r is None
+        assert r is not None
 
 
 def test_episode_comment():
     e1 = TVEpisode('Game of Thrones', season=1, number=1)
     r = e1.comment('Test Comment')
-    assert r is None
+    assert r is not None
 
 
 def test_episode_scrobble():

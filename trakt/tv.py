@@ -673,13 +673,13 @@ class TVSeason:
 
     def add_to_library(self):
         """Add this :class:`TVSeason` to your library."""
-        add_to_collection(self)
+        return add_to_collection(self)
 
     add_to_collection = add_to_library
 
     def remove_from_library(self):
         """Remove this :class:`TVSeason` from your library."""
-        remove_from_collection(self)
+        return remove_from_collection(self)
 
     remove_from_collection = remove_from_library
 
@@ -864,40 +864,40 @@ class TVEpisode:
         settings, this may also send out social updates to facebook, twitter,
         tumblr, and path.
         """
-        rate(self, rating)
+        return rate(self, rating)
 
     def add_to_library(self):
         """Add this :class:`TVEpisode` to your Trakt.tv library"""
-        add_to_collection(self)
+        return add_to_collection(self)
 
     add_to_collection = add_to_library
 
     def add_to_watchlist(self):
         """Add this :class:`TVEpisode` to your watchlist"""
-        add_to_watchlist(self)
+        return add_to_watchlist(self)
 
     def mark_as_seen(self, watched_at=None):
         """Mark this episode as seen"""
-        add_to_history(self, watched_at)
+        return add_to_history(self, watched_at)
 
     def mark_as_unseen(self):
         """Remove this :class:`TVEpisode` from your list of watched episodes"""
-        remove_from_history(self)
+        return remove_from_history(self)
 
     def remove_from_library(self):
         """Remove this :class:`TVEpisode` from your library"""
-        remove_from_collection(self)
+        return remove_from_collection(self)
 
     remove_from_collection = remove_from_library
 
     def remove_from_watchlist(self):
         """Remove this :class:`TVEpisode` from your watchlist"""
-        remove_from_watchlist(self)
+        return remove_from_watchlist(self)
 
     def comment(self, comment_body, spoiler=False, review=False):
         """Add a comment (shout or review) to this :class:`TVEpisode` on trakt.
         """
-        comment(self, comment_body, spoiler, review)
+        return comment(self, comment_body, spoiler, review)
 
     def scrobble(self, progress, app_version, app_date):
         """Scrobble this :class:`TVEpisode` via the TraktTV Api
@@ -930,7 +930,7 @@ class TVEpisode:
         """
         if delete:
             delete_checkin()
-        checkin_media(self, app_version, app_date, message, sharing, venue_id,
+        return checkin_media(self, app_version, app_date, message, sharing, venue_id,
                       venue_name)
 
     def to_json_singular(self):

@@ -258,16 +258,16 @@ class Movie:
 
     def add_to_library(self):
         """Add this :class:`Movie` to your library."""
-        add_to_collection(self)
+        return add_to_collection(self)
     add_to_collection = add_to_library
 
     def add_to_watchlist(self):
         """Add this :class:`Movie` to your watchlist"""
-        add_to_watchlist(self)
+        return add_to_watchlist(self)
 
     def comment(self, comment_body, spoiler=False, review=False):
         """Add a comment (shout or review) to this :class:`Move` on trakt."""
-        comment(self, comment_body, spoiler, review)
+        return comment(self, comment_body, spoiler, review)
 
     def dismiss(self):
         """Dismiss this movie from showing up in Movie Recommendations"""
@@ -305,28 +305,28 @@ class Movie:
     def mark_as_seen(self, watched_at=None):
         """Add this :class:`Movie`, watched outside of trakt, to your library.
         """
-        add_to_history(self, watched_at)
+        return add_to_history(self, watched_at)
 
     def mark_as_unseen(self):
         """Remove this :class:`Movie`, watched outside of trakt, from your
         library.
         """
-        remove_from_history(self)
+        return remove_from_history(self)
 
     def rate(self, rating):
         """Rate this :class:`Movie` on trakt. Depending on the current users
         settings, this may also send out social updates to facebook, twitter,
         tumblr, and path.
         """
-        rate(self, rating)
+        return rate(self, rating)
 
     def remove_from_library(self):
         """Remove this :class:`Movie` from your library."""
-        remove_from_collection(self)
+        return remove_from_collection(self)
     remove_from_collection = remove_from_library
 
     def remove_from_watchlist(self):
-        remove_from_watchlist(self)
+        return remove_from_watchlist(self)
 
     def scrobble(self, progress, app_version, app_date):
         """Notify trakt that the current user has finished watching a movie.
@@ -362,7 +362,7 @@ class Movie:
         """
         if delete:
             delete_checkin()
-        checkin_media(self, app_version, app_date, message, sharing, venue_id,
+        return checkin_media(self, app_version, app_date, message, sharing, venue_id,
                       venue_name)
 
     def to_json_singular(self):

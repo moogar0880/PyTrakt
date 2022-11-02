@@ -148,21 +148,27 @@ def test_movie_search():
     assert all(isinstance(m, Movie) for m in results)
 
 
+def test_dismiss():
+    tron = Movie('Tron Legacy 2010')
+    r = tron.dismiss()
+    assert r is None
+
+
 def test_utilities():
     tron = Movie('Tron Legacy 2010')
     functions = [tron.add_to_library, tron.add_to_collection,
-                 tron.add_to_watchlist, tron.dismiss, tron.mark_as_unseen,
+                 tron.add_to_watchlist, tron.mark_as_unseen,
                  tron.remove_from_library, tron.remove_from_collection,
                  tron.remove_from_watchlist, tron.mark_as_seen]
     for fn in functions:
         r = fn()
-        assert r is None
+        assert r is not None
 
 
 def test_movie_comment():
     tron = Movie('Tron Legacy 2010')
     r = tron.comment('Some comment data')
-    assert r is None
+    assert r is not None
 
 
 def test_rate_movie():

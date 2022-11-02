@@ -53,7 +53,7 @@ def test_oneliners():
                  s1.remove_from_library, s1.remove_from_collection]
     for fn in functions:
         r = fn()
-        assert r is None
+        assert r is not None
 
 
 def test_season_to_json():

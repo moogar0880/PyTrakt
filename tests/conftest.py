@@ -40,7 +40,11 @@ class MockCore(trakt.core.Core):
         # use a deepcopy of the mocked data to ensure clean responses on every
         # request. this prevents rewrites to JSON responses from persisting
         method_responses = deepcopy(self.mock_data).get(uri, {})
-        return method_responses.get(method.upper())
+        result = method_responses.get(method.upper())
+        if result is None:
+            print(f"Missing mock for {method.upper()} {trakt.core.BASE_URL}{uri}")
+
+        return result
 
 
 """Override utility functions from trakt.core to use an underlying MockCore

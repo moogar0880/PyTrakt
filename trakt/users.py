@@ -374,7 +374,8 @@ class User:
                 s = show.pop('show')
                 extract_ids(s)
                 sh = TVShow(**s)
-                sh._seasons = [TVSeason(show=sh.title, **sea)
+                sh._seasons = [TVSeason(show=sh.title,
+                               season=sea['number'], **sea)
                                for sea in show.pop('seasons')]
                 self._show_collection.append(sh)
         yield self._show_collection

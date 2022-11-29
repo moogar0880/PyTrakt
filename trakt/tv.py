@@ -253,7 +253,7 @@ class TVShow:
 
     @property
     def ext(self):
-        return 'shows/{slug}'.format(slug=self.slug)
+        return 'shows/{slug}'.format(slug=self.trakt or self.slug)
 
     @property
     def ext_full(self):

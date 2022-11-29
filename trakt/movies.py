@@ -94,7 +94,7 @@ class Movie:
             self.slug = slug or slugify(self.title)
 
         self.released = self.tmdb_id = self.imdb_id = self.duration = None
-        self.trakt_id = self.tagline = self.overview = self.runtime = None
+        self.trakt = self.trakt_id = self.tagline = self.overview = self.runtime = None
         self.updated_at = self.trailer = self.homepage = self.rating = None
         self.votes = self.language = self.available_translations = None
         self.genres = self.certification = None

@@ -33,7 +33,7 @@ about them
     >>> heyy.birthplace
     'Uvalde, Texas, USA'
     >>> heyy.biography
-    '\u200bFrom Wikipedia, the free encyclopedia. \xa0\n\nMatthew David McConaughey (born November 4, 1969) is an American actor.\n...'
+    "Matthew David McConaughey (born November 4, 1969) is an American actor..."
     >>> heyy.images
     {'headshot': 'http://slurm.trakt.us/images/poster-dark.jpg'}
 

@@ -171,12 +171,12 @@ def search(query, search_type='movie', year=None, slugify_query=False):
         'movie', 'show', 'episode', or 'person'
     :param year: This parameter is ignored as it is no longer a part of the
         official API. It is left here as a valid arg for backwards
-        compatability.
+        compatibility.
     :param slugify_query: A boolean indicating whether or not the provided
         query should be slugified or not prior to executing the query.
     """
     # the new get_search_results expects a list of types, so handle this
-    # conversion to maintain backwards compatability
+    # conversion to maintain backwards compatibility
     if isinstance(search_type, str):
         search_type = [search_type]
     results = get_search_results(query, search_type, slugify_query)

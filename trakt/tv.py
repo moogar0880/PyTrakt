@@ -720,7 +720,7 @@ class TVEpisode:
             self._build(kwargs)
         else:
             self._get()
-        self.episode = self.number  # Backwards compatability
+        self.episode = self.number  # Backwards compatibility
 
     @get
     def _get(self):

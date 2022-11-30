@@ -214,7 +214,7 @@
             {"number":4,"ids":{"trakt":5,"tvdb":522882,"tmdb":3628,"tvrage":null},"rating":9.0,"votes":111,"episode_count":10,"aired_episodes":10,"overview":"Season 4 overview."}
         ]
     },
-    "shows/game-of-thrones/seasons?extended=episodes": {
+    "shows/1390/seasons?extended=episodes": {
         "GET": [
             {"number":0,"ids":{"trakt":2145,"tvdb":137481,"tmdb":3627,"tvrage":null},
                 "episodes":[

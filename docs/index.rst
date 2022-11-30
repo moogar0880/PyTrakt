@@ -7,7 +7,7 @@ trakt: Python interface to Trakt.tv
 ===================================
 Release v\ |version|.
 
-This module is designed to be a Pythonic interface to the `Trakt.tv <http://trakt.tv>`_.
+This module is designed to be a Pythonic interface to the `Trakt.tv <https://trakt.tv>`_.
 REST API. The official documentation for which can be found `here <http://trakt.tv/api-docs/>`_.
 trakt contains interfaces to all of the Trakt.tv functionality in an, ideally, easily
 scriptable fashion.

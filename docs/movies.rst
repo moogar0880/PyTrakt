@@ -45,7 +45,7 @@ optional year, and you will be returned an interface to that Movie on trakt.tv.
 ::
 
     >>> from trakt.movies import Movie
-    >>> batman = Movie('Son of Batman')
+    >>> batman = Movie('Son of Batman', 2014)
     >>> batman.overview
     'Batman learns that he has a violent, unruly pre-teen son with Talia al Ghul named Damian Wayne who is secretly being...
     >>> batman.released_iso

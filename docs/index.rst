@@ -22,7 +22,7 @@ There are two ways through which you can install trakt
 
 Install Via Pip
 ^^^^^^^^^^^^^^^
-To install with `pip <http://www.pip-installer.org/>`_, just run this in your terminal::
+To install with `pip <https://pip.pypa.io/>`_, just run this in your terminal::
 
     $ pip install trakt
 

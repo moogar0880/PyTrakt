@@ -48,8 +48,8 @@ optional year, and you will be returned an interface to that Movie on trakt.tv.
     >>> batman = Movie('Son of Batman', 2014)
     >>> batman.overview
     'Batman learns that he has a violent, unruly pre-teen son with Talia al Ghul named Damian Wayne who is secretly being...
-    >>> batman.released_iso
-    '2014-04-20T07:00:00'
+    >>> batman.released
+    '2014-04-22'
     >>> batman.genres
     [Genre(name='Action', slug='action'), Genre(name='Adventure', slug='adventure'), Genre(name='Animation', slug='animation')]
     >>> batman.add_to_library()

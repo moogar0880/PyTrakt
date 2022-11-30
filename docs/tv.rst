@@ -57,7 +57,7 @@ information on the show's seasons and episodes
     <TVEpisode>: The IT Crowd S1E-1 The Haunting of Bill Crouse, <TVEpisode>: The IT Crowd S1E-1 Aunt Irma Visits]
     >>> pilot = s1.episodes[0]
     >>> pilot.title
-    'Yesterday's Jam'
+    "Yesterday's Jam"
     >>> pilot.overview
     'Jen is hired as the manager Reynholm Industries although she doesn't know the first thing about computers.'
 

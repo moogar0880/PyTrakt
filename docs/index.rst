@@ -36,7 +36,7 @@ You can either clone the public repository::
 
 Download the `tarball <https://github.com/glensc/python-pytrakt/tarball/main>`_::
 
-    $ curl -OL https://github.com/glensc/python-pytrakt/tarball/master
+    $ curl -OL https://github.com/glensc/python-pytrakt/tarball/main
 
 Or, download the `zipball <https://github.com/glensc/python-pytrakt/zipball/main>`_::
 

@@ -29,6 +29,6 @@ available from this trakt.tv :class:`User`.
     >>> my.location
     'Newmarket NH'
     >>> my.movie_collection
-    [<Movie>: b'2 Fast 2 Furious', <Movie>: b'A Beautiful Mind', <Movie>: b'A Bronx Tale', <Movie>: b"A Bug's Life", <Movie>: b'A Christmas Carol',...
+    [<Movie>: '2 Fast 2 Furious', <Movie>: 'A Beautiful Mind', <Movie>: 'A Bronx Tale', <Movie>: "A Bug's Life", <Movie>: 'A Christmas Carol',...
 
 

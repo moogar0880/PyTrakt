@@ -27,7 +27,7 @@ the currently authenticated user.
     >>> from trakt.movies import get_recommended_movies
     >>> all_movies = get_recommended_movies()
     >>> all_movies
-    [<Movie>: b'The Dark Knight', <Movie>: b'WALLE', <Movie>: b'Up', <Movie>: b'Toy Story',...
+    [<Movie>: 'The Dark Knight', <Movie>: 'WALLE', <Movie>: 'Up', <Movie>: 'Toy Story',...
 
 There are a few properties that belong to the trakt.movies module as well.
 ::
@@ -36,7 +36,7 @@ There are a few properties that belong to the trakt.movies module as well.
     >>> movies.genres()
     [Genre(name='Action', slug='action'), Genre(name='Adventure', slug='adventure'),...
     >>> movies.trending_movies()
-    [<Movie>: b'The LEGO Movie', <Movie>: b'Non-Stop', <Movie>: b'Frozen', <Movie>: b'RoboCop',...
+    [<Movie>: 'The LEGO Movie', <Movie>: 'Non-Stop', <Movie>: 'Frozen', <Movie>: 'RoboCop',...
     >>> movies.updated_movies()
     []
 

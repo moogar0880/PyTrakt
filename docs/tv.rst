@@ -32,8 +32,8 @@ object
     [<TVEpisode>: The IT Crowd S1E1 Yesterday's Jam, <TVEpisode>: The IT Crowd S1E2 Calamity Jen,
      <TVEpisode>: The IT Crowd S2E1 The Work Outing, <TVEpisode>: The IT Crowd S1E4 The Red Door,...
     >>> it_crowd.top_watchers
-    [<User>: b'Vaelek', <User>: b'Governa', <User>: b'shanos404', <User>: b'b_jammin666',
-    <User>: b'pavvoc', <User>: b'heartbraden', <User>: b'tressal', <User>: b'hherrera',...
+    [<User>: 'Vaelek', <User>: 'Governa', <User>: 'shanos404', <User>: 'b_jammin666',
+    <User>: 'pavvoc', <User>: 'heartbraden', <User>: 'tressal', <User>: 'hherrera',...
     >>> it_crowd.genres
     [Genre(name='Comedy', slug='comedy')]
 

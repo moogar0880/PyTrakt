@@ -29,14 +29,6 @@ the currently authenticated user.
     >>> all_movies
     [<Movie>: b'The Dark Knight', <Movie>: b'WALLE', <Movie>: b'Up', <Movie>: b'Toy Story',...
 
-
-There's also a function to quickly rate a list of movies as the currently
-authenticated user.
-::
-
-    >>> from trakt.movies import Movie, rate_movies
-    >>> rate_movies(all_movies, 'love')
-
 There are a few properties that belong to the trakt.movies module as well.
 ::
 

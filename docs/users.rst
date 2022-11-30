@@ -24,10 +24,6 @@ Good, now we have a hold of the :class:`User` object. Now we can get all of the 
 available from this trakt.tv :class:`User`.
 ::
 
-    >>> my.gender
-    'male'
-    >>> my.location
-    'Newmarket NH'
     >>> my.movie_collection
     [<Movie>: '2 Fast 2 Furious', <Movie>: 'A Beautiful Mind', <Movie>: 'A Bronx Tale', <Movie>: "A Bug's Life", <Movie>: 'A Christmas Carol',...
 

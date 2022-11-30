@@ -33,9 +33,9 @@ There are a few properties that belong to the trakt.movies module as well.
 ::
 
     >>> from trakt import movies
-    >>> movies.genres
+    >>> movies.genres()
     [Genre(name='Action', slug='action'), Genre(name='Adventure', slug='adventure'),...
-    >>> movies.trending_movies
+    >>> movies.trending_movies()
     [<Movie>: b'The LEGO Movie', <Movie>: b'Non-Stop', <Movie>: b'Frozen', <Movie>: b'RoboCop',...
     >>> movies.updated_movies()
     []

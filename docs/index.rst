@@ -8,7 +8,7 @@ trakt: Python interface to Trakt.tv
 Release v\ |version|.
 
 This module is designed to be a Pythonic interface to the `Trakt.tv <https://trakt.tv>`_.
-REST API. The official documentation for which can be found `here <http://trakt.tv/api-docs/>`_.
+REST API. The official documentation for which can be found `here <https://trakt.docs.apiary.io>`_.
 trakt contains interfaces to all of the Trakt.tv functionality in an, ideally, easily
 scriptable fashion.
 

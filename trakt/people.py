@@ -13,7 +13,6 @@ __all__ = ['Person', 'ActingCredit', 'CrewCredit', 'Credits', 'MovieCredits',
 class Person(IdsMixin):
     """A Class representing a trakt.tv Person such as an Actor or Director"""
     def __init__(self, name, slug=None, **kwargs):
-        super().__init__()
         self.name = name
         self.biography = self.birthplace = self.birthday = None
         self.death = self.homepage = None

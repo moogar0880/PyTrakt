@@ -26,7 +26,6 @@ class Calendar:
         :param days: Number of days for this :class:`Calendar`. Defaults to 7
             days
         """
-        super().__init__()
         self.date = date or now()
         self.days = days
         self._calendar = []

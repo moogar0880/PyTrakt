@@ -205,7 +205,6 @@ class UserList(namedtuple('UserList', ['name', 'description', 'privacy',
 class User:
     """A Trakt.tv User"""
     def __init__(self, username, **kwargs):
-        super().__init__()
         self.username = username
         self._calendar = self._last_activity = self._watching = None
         self._movies = self._movie_collection = self._movies_watched = None

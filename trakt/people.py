@@ -12,7 +12,6 @@ __all__ = ['Person', 'ActingCredit', 'CrewCredit', 'Credits', 'MovieCredits',
 class Person:
     """A Class representing a trakt.tv Person such as an Actor or Director"""
     def __init__(self, name, slug=None, **kwargs):
-        super().__init__()
         self.name = name
         self.biography = self.birthplace = self.tmdb_id = self.birthday = None
         self.job = self.character = self._images = self._movie_credits = None

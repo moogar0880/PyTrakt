@@ -1,0 +1,23 @@
+name: tagged-release
+
+on:
+  push:
+    tags:
+      - "*.*.*"
+
+jobs:
+  gh_tagged_release:
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: "Checkout source code"
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - uses: marvinpinto/action-automatic-releases@v1.2.1
+        with:
+          prerelease: false
+        id: automatic_releases
+
+# vim:ts=2:sw=2:et

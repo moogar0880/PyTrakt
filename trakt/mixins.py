@@ -28,6 +28,10 @@ class IdsMixin:
             'ids': ids
         }
 
+    @ids.setter
+    def ids(self, value):
+        self._ids = value
+
     @property
     def imdb(self):
         return self._ids.get('imdb', None)

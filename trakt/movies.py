@@ -92,8 +92,6 @@ class Movie(IdsMixin):
         else:
             self.slug = slug or slugify(self.title)
 
-        self.released = self.duration = None
-        self.tagline = self.overview = self.runtime = None
         self.updated_at = self.trailer = self.homepage = self.rating = None
         self.votes = self.language = self.available_translations = None
         self.genres = self.certification = None

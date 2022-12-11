@@ -7,8 +7,8 @@ trakt: Python interface to Trakt.tv
 ===================================
 Release v\ |version|.
 
-This module is designed to be a Pythonic interface to the `Trakt.tv <http://trakt.tv>`_.
-REST API. The official documentation for which can be found `here <http://trakt.tv/api-docs/>`_.
+This module is designed to be a Pythonic interface to the `Trakt.tv <https://trakt.tv>`_.
+REST API. The official documentation for which can be found `here <https://trakt.docs.apiary.io>`_.
 trakt contains interfaces to all of the Trakt.tv functionality in an, ideally, easily
 scriptable fashion.
 
@@ -22,9 +22,9 @@ There are two ways through which you can install trakt
 
 Install Via Pip
 ^^^^^^^^^^^^^^^
-To install with `pip <http://www.pip-installer.org/>`_, just run this in your terminal::
+To install with `pip <https://pip.pypa.io/>`_, just run this in your terminal::
 
-    $ pip install trakt
+    $ pip install pytrakt
 
 Get the code
 ^^^^^^^^^^^^
@@ -36,7 +36,7 @@ You can either clone the public repository::
 
 Download the `tarball <https://github.com/glensc/python-pytrakt/tarball/main>`_::
 
-    $ curl -OL https://github.com/glensc/python-pytrakt/tarball/master
+    $ curl -OL https://github.com/glensc/python-pytrakt/tarball/main
 
 Or, download the `zipball <https://github.com/glensc/python-pytrakt/zipball/main>`_::
 
@@ -62,7 +62,6 @@ including example usages.
    people.rst
    tv.rst
    users.rst
-   sync.rst
    core.rst
    sync.rst
 

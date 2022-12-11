@@ -256,7 +256,7 @@ class TVShow(IdsMixin):
 
     @property
     def ext(self):
-        return 'shows/{slug}'.format(slug=self.slug)
+        return 'shows/{slug}'.format(slug=self.trakt or self.slug)
 
     @property
     def ext_full(self):
@@ -712,7 +712,7 @@ class TVEpisode(IdsMixin):
             self._build(kwargs)
         else:
             self._get()
-        self.episode = self.number  # Backwards compatability
+        self.episode = self.number  # Backwards compatibility
 
     @get
     def _get(self):

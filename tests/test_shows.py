@@ -67,6 +67,15 @@ def test_get_people():
     for group in groups:
         assert all([isinstance(p, Person) for p in group])
 
+    ids = {
+        'imdb': 'nm0227759',
+        'slug': 'peter-dinklage',
+        'tmdb': 22970,
+        'trakt': 639,
+    }
+    assert got.people[0].ids['ids'] == ids
+
+
 
 def test_ratings():
     got = TVShow('Game of Thrones')

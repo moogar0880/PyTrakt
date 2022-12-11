@@ -81,7 +81,7 @@ class Calendar:
             }
             self._calendar.append(
                 TVEpisode(show_data['title'], season, ep_num,
-                          show_id=show_data['trakt'], **e_data)
+                          show_id=show_data['ids']['trakt'], **e_data)
             )
         self._calendar = sorted(self._calendar, key=lambda x: x.airs_at)
 

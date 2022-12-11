@@ -456,6 +456,7 @@ class Scrobbler:
         :param app_version: The media center application version
         :param app_date: The date that *app_version* was released
         """
+        super().__init__()
         self.progress, self.version = progress, app_version
         self.media, self.date = media, app_date
         if self.progress > 0:

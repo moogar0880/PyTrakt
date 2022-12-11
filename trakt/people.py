@@ -1,23 +1,26 @@
 # -*- coding: utf-8 -*-
 """Interfaces to all of the People objects offered by the Trakt.tv API"""
 from trakt.core import get
+from trakt.mixins import IdsMixin
 from trakt.sync import search
-from trakt.utils import extract_ids, slugify
+from trakt.utils import slugify
 
 __author__ = 'Jon Nappi'
 __all__ = ['Person', 'ActingCredit', 'CrewCredit', 'Credits', 'MovieCredits',
            'TVCredits']
 
 
-class Person:
+class Person(IdsMixin):
     """A Class representing a trakt.tv Person such as an Actor or Director"""
     def __init__(self, name, slug=None, **kwargs):
         super().__init__()
         self.name = name
-        self.biography = self.birthplace = self.tmdb_id = self.birthday = None
+        self.biography = self.birthplace = self.birthday = None
+        self.death = self.homepage = None
         self.job = self.character = self._images = self._movie_credits = None
         self._tv_credits = None
         self.slug = slug or slugify(self.name)
+        self.tmdb_id = None  # @deprecated: unused
 
         if len(kwargs) > 0:
             self._build(kwargs)
@@ -59,21 +62,12 @@ class Person:
         self._build(data)
 
     def _build(self, data):
-        extract_ids(data)
         for key, val in data.items():
             try:
                 setattr(self, key, val)
             except AttributeError as ae:
                 if not hasattr(self, '_' + key):
                     raise ae
-
-    @property
-    def ids(self):
-        """Accessor to the trakt, imdb, and tmdb ids, as well as the trakt.tv
-        slug
-        """
-        return {'ids': {'trakt': self.trakt, 'slug': self.slug,
-                        'imdb': self.imdb, 'tmdb': self.tmdb}}
 
     @property
     @get

@@ -108,6 +108,10 @@ class TraktInternalException(TraktException):
     http_code = 500
     message = 'Internal Server Error'
 
+    @property
+    def error_message(self):
+        return self.response.headers.get("x-error-message", None)
+
 
 class TraktBadGateway(TraktException):
     """TraktException type to be raised when a 502 error is raised"""

@@ -102,6 +102,10 @@ class RateLimitException(TraktException):
     http_code = 429
     message = 'Rate Limit Exceeded'
 
+    @property
+    def retry_after(self):
+        return int(self.response.headers.get("Retry-After", 1))
+
 
 class TraktInternalException(TraktException):
     """TraktException type to be raised when a 500 error is raised"""

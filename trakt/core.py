@@ -5,16 +5,17 @@ trakt package
 import json
 import logging
 import os
+import sys
+import time
+from collections import namedtuple
+from datetime import datetime, timedelta, timezone
+from functools import wraps
 from json import JSONDecodeError
 from urllib.parse import urljoin
 
 import requests
-import sys
-import time
-from collections import namedtuple
-from functools import wraps
 from requests_oauthlib import OAuth2Session
-from datetime import datetime, timedelta, timezone
+
 from trakt import errors
 from trakt.errors import BadResponseException
 

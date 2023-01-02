@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 """Interfaces to all of the User objects offered by the Trakt.tv API"""
 from collections import namedtuple
-from trakt.core import get, post, delete
+
+from trakt.core import delete, get, post
 from trakt.mixins import IdsMixin
 from trakt.movies import Movie
 from trakt.people import Person
-from trakt.tv import TVShow, TVSeason, TVEpisode
+from trakt.tv import TVEpisode, TVSeason, TVShow
 from trakt.utils import slugify
 
 __author__ = 'Jon Nappi'

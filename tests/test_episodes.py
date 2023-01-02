@@ -2,7 +2,7 @@
 """trakt.tv functional tests"""
 from trakt.core import Comment
 from trakt.sync import Scrobbler
-from trakt.tv import TVSeason, TVEpisode
+from trakt.tv import TVEpisode, TVSeason
 from trakt.users import User
 from trakt.utils import airs_date
 

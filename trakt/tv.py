@@ -7,12 +7,12 @@ from urllib.parse import urlencode
 from trakt.core import Airs, Alias, Comment, Genre, delete, get
 from trakt.errors import NotFoundException
 from trakt.mixins import IdsMixin
-from trakt.sync import (Scrobbler, rate, comment, add_to_collection,
-                        add_to_watchlist, add_to_history, remove_from_history,
-                        remove_from_collection, remove_from_watchlist, search,
-                        checkin_media, delete_checkin)
-from trakt.utils import slugify, airs_date
 from trakt.people import Person
+from trakt.sync import (Scrobbler, add_to_collection, add_to_history,
+                        add_to_watchlist, checkin_media, comment,
+                        delete_checkin, rate, remove_from_collection,
+                        remove_from_history, remove_from_watchlist, search)
+from trakt.utils import airs_date, slugify
 
 __author__ = 'Jon Nappi'
 __all__ = ['dismiss_recommendation', 'get_recommended_shows', 'genres',

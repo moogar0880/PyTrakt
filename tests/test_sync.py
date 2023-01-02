@@ -4,10 +4,9 @@ from datetime import datetime
 
 import pytest
 
-from trakt.sync import (comment, rate, add_to_history, add_to_watchlist,
-                        remove_from_history, remove_from_watchlist,
-                        add_to_collection, remove_from_collection)
-
+from trakt.sync import (add_to_collection, add_to_history, add_to_watchlist,
+                        comment, rate, remove_from_collection,
+                        remove_from_history, remove_from_watchlist)
 
 
 class FakeMedia:

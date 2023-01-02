@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from trakt.movies import Movie
-from trakt.tv import TVShow, TVEpisode, TVSeason
-from trakt.users import (User, UserList, Request, get_all_requests,
-                         get_user_settings)
 from trakt.people import Person
+from trakt.tv import TVEpisode, TVSeason, TVShow
+from trakt.users import (Request, User, UserList, get_all_requests,
+                         get_user_settings)
 
 
 def test_user_settings():

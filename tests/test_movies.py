@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """tests for the trakt.movies module"""
 from trakt.core import Comment
-from trakt.movies import (trending_movies, updated_movies, Movie, Release,
-                          dismiss_recommendation, get_recommended_movies,
-                          Translation)
+from trakt.movies import (Movie, Release, Translation, dismiss_recommendation,
+                          get_recommended_movies, trending_movies,
+                          updated_movies)
 from trakt.people import Person
 from trakt.users import User
 

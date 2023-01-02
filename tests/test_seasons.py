@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """trakt.tv functional tests"""
 from trakt.core import Comment
-from trakt.tv import TVShow, TVSeason, TVEpisode
+from trakt.tv import TVEpisode, TVSeason, TVShow
 from trakt.users import User
 
 

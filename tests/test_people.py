@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import pytest
-from trakt.people import Person, MovieCredits, TVCredits, Credits
+
+from trakt.people import Credits, MovieCredits, Person, TVCredits
 
 
 def test_get_person():

@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 """trakt.tv functional tests"""
 import pytest
+
 from trakt.core import Comment
 from trakt.people import Person
-from trakt.tv import (trending_shows, popular_shows, updated_shows, TVShow,
-                      dismiss_recommendation, get_recommended_shows, TVEpisode)
+from trakt.tv import (TVEpisode, TVShow, dismiss_recommendation,
+                      get_recommended_shows, popular_shows, trending_shows,
+                      updated_shows)
 from trakt.users import User
 
 

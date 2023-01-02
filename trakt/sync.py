@@ -4,9 +4,8 @@ from datetime import datetime, timezone
 
 from deprecated import deprecated
 
-from trakt.core import get, post, delete
+from trakt.core import delete, get, post
 from trakt.utils import slugify, timestamp
-
 
 __author__ = 'Jon Nappi'
 __all__ = ['Scrobbler', 'comment', 'rate', 'add_to_history', 'get_collection',
@@ -82,8 +81,8 @@ def add_to_watchlist(media):
     :param media: Supports both the PyTrakt :class:`Movie`,
         :class:`TVShow`, etc. But also supports passing custom json structures.
     """
-    from trakt.tv import TVEpisode, TVSeason, TVShow
     from trakt.movies import Movie
+    from trakt.tv import TVEpisode, TVSeason, TVShow
     if isinstance(media, (TVEpisode, TVSeason, TVShow, Movie)):
         media_object = media.to_json()
     else:
@@ -100,8 +99,8 @@ def remove_from_history(media):
     :param media: Supports both the PyTrakt :class:`Movie`,
         :class:`TVShow`, etc. But also supports passing custom json structures.
     """
-    from trakt.tv import TVEpisode, TVSeason, TVShow
     from trakt.movies import Movie
+    from trakt.tv import TVEpisode, TVSeason, TVShow
     if isinstance(media, (TVEpisode, TVSeason, TVShow, Movie)):
         media_object = media.to_json()
     else:
@@ -117,8 +116,8 @@ def remove_from_watchlist(media):
     :param media: Supports both the PyTrakt :class:`Movie`,
         :class:`TVShow`, etc. But also supports passing custom json structures.
     """
-    from trakt.tv import TVEpisode, TVSeason, TVShow
     from trakt.movies import Movie
+    from trakt.tv import TVEpisode, TVSeason, TVShow
     if isinstance(media, (TVEpisode, TVSeason, TVShow, Movie)):
         media_object = media.to_json()
     else:
@@ -135,8 +134,8 @@ def add_to_collection(media):
     :param media: Supports both the PyTrakt :class:`Movie`,
         :class:`TVShow`, etc. But also supports passing custom json structures.
     """
-    from trakt.tv import TVEpisode, TVSeason, TVShow
     from trakt.movies import Movie
+    from trakt.tv import TVEpisode, TVSeason, TVShow
     if isinstance(media, (TVEpisode, TVSeason, TVShow, Movie)):
         media_object = media.to_json()
     else:
@@ -152,8 +151,8 @@ def remove_from_collection(media):
     :param media: Supports both the PyTrakt :class:`Movie`,
         :class:`TVShow`, etc. But also supports passing custom json structures.
     """
-    from trakt.tv import TVEpisode, TVSeason, TVShow
     from trakt.movies import Movie
+    from trakt.tv import TVEpisode, TVSeason, TVShow
     if isinstance(media, (TVEpisode, TVSeason, TVShow, Movie)):
         media_object = media.to_json()
     else:

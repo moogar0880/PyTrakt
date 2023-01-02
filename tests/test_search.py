@@ -2,7 +2,7 @@
 """trakt.sync functional tests"""
 from trakt.movies import Movie
 from trakt.people import Person
-from trakt.sync import get_search_results, search, search_by_id, SearchResult
+from trakt.sync import SearchResult, get_search_results, search, search_by_id
 from trakt.tv import TVEpisode, TVShow
 
 __author__ = 'Reinier van der Windt'

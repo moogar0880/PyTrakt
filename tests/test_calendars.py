@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """trakt.calendar functional tests"""
-from trakt.calendar import (PremiereCalendar, MyPremiereCalendar, ShowCalendar,
-                            MyShowCalendar, SeasonCalendar, MySeasonCalendar,
-                            MovieCalendar, MyMovieCalendar)
+from trakt.calendar import (MovieCalendar, MyMovieCalendar, MyPremiereCalendar,
+                            MySeasonCalendar, MyShowCalendar, PremiereCalendar,
+                            SeasonCalendar, ShowCalendar)
 from trakt.movies import Movie
 
 __author__ = 'Jon Nappi'

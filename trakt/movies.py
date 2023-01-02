@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 """Interfaces to all of the Movie objects offered by the Trakt.tv API"""
 from collections import namedtuple
-from trakt.core import Alias, Comment, Genre, get, delete
+
+from trakt.core import Alias, Comment, Genre, delete, get
 from trakt.mixins import IdsMixin
-from trakt.sync import (Scrobbler, comment, rate, add_to_history,
-                        remove_from_history, add_to_watchlist,
-                        remove_from_watchlist, add_to_collection,
-                        remove_from_collection, search, checkin_media,
-                        delete_checkin)
 from trakt.people import Person
-from trakt.utils import slugify, now
+from trakt.sync import (Scrobbler, add_to_collection, add_to_history,
+                        add_to_watchlist, checkin_media, comment,
+                        delete_checkin, rate, remove_from_collection,
+                        remove_from_history, remove_from_watchlist, search)
+from trakt.utils import now, slugify
 
 __author__ = 'Jon Nappi'
 __all__ = ['dismiss_recommendation', 'get_recommended_movies', 'genres',

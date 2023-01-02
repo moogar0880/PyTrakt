@@ -1,0 +1,14 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+#
+# To update all hooks:
+# $ pre-commit autoupdate
+
+repos:
+  - repo: https://github.com/pycqa/isort
+    rev: 5.11.4
+    hooks:
+      - id: isort
+        name: isort (Python)
+
+# vim:ts=2:sw=2:et

@@ -201,22 +201,31 @@ def anticipated_shows(page=1, limit=10, extended=None):
 class TVShow(IdsMixin):
     """A Class representing a TV Show object."""
 
-    def __init__(self, title='', slug=None, **kwargs):
+    def __init__(self, title='', slug=None, seasons=None, **kwargs):
         super().__init__()
         self.media_type = 'shows'
         self.top_watchers = self.top_episodes = self.year = None
         self.genres = self.certification = self.network = None
         self._aliases = self._comments = None
         self._images = self._people = self._ratings = self._translations = None
-        self._seasons = None
         self._last_episode = self._next_episode = None
         self._slug = slug
         self.title = title
+        self._seasons = self._build_seasons(seasons) if seasons else None
 
         if len(kwargs) > 0:
             self._build(kwargs)
         else:
             self._get()
+
+    def _build_seasons(self, seasons_data):
+        seasons = []
+        show_id = self.trakt
+        for season_data in seasons_data:
+            number = season_data.pop('number')
+            season = TVSeason(show=self.title, season=number, show_id=show_id, **season_data)
+            seasons.append(season)
+        return seasons
 
     @property
     def slug(self):

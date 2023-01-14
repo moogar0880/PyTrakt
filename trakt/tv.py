@@ -567,19 +567,28 @@ class TVShow(IdsMixin):
 class TVSeason(IdsMixin):
     """Container for TV Seasons"""
 
-    def __init__(self, show, season=1, slug=None, show_id=None, **kwargs):
+    def __init__(self, show, season=1, slug=None, episodes=None, show_id=None, **kwargs):
         super().__init__()
         self.show = show
         self.show_id = show_id
         self.season = season
         self.slug = slug or slugify(show)
-        self._episodes = self._comments = self._ratings = None
-        self.ext = 'shows/{id}/seasons/{season}'.format(id=self.slug,
-                                                        season=season)
-        if len(kwargs) > 0:
+        self.ext = 'shows/{id}/seasons/{season}'.format(id=self.slug, season=season)
+        self._comments = self._ratings = None
+        self._episodes = self._build_episodes(episodes) if episodes else None
+
+        if len(kwargs) > 0 or episodes:
             self._build(kwargs)
         else:
             self._get()
+
+    def _build_episodes(self, episodes_data):
+        episodes = []
+        for episode_data in episodes_data:
+            season = episode_data.get('season', self.season)
+            episode = TVEpisode(show=self.show, season=season, show_id=self.show_id, **episode_data)
+            episodes.append(episode)
+        return episodes
 
     @get
     def _get(self):

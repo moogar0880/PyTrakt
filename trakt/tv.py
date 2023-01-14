@@ -433,10 +433,11 @@ class TVShow(IdsMixin):
                     episode = TVEpisode(show=self.title,
                                         show_id=self.trakt, **ep)
                     episodes.append(episode)
-                season['episodes'] = episodes
 
                 number = season.pop('number')
                 season = TVSeason(self.title, number, self.slug, **season)
+                season._episodes = episodes
+
                 self._seasons.append(season)
 
         yield self._seasons

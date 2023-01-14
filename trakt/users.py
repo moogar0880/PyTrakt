@@ -373,10 +373,6 @@ class User:
             for show_data in data:
                 show_item = show_data.pop('show')
                 show = TVShow(**show_item)
-                show._seasons = [
-                    TVSeason(show=show.title, season=sea['number'], **sea)
-                    for sea in show_data.pop('seasons')
-                ]
                 self._show_collection.append(show)
         yield self._show_collection
 

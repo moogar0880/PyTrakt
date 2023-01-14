@@ -558,9 +558,10 @@ class TVShow(IdsMixin):
 class TVSeason(IdsMixin):
     """Container for TV Seasons"""
 
-    def __init__(self, show, season=1, slug=None, **kwargs):
+    def __init__(self, show, season=1, slug=None, show_id=None, **kwargs):
         super().__init__()
         self.show = show
+        self.show_id = show_id
         self.season = season
         self.slug = slug or slugify(show)
         self._episodes = self._comments = self._ratings = None

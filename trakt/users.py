@@ -370,13 +370,14 @@ class User:
             ext = 'users/{username}/collection/shows?extended=metadata'
             data = yield ext.format(username=slugify(self.username))
             self._show_collection = []
-            for show in data:
-                s = show.pop('show')
-                sh = TVShow(**s)
-                sh._seasons = [TVSeason(show=sh.title,
-                               season=sea['number'], **sea)
-                               for sea in show.pop('seasons')]
-                self._show_collection.append(sh)
+            for show_data in data:
+                show_item = show_data.pop('show')
+                show = TVShow(**show_item)
+                show._seasons = [
+                    TVSeason(show=show.title, season=sea['number'], **sea)
+                    for sea in show_data.pop('seasons')
+                ]
+                self._show_collection.append(show)
         yield self._show_collection
 
     @property

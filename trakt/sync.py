@@ -61,16 +61,26 @@ def add_to_history(media, watched_at=None):
     """Add a :class:`Movie`, :class:`TVShow`, or :class:`TVEpisode` to your
         watched history.
 
-    :param media: The media object to add to your history
+    :param media: The media object to add to your history. But also supports passing custom json structures.
     :param watched_at: A `datetime.datetime` object indicating the time at
-        which this media item was viewed
+        which this media item was viewed. Ignored if "media" is dict.
     """
-    if watched_at is None:
-        watched_at = datetime.now(tz=timezone.utc)
+    """Add a :class:`Movie`, :class:`TVShow`, or :class:`TVEpisode
+        to your collection.
+    :param media: Supports both the PyTrakt :class:`Movie`,
+        :class:`TVShow`, etc. But also supports passing custom json structures.
+    """
 
-    data = dict(watched_at=timestamp(watched_at))
-    data.update(media.ids)
-    result = yield 'sync/history', {media.media_type: [data]}
+    if isinstance(media, dict):
+        media_object = media
+    else:
+        if watched_at is None:
+            watched_at = datetime.now(tz=timezone.utc)
+        data = dict(watched_at=timestamp(watched_at))
+        data.update(media.ids)
+        media_object = {media.media_type: [data]}
+
+    result = yield 'sync/history', media_object
     yield result
 
 

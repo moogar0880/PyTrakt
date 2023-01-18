@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """This module contains Trakt.tv sync endpoint support functions"""
+from collections import defaultdict
 from datetime import datetime, timezone
 
 from deprecated import deprecated
@@ -63,7 +64,7 @@ def add_to_history(media, watched_at=None):
 
     :param media: The media object to add to your history. But also supports passing custom json structures.
     :param watched_at: A `datetime.datetime` object indicating the time at
-        which this media item was viewed. Ignored if "media" is dict.
+        which this media item was viewed. Defaults to now.
     """
     """Add a :class:`Movie`, :class:`TVShow`, or :class:`TVEpisode
         to your collection.
@@ -72,7 +73,19 @@ def add_to_history(media, watched_at=None):
     """
 
     if isinstance(media, dict):
-        media_object = media
+        # Walk over items and convert watched_at to a string.
+        # Do not mutate original dict.
+        media_object = defaultdict(list)
+        now = datetime.now(tz=timezone.utc)
+        for media_type, media_items in media.items():
+            for item in media_items:
+                watched_at = item.get("watched_at", now)
+                if not isinstance(watched_at, str):
+                    watched_at = timestamp(watched_at)
+                media_object[media_type].append({
+                    "ids": item["ids"],
+                    "watched_at": watched_at,
+                })
     else:
         if watched_at is None:
             watched_at = datetime.now(tz=timezone.utc)

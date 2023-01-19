@@ -76,7 +76,7 @@ def add_to_history(media, watched_at=None):
         # Walk over items and convert watched_at to a string.
         # Do not mutate original dict.
         media_object = defaultdict(list)
-        now = datetime.now(tz=timezone.utc)
+        now = datetime.now(tz=timezone.utc) if watched_at is None else watched_at
         for media_type, media_items in media.items():
             for item in media_items:
                 watched_at = item.get("watched_at", now)

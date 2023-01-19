@@ -73,25 +73,27 @@ def add_to_history(media, watched_at=None):
     """
 
     if isinstance(media, dict):
-        # Walk over items and convert watched_at to a string.
-        # Do not mutate original dict.
-        media_object = defaultdict(list)
-        now = datetime.now(tz=timezone.utc) if watched_at is None else watched_at
-        for media_type, media_items in media.items():
-            for item in media_items:
-                watched_at = item.get("watched_at", now)
-                if not isinstance(watched_at, str):
-                    watched_at = timestamp(watched_at)
-                media_object[media_type].append({
-                    "ids": item["ids"],
-                    "watched_at": watched_at,
-                })
+        items = media
     else:
-        if watched_at is None:
-            watched_at = datetime.now(tz=timezone.utc)
-        data = dict(watched_at=timestamp(watched_at))
-        data.update(media.ids)
-        media_object = {media.media_type: [data]}
+        items = {
+            media.media_type: [
+                dict(**media.ids, watched_at=watched_at),
+            ],
+        }
+
+    # Walk over items and convert watched_at to a string.
+    # Do not mutate original dict.
+    media_object = defaultdict(list)
+    now = datetime.now(tz=timezone.utc) if watched_at is None else watched_at
+    for media_type, media_items in items.items():
+        for item in media_items:
+            watched_at = item.get("watched_at", now)
+            if not isinstance(watched_at, str):
+                watched_at = timestamp(watched_at)
+            media_object[media_type].append({
+                "ids": item["ids"],
+                "watched_at": watched_at,
+            })
 
     result = yield 'sync/history', media_object
     yield result

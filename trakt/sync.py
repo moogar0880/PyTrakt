@@ -77,7 +77,7 @@ def add_to_history(media, watched_at=None):
     else:
         items = {
             media.media_type: [
-                dict(**media.ids, watched_at=watched_at),
+                dict(ids=media.ids.get("ids", {}), watched_at=watched_at),
             ],
         }
 

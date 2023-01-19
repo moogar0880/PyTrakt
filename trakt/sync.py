@@ -87,7 +87,7 @@ def add_to_history(media, watched_at=None):
     now = datetime.now(tz=timezone.utc) if watched_at is None else watched_at
     for media_type, media_items in items.items():
         for item in media_items:
-            watched_at = item.get("watched_at", now)
+            watched_at = item.get("watched_at") or now
             if not isinstance(watched_at, str):
                 watched_at = timestamp(watched_at)
             media_object[media_type].append({

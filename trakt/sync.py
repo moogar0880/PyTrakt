@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """This module contains Trakt.tv sync endpoint support functions"""
+from collections import defaultdict
 from datetime import datetime, timezone
 
 from deprecated import deprecated
@@ -61,16 +62,40 @@ def add_to_history(media, watched_at=None):
     """Add a :class:`Movie`, :class:`TVShow`, or :class:`TVEpisode` to your
         watched history.
 
-    :param media: The media object to add to your history
+    :param media: The media object to add to your history. But also supports passing custom json structures.
     :param watched_at: A `datetime.datetime` object indicating the time at
-        which this media item was viewed
+        which this media item was viewed. Defaults to now.
     """
-    if watched_at is None:
-        watched_at = datetime.now(tz=timezone.utc)
+    """Add a :class:`Movie`, :class:`TVShow`, or :class:`TVEpisode
+        to your collection.
+    :param media: Supports both the PyTrakt :class:`Movie`,
+        :class:`TVShow`, etc. But also supports passing custom json structures.
+    """
 
-    data = dict(watched_at=timestamp(watched_at))
-    data.update(media.ids)
-    result = yield 'sync/history', {media.media_type: [data]}
+    if isinstance(media, dict):
+        items = media
+    else:
+        items = {
+            media.media_type: [
+                dict(ids=media.ids.get("ids", {}), watched_at=watched_at),
+            ],
+        }
+
+    # Walk over items and convert watched_at to a string.
+    # Do not mutate original dict.
+    media_object = defaultdict(list)
+    now = datetime.now(tz=timezone.utc) if watched_at is None else watched_at
+    for media_type, media_items in items.items():
+        for item in media_items:
+            watched_at = item.get("watched_at") or now
+            if not isinstance(watched_at, str):
+                watched_at = timestamp(watched_at)
+            media_object[media_type].append({
+                "ids": item["ids"],
+                "watched_at": watched_at,
+            })
+
+    result = yield 'sync/history', media_object
     yield result
 
 

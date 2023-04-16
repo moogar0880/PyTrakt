@@ -1,21 +1,21 @@
 {
     "shows/trending?page=1&limit=10": {
         "GET": [
-            {"watchers":541,"show":{"title":"Breaking Bad","year":2008,"ids":{"trakt":1,"slug":"breaking-bad","tvdb":81189,"imdb":"tt0903747","tmdb":1396,"tvrage":18164}}},
-            {"watchers":432,"show":{"title":"The Walking Dead","year":2010,"ids":{"trakt":2,"slug":"the-walking-dead","tvdb":153021,"imdb":"tt1520211","tmdb":1402,"tvrage":25056}}}
+            {"watchers":541,"show":{"title":"Breaking Bad","year":2008,"ids":{"trakt":1388,"slug":"breaking-bad","tvdb":81189,"imdb":"tt0903747","tmdb":1396,"tvrage":18164}}},
+            {"watchers":432,"show":{"title":"The Walking Dead","year":2010,"ids":{"trakt":1393,"slug":"the-walking-dead","tvdb":153021,"imdb":"tt1520211","tmdb":1402,"tvrage":25056}}}
         ]
     },
     "shows/popular?page=1&limit=10": {
         "GET": [
             {"title":"Community","year":2009,"ids":{"trakt":41,"slug":"community","tvdb":94571,"imdb":"tt1439629","tmdb":18347,"tvrage":22589}},
-            {"title":"The Walking Dead","year":2010,"ids":{"trakt":2,"slug":"the-walking-dead","tvdb":153021,"imdb":"tt1520211","tmdb":1402,"tvrage":25056}},
+            {"title":"The Walking Dead","year":2010,"ids":{"trakt":1393,"slug":"the-walking-dead","tvdb":153021,"imdb":"tt1520211","tmdb":1402,"tvrage":25056}},
             {"title":"Dexter","year":2006,"ids":{"trakt":19,"slug":"dexter","tvdb":79349,"imdb":"tt0773262","tmdb":1405,"tvrage":null}},
             {"title":"The Simpsons","year":1989,"ids":{"trakt":91,"slug":"the-simpsons","tvdb":71663,"imdb":"tt0096697","tmdb":456,"tvrage":6190}},
             {"title":"Game of Thrones","year":2011,"ids":{"trakt":1390,"slug":"game-of-thrones","tvdb":121361,"imdb":"tt0944947","tmdb":1399,"tvrage":24493}},
             {"title":"Lost","year":2004,"ids":{"trakt":511,"slug":"lost","tvdb":73739,"imdb":"tt0411008","tmdb":4607,"tvrage":null}},
             {"title":"24","year":2001,"ids":{"trakt":460,"slug":"24","tvdb":76290,"imdb":"tt0285331","tmdb":1973,"tvrage":2445}},
             {"title":"Battlestar Galactica","year":2005,"ids":{"trakt":331,"slug":"battlestar-galactica","tvdb":73545,"imdb":"tt0407362","tmdb":1972,"tvrage":null}},
-            {"title":"Breaking Bad","year":2008,"ids":{"trakt":1,"slug":"breaking-bad","tvdb":81189,"imdb":"tt0903747","tmdb":1396,"tvrage":18164}},
+            {"title":"Breaking Bad","year":2008,"ids":{"trakt":1388,"slug":"breaking-bad","tvdb":81189,"imdb":"tt0903747","tmdb":1396,"tvrage":18164}},
             {"title":"Firefly","year":2002,"ids":{"trakt":329,"slug":"firefly","tvdb":78874,"imdb":"tt0303461","tmdb":1437,"tvrage":null}}
         ]
     },
@@ -77,8 +77,8 @@
     },
     "shows/updates/2014-09-22?page=1&limit=10": {
         "GET": [
-            {"updated_at":"2014-09-22T21:56:03.000Z","show":{"title":"Breaking Bad","year":2008,"ids":{"trakt":1,"slug":"breaking-bad","tvdb":81189,"imdb":"tt0903747","tmdb":1396,"tvrage":18164}}},
-            {"updated_at":"2014-09-23T21:56:03.000Z","show":{"title":"The Walking Dead","year":2010,"ids":{"trakt":2,"slug":"the-walking-dead","tvdb":153021,"imdb":"tt1520211","tmdb":1402,"tvrage":25056}}}
+            {"updated_at":"2014-09-22T21:56:03.000Z","show":{"title":"Breaking Bad","year":2008,"ids":{"trakt":1388,"slug":"breaking-bad","tvdb":81189,"imdb":"tt0903747","tmdb":1396,"tvrage":18164}}},
+            {"updated_at":"2014-09-23T21:56:03.000Z","show":{"title":"The Walking Dead","year":2010,"ids":{"trakt":1393,"slug":"the-walking-dead","tvdb":153021,"imdb":"tt1520211","tmdb":1402,"tvrage":25056}}}
         ]
     },
     "shows/1390?extended=images": {
@@ -136,7 +136,7 @@
             {"title":"Sons of Anarchy","year":2008,"ids":{"trakt":23,"slug":"sons-of-anarchy","tvdb":82696,"imdb":"tt1124373","tmdb":1409,"tvrage":null}},
             {"title":"Hannibal","year":2013,"ids":{"trakt":567,"slug":"hannibal","tvdb":259063,"imdb":"tt2243973","tmdb":40008,"tvrage":30909}},
             {"title":"True Blood","year":2008,"ids":{"trakt":122,"slug":"true-blood","tvdb":82283,"imdb":"tt0844441","tmdb":10545,"tvrage":12662}},
-            {"title":"The Walking Dead","year":2010,"ids":{"trakt":2,"slug":"the-walking-dead","tvdb":153021,"imdb":"tt1520211","tmdb":1402,"tvrage":25056}},
+            {"title":"The Walking Dead","year":2010,"ids":{"trakt":1393,"slug":"the-walking-dead","tvdb":153021,"imdb":"tt1520211","tmdb":1402,"tvrage":25056}},
             {"title":"The Shield","year":2002,"ids":{"trakt":486,"slug":"the-shield","tvdb":78261,"imdb":"tt0286486","tmdb":1414,"tvrage":null}}
         ]
     },

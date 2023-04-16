@@ -47,6 +47,7 @@
                     "name":"Star Wars in NEW machete order",
                     "description":"Some descriptive text",
                     "privacy":"private",
+                    "share_link":"https://trakt.tv/lists/55",
                     "type":"personal",
                     "display_numbers":true,
                     "allow_comments":false,
@@ -189,7 +190,7 @@
             {"type":"show","show":{"title":"Breaking Bad","year":2008,"ids":{"trakt":1,"slug":"breaking-bad","tvdb":81189,"imdb":"tt0903747","tmdb":1396,"tvrage":18164}},"comment":{"id":199,"comment":"Skyler, I AM THE DANGER.","spoiler":false,"review":false,"parent_id":0,"created_at":"2015-02-18T06:02:30.000Z","replies":0,"likes":0,"user_rating":10,"user":{"username":"justin","private":false,"name":"Justin N.","vip":true,"vip_ep":false}}},
             {"type":"season","season":{"number":1,"ids":{"trakt":3958,"tvdb":274431,"tmdb":60394,"tvrage":38049}},"show":{"title":"Gotham","year":2014,"ids":{"trakt":869,"slug":"gotham","tvdb":274431,"imdb":"tt3749900","tmdb":60708,"tvrage":38049}},"comment":{"id":220,"comment":"Kicking off season 1 for a new Batman show.","spoiler":false,"review":false,"parent_id":0,"created_at":"2015-04-21T06:53:25.000Z","replies":0,"likes":0,"user_rating":8,"user":{"username":"justin","private":false,"name":"Justin N.","vip":true,"vip_ep":false}}},
             {"type":"episode","episode":{"season":1,"number":1,"title":"Jim Gordon","ids":{"trakt":63958,"tvdb":4768720,"imdb":"tt3216414","tmdb":975968,"tvrage":1065564827}},"show":{"title":"Gotham","year":2014,"ids":{"trakt":869,"slug":"gotham","tvdb":274431,"imdb":"tt3749900","tmdb":60708,"tvrage":38049}},"comment":{"id":229,"comment":"Is this the OC?","spoiler":false,"review":false,"parent_id":0,"created_at":"2015-04-21T15:42:31.000Z","replies":1,"likes":0,"user_rating":7,"user":{"username":"justin","private":false,"name":"Justin N.","vip":true,"vip_ep":false}}},
-            {"type":"list","list":{"name":"Star Wars","description":"The complete Star Wars saga!","privacy":"public","type":"personal","display_numbers":false,"allow_comments":true,"updated_at":"2015-04-22T22:01:39.000Z","item_count":8,"comment_count":0,"likes":0,"ids":{"trakt":51,"slug":"star-wars"}},"comment":{"id":268,"comment":"May the 4th be with you!","spoiler":false,"review":false,"parent_id":0,"created_at":"2014-12-08T17:34:51.000Z","replies":0,"likes":0,"user_rating":null,"user":{"username":"justin","private":false,"name":"Justin N.","vip":true,"vip_ep":false}}}
+            {"type":"list","list":{"name":"Star Wars","description":"The complete Star Wars saga!","privacy":"public","share_link":"https://trakt.tv/lists/51","type":"personal","display_numbers":false,"allow_comments":true,"updated_at":"2015-04-22T22:01:39.000Z","item_count":8,"comment_count":0,"likes":0,"ids":{"trakt":51,"slug":"star-wars"}},"comment":{"id":268,"comment":"May the 4th be with you!","spoiler":false,"review":false,"parent_id":0,"created_at":"2014-12-08T17:34:51.000Z","replies":0,"likes":0,"user_rating":null,"user":{"username":"justin","private":false,"name":"Justin N.","vip":true,"vip_ep":false}}}
         ]
     },
     "users/sean/lists": {
@@ -198,6 +199,7 @@
                 "name":"Star Wars in machete order",
                 "description":"Some descriptive text",
                 "privacy":"public",
+                "share_link":"https://trakt.tv/lists/55",
                 "type":"personal",
                 "display_numbers":true,
                 "allow_comments":true,
@@ -222,6 +224,7 @@
                 "name":"Vampires FTW",
                 "description":"These suck, but in a good way!",
                 "privacy":"public",
+                "share_link":"https://trakt.tv/lists/52",
                 "type":"personal",
                 "display_numbers":false,
                 "allow_comments":true,
@@ -247,6 +250,7 @@
             "name":"Star Wars in machete order",
             "description":"Some descriptive text",
             "privacy":"public",
+            "share_link":"https://trakt.tv/lists/55",
             "type":"personal",
             "display_numbers":true,
             "allow_comments":true,
@@ -265,6 +269,7 @@
             "name":"Star Wars in machete order",
             "description":"Some descriptive text",
             "privacy":"public",
+            "share_link":"https://trakt.tv/lists/55",
             "type":"personal",
             "display_numbers":true,
             "allow_comments":true,
@@ -282,6 +287,7 @@
             "name":"Star Wars in NEW machete order",
             "description":"Some descriptive text",
             "privacy":"private",
+            "share_link":"https://trakt.tv/lists/55",
             "type":"personal",
             "display_numbers":true,
             "allow_comments":false,

@@ -63,7 +63,7 @@ def unfollow(user_name):
 
 
 class UserList(namedtuple('UserList', ['name', 'description', 'privacy',
-                                       'type', 'display_numbers',
+                                       'share_link', 'type', 'display_numbers',
                                        'allow_comments', 'sort_by',
                                        'sort_how', 'created_at',
                                        'updated_at', 'item_count',

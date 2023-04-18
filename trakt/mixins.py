@@ -4,6 +4,23 @@
 __author__ = 'Jon Nappi, Elan Ruusamäe'
 
 
+def data_class_factory(data_class):
+    """
+    A Mixin for inheriting @dataclass or NamedTuple, via composition rather inheritance.
+    """
+    class DataClassMixinClass:
+        def __init__(self, **kwargs):
+            self.data = data_class(**kwargs)
+
+        def __getattr__(self, item):
+            return getattr(self.data, item)
+
+    return DataClassMixinClass
+
+
+DataClassMixin = data_class_factory
+
+
 class IdsMixin:
     """
     Provides Mixin to translate "ids" array

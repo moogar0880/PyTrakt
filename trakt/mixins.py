@@ -70,3 +70,11 @@ class IdsMixin:
     @property
     def tvrage(self):
         return self._ids.get('tvrage', None)
+
+    @property
+    def slug(self):
+        return self._ids.get('slug', None)
+
+    @slug.setter
+    def slug(self, value):
+        self._ids['slug'] = value

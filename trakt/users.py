@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 """Interfaces to all of the User objects offered by the Trakt.tv API"""
-from collections import namedtuple
 from typing import Any, NamedTuple
 
 from trakt.core import delete, get, post
@@ -65,17 +64,23 @@ def unfollow(user_name):
     yield 'users/{username}/follow'.format(username=slugify(user_name))
 
 
-UserListFields = [
-    'name', 'description', 'privacy',
-    'share_link', 'type', 'display_numbers',
-    'allow_comments', 'sort_by',
-    'sort_how', 'created_at',
-    'updated_at', 'item_count',
-    'comment_count', 'likes', 'ids',
-    'user', 'creator',
-]
-# Can't have NamedTuple and __init__, so this stays as namedtuple()
-UserListTuple = namedtuple('UserList', UserListFields)
+class UserListTuple(NamedTuple):
+    name: str
+    description: str
+    privacy: str
+    share_link: str
+    type: str
+    display_numbers: bool
+    allow_comments: bool
+    sort_by: str
+    sort_how: str
+    created_at: str
+    updated_at: str
+    item_count: int
+    comment_count: int
+    likes: int
+    user: Any
+    creator: str
 
 
 class UserList(DataClassMixin(UserListTuple), IdsMixin):

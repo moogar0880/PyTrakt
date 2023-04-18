@@ -31,8 +31,10 @@ class IdsMixin:
 
     __ids = ['imdb', 'slug', 'tmdb', 'trakt']
 
-    def __init__(self):
-        self._ids = {}
+    def __init__(self, ids=None):
+        if ids is None:
+            ids = {}
+        self._ids = ids
 
     @property
     def ids(self):

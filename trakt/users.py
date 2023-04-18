@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Interfaces to all of the User objects offered by the Trakt.tv API"""
+from dataclasses import dataclass
 from typing import Any, NamedTuple
 
 from trakt.core import delete, get, post
@@ -64,7 +65,8 @@ def unfollow(user_name):
     yield 'users/{username}/follow'.format(username=slugify(user_name))
 
 
-class UserListTuple(NamedTuple):
+@dataclass(frozen=True)
+class UserListEntry:
     name: str
     description: str
     privacy: str
@@ -83,7 +85,7 @@ class UserListTuple(NamedTuple):
     creator: str
 
 
-class UserList(DataClassMixin(UserListTuple), IdsMixin):
+class UserList(DataClassMixin(UserListEntry), IdsMixin):
     """A list created by a Trakt.tv :class:`User`"""
 
     def __init__(self, ids=None, **kwargs):

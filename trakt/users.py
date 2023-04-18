@@ -90,10 +90,6 @@ class UserList(DataClassMixin(UserListTuple), IdsMixin):
         """Iterate over the items in this user list"""
         return self._items.__iter__()
 
-    @property
-    def slug(self):
-        return self._ids.get('slug', None)
-
     @classmethod
     @post
     def create(cls, name, creator, description=None, privacy='private',

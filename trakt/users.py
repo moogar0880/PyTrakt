@@ -4,7 +4,7 @@ from collections import namedtuple
 from typing import Any, NamedTuple
 
 from trakt.core import delete, get, post
-from trakt.mixins import IdsMixin
+from trakt.mixins import DataClassMixin, IdsMixin
 from trakt.movies import Movie
 from trakt.people import Person
 from trakt.tv import TVEpisode, TVSeason, TVShow
@@ -78,11 +78,11 @@ UserListFields = [
 UserListTuple = namedtuple('UserList', UserListFields)
 
 
-class UserList(UserListTuple, IdsMixin):
+class UserList(DataClassMixin(UserListTuple), IdsMixin):
     """A list created by a Trakt.tv :class:`User`"""
 
-    def __init__(self, *args, ids=None, **kwargs):
-        super().__init__()
+    def __init__(self, ids=None, **kwargs):
+        super().__init__(**kwargs)
         self._ids = ids
         self._items = list()
 

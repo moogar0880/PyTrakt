@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """Interfaces to all of the User objects offered by the Trakt.tv API"""
-from collections import namedtuple
+from typing import Any, NamedTuple
 
 from trakt.core import delete, get, post
-from trakt.mixins import IdsMixin
+from trakt.mixins import DataClassMixin, IdsMixin
 from trakt.movies import Movie
 from trakt.people import Person
 from trakt.tv import TVEpisode, TVSeason, TVShow
@@ -14,8 +14,10 @@ __all__ = ['User', 'UserList', 'Request', 'follow', 'get_all_requests',
            'get_user_settings', 'unfollow']
 
 
-class Request(namedtuple('Request', ['id', 'requested_at', 'user'])):
-    __slots__ = ()
+class Request(NamedTuple):
+    id: int
+    user: Any
+    requested_at: str
 
     @post
     def approve(self):
@@ -62,27 +64,36 @@ def unfollow(user_name):
     yield 'users/{username}/follow'.format(username=slugify(user_name))
 
 
-class UserList(namedtuple('UserList', ['name', 'description', 'privacy',
-                                       'share_link', 'type', 'display_numbers',
-                                       'allow_comments', 'sort_by',
-                                       'sort_how', 'created_at',
-                                       'updated_at', 'item_count',
-                                       'comment_count', 'likes', 'ids',
-                                       'user', 'creator']), IdsMixin):
+class UserListTuple(NamedTuple):
+    name: str
+    description: str
+    privacy: str
+    share_link: str
+    type: str
+    display_numbers: bool
+    allow_comments: bool
+    sort_by: str
+    sort_how: str
+    created_at: str
+    updated_at: str
+    item_count: int
+    comment_count: int
+    likes: int
+    user: Any
+    creator: str
+
+
+class UserList(DataClassMixin(UserListTuple), IdsMixin):
     """A list created by a Trakt.tv :class:`User`"""
 
-    def __init__(self, *args, ids=None, **kwargs):
-        super().__init__()
+    def __init__(self, ids=None, **kwargs):
+        super().__init__(**kwargs)
         self._ids = ids
         self._items = list()
 
     def __iter__(self):
         """Iterate over the items in this user list"""
         return self._items.__iter__()
-
-    @property
-    def slug(self):
-        return self._ids.get('slug', None)
 
     @classmethod
     @post

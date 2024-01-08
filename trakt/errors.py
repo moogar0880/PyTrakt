@@ -105,7 +105,7 @@ class RateLimitException(TraktException):
 
     @property
     def retry_after(self):
-        return int(self.response.headers.get("Retry-After", 1))
+        return int(self.response.headers.get("retry-after", 1))
 
     @property
     def details(self):

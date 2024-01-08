@@ -77,7 +77,7 @@ class NotFoundException(TraktException):
 class MethodNotAllowedException(TraktException):
     """TraktException type to be raised when a 405 return code is received"""
     http_code = 405
-    message = 'Method not Allowed'
+    message = 'Method Not Found - method doesn\'t exist'
 
 
 class ConflictException(TraktException):

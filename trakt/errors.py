@@ -13,6 +13,7 @@ __all__ = [
     'BadResponseException',
 
     # Exceptions by HTTP status code
+    # https://trakt.docs.apiary.io/#introduction/status-codes
     'BadRequestException',
     'OAuthException',
     'ForbiddenException',

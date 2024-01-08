@@ -107,6 +107,14 @@ class RateLimitException(TraktException):
     def retry_after(self):
         return int(self.response.headers.get("Retry-After", 1))
 
+    @property
+    def details(self):
+        from json import JSONDecodeError, loads
+        try:
+            return loads(self.response.headers.get("x-ratelimit", ""))
+        except JSONDecodeError:
+            return None
+
 
 class TraktInternalException(TraktException):
     """TraktException type to be raised when a 500 error is raised"""
